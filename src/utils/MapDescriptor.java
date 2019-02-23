@@ -29,14 +29,14 @@ public class MapDescriptor {
 //            }
             String binary = temp;
             ptr = 0;
-            for (int y = ArenaConstants.ROWS-1; y >= 0 ; y--){
-                for (int x = 0; x <= ArenaConstants.COLS-1; x++){
+            for (int y = ArenaConstants.ROWS; y > 0 ; y--){
+                for (int x = 1; x <= ArenaConstants.COLS; x++){
                     if(binary.charAt(ptr) == '1')
                         arena.setObstacle(x, y, true);
                     ptr++;
                 }
             }
-            //set all explored?
+            arena.setAllExplored();
         } catch (IOException e){
             e.printStackTrace();
         }

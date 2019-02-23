@@ -1,5 +1,6 @@
 package simulator;
 
+import algorithms.Exploration;
 import arena.Arena;
 import robot.Robot;
 import robot.RbtConstants;
@@ -22,6 +23,9 @@ public class Simulator {
 
     private static Robot robot;
 
+    private static int timeLimit = 3600;
+    private static int coverageLimit = 300;
+
     public static void main(String[] args){
         robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y,1);
         createDisplay();
@@ -36,7 +40,7 @@ public class Simulator {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         appFrame.setLocation(dim.width / 2 - appFrame.getSize().width / 2, dim.height / 2 - appFrame.getSize().height / 2);
 
-        arenaPanel = new JPanel(new GridLayout());
+        arenaPanel = new JPanel(new CardLayout());
         btnPanel = new JPanel(new GridLayout());
         arenaPanel.setBackground(Color.LIGHT_GRAY);
 
@@ -54,10 +58,14 @@ public class Simulator {
 
     private static void setupArena(){
         arena =  new Arena(robot);
+        arena.setAllUnexplored();
+        explored = new Arena(robot);
+        explored.setAllUnexplored();
         arenaPanel.add(arena, "Arena");
+        arenaPanel.add(explored, "Explore");
 
-//        CardLayout cl = (CardLayout) arenaPanel.getLayout();
-//        cl.show(arenaPanel,"Arena");
+        CardLayout cl = (CardLayout) arenaPanel.getLayout();
+        cl.show(arenaPanel,"Arena");
     }
 
     private static void setupButtons(){
@@ -74,25 +82,54 @@ public class Simulator {
                     arena.clearArena();
                     File selectedFile = fc.getSelectedFile();
                     MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
+                    System.out.println("Here");
+                    appFrame.repaint();
                 }
-                appFrame.repaint();
             }
         });
         btnPanel.add(btnLoad);
 
-        JButton btnExplore = new JButton("Exploration");
+        class Explore extends SwingWorker<Integer, String>{
+            protected Integer doInBackground() throws Exception {
+                int x, y;
+
+                x = RbtConstants.START_X;
+                y = RbtConstants.START_Y;
+
+                robot.setRobotPos(x, y);
+//                explored.repaint();
+                appFrame.repaint();
+
+                Exploration exploration;
+                exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
+
+                exploration.execute();
+
+                return 111;
+            }
+        }
+
+
+        JButton btnExplore = new JButton("Start explore");
         standardBtn(btnExplore);
         btnExplore.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-
+                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                cl.show(arenaPanel, "Explore");
+                new Explore().execute();
             }
         });
+        btnPanel.add(btnExplore);
     }
 
     private static void standardBtn(JButton btn){
         btn.setFont(new Font("Arial", Font.BOLD, 13));
         btn.setFocusPainted(false);
+    }
+
+    public static void refresh(){
+        appFrame.repaint();
     }
 }

@@ -17,6 +17,12 @@ public class Arena extends JPanel {
         for(short row = 0; row < grid.length; row++) {
             for (short col = 0; col < grid[0].length; col++) {
                 grid[row][col] = new Cell(row + 1, col + 1);
+
+                if (row == 0 || col == 0 ||
+                    row == ArenaConstants.ROWS - 1 ||
+                    col == ArenaConstants.COLS - 1) {
+                    grid[row][col].setVirtualWall(true);
+                }
             }
         }
     }
@@ -27,7 +33,9 @@ public class Arena extends JPanel {
                 Color cellColor;
                 if (inStartZone(cell.x, cell.y)) cellColor = Color.GREEN;
                 else if (inGoalZone(cell.x, cell.y)) cellColor = Color.RED;
+                else if (!cell.getIsExplored()) cellColor = Color.LIGHT_GRAY;
                 else if (cell.getIsObstacle()) cellColor = Color.BLACK;
+                else if (cell.getIsVirualWall()) cellColor = Color.YELLOW;
                 else cellColor = Color.WHITE;
 
                 g.setColor(cellColor);
@@ -51,19 +59,45 @@ public class Arena extends JPanel {
     }
 
     private boolean inStartZone(int x, int y){
-        return x >= 0 && y >=0 &&
+        return x > 0 && y > 0 &&
             x <= ArenaConstants.START_X + 1 && y <= ArenaConstants.START_Y + 1;
     }
 
     private boolean inGoalZone(int x, int y){
-        return x >= 13 && y >= 18 &&
-            x <= 20 && y <= 20;
+        return x >= ArenaConstants.GOAL_X - 1 && y >= ArenaConstants.GOAL_Y - 1 &&
+            x <= ArenaConstants.COLS && y <= ArenaConstants.ROWS;
     }
 
     public void setObstacle(int x, int y, boolean obstacle){
         if (obstacle && inStartZone(x, y) || inGoalZone(x, y)) return;
 
-        grid[y][x].setIsObstacle(obstacle);
+        grid[y - 1][x - 1].setIsObstacle(obstacle);
+
+        if (y >= 2){
+            grid[y - 2][x - 1].setVirtualWall(obstacle);            //Cell's bottom
+
+            if (x < ArenaConstants.COLS){
+                grid[y - 2][x].setVirtualWall(obstacle);            //Cell's bottom-right
+            }
+            if (x > 1){
+                grid[y - 2][x - 2].setVirtualWall(obstacle);        //Cell's bottom-left
+            }
+        }
+        if (y < ArenaConstants.ROWS){
+            grid[y][x - 1].setVirtualWall(obstacle);                  //Cell's top
+            if (x < ArenaConstants.COLS - 1){
+                grid[y][x].setVirtualWall(obstacle);                  //Cell's top-right
+            }
+            if (x >= 2){
+                grid[y][x - 2].setVirtualWall(obstacle);              //Cell's top-left
+            }
+        }
+        if (x >= 2){
+            grid[y - 1][x - 2].setVirtualWall(obstacle);              //Cell's left
+        }
+        if (x < ArenaConstants.COLS){
+            grid[y - 1][x].setVirtualWall(obstacle);                  //Cell's right
+        }
     }
 
     public void clearArena(){
@@ -75,9 +109,41 @@ public class Arena extends JPanel {
                 }
                 else {
                     cell.setIsExplored(false);
+                    cell.setVirtualWall(false);
                 }
 
             }
         }
     }
+
+    public boolean checkValidCoord(int posX, int posY) {
+        return posY > 0 && posX > 0 &&
+            posY <= ArenaConstants.ROWS && posX <= ArenaConstants.COLS;
+    }
+
+    public Cell getCell(int posX, int posY){
+        return grid[posY - 1][posX - 1];
+    }
+
+    public void setAllExplored(){
+        for (Cell row[] : grid) {
+            for (Cell cell : row) {
+                cell.setIsExplored(true);
+            }
+        }
+    }
+
+    public void setAllUnexplored(){
+        for (Cell row[] : grid) {
+            for (Cell cell : row) {
+                if (inStartZone(cell.x, cell.y) || inGoalZone(cell.x, cell.y)) {
+                    cell.setIsExplored(true);
+                }
+                else {
+                    cell.setIsExplored(false);
+                }
+            }
+        }
+    }
+
 }
