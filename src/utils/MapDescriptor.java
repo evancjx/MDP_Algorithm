@@ -17,17 +17,29 @@ public class MapDescriptor {
                 sb.append(line);
                 line = br.readLine();
             }
-            String temp = sb.toString();
+            String grid = sb.toString();
+            boolean isHEX = false;
+            for(char c : grid.toCharArray()){
+                if(c != '1' || c != '0'){
+                    isHEX = true;
+                    break;
+                }
+            }
             int ptr = 0;
-//            String binary = "", partial, tempBin;
-//            while (temp.length() - ptr > 0){//pointer != inputHex.length()
-//                partial = temp.substring(ptr, ptr + 1); //every character in the input
-//                tempBin = Integer.toBinaryString(Integer.parseInt(partial,16));
-//                for (int i = 0; i < 4 - tempBin.length(); i++) binary = binary.concat("0");
-//                binary = binary.concat(tempBin);
-//                ptr++;
-//            }
-            String binary = temp;
+            String binary, partial, tempBin;
+            if (isHEX){
+                binary = "";
+                while (grid.length() - ptr > 0){//pointer != inputHex.length()
+                    partial = grid.substring(ptr, ptr + 1); //every character in the input
+                    tempBin = Integer.toBinaryString(Integer.parseInt(partial,16));
+                    for (int i = 0; i < 4 - tempBin.length(); i++) binary = binary.concat("0");
+                    binary = binary.concat(tempBin);
+                    ptr++;
+                }
+            }
+            else {
+                binary = grid;
+            }
             ptr = 0;
             for (int y = ArenaConstants.ROWS; y > 0 ; y--){
                 for (int x = 1; x <= ArenaConstants.COLS; x++){
