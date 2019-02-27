@@ -15,6 +15,12 @@ public class RbtConstants {
     public enum DIRECTION{
         UP, LEFT, DOWN, RIGHT;
 
+        public static DIRECTION getNext(DIRECTION curDir){
+            return values()[(curDir.ordinal() + 1) % values().length];
+        }
+        public static DIRECTION getPrev(DIRECTION curDir){
+            return values()[(curDir.ordinal() + values().length - 1) % values().length];
+        }
 
     }
 }

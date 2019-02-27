@@ -4,6 +4,7 @@ import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
 import robot.Robot;
+import robot.RbtConstants.DIRECTION;
 import simulator.Simulator;
 
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,7 @@ public class Exploration_Improved {
             System.out.println("Explored Area: " + areaExplored);
 
             //Improved Algorithm
-            if(robot.getPosX() == 2 && robot.getPosY() < 10 && robot.getDirection() == 3 && areaExplored < 275){
+            if(robot.getPosX() == 2 && robot.getPosY() < 10 && robot.getDirection() == DIRECTION.DOWN && areaExplored < 275){
                 robot.setIsAlert(true);
             }
             nextMove();
@@ -85,41 +86,41 @@ public class Exploration_Improved {
         if(robot.getIsAlert()){
             System.out.println("Alerted");
             if(lookLeftEmpty(rbtX, rbtY)){
-                moveBot(2, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
+                moveBot(DIRECTION.LEFT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
             } else if (lookForward(rbtX, rbtY)){
-                moveBot(1, rbtX, rbtY);
+                moveBot(DIRECTION.UP, rbtX, rbtY);
             } else if (lookRightEmpty(rbtX, rbtY)){
-                moveBot(4, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
+                moveBot(DIRECTION.RIGHT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
             } else
-                moveBot(3, rbtX, rbtY);
+                moveBot(DIRECTION.DOWN, rbtX, rbtY);
         }
         else {
             if (lookRightEmpty(rbtX, rbtY)){
-                moveBot(4, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
+                moveBot(DIRECTION.RIGHT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
             } else if (lookForward(rbtX, rbtY)){
-                moveBot(1, rbtX, rbtY);
+                moveBot(DIRECTION.UP, rbtX, rbtY);
             } else if (lookLeftEmpty(rbtX, rbtY)){
-                moveBot(2, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
+                moveBot(DIRECTION.LEFT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
             } else {
-                moveBot(2, rbtX, rbtY); //Depends on which rotation LEFT or RIGHT is better
-                moveBot(2, rbtX, rbtY);
+                moveBot(DIRECTION.LEFT, rbtX, rbtY); //Depends on which rotation LEFT or RIGHT is better
+                moveBot(DIRECTION.LEFT, rbtX, rbtY);
             }
         }
     }
 
     private boolean lookForward(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1: //Face UP
+            case UP: //Face UP
                 return upFree(rbtX, rbtY);
-            case 2: //Face LEFT
+            case LEFT: //Face LEFT
                 return leftFree(rbtX, rbtY);
-            case 3: //Face DOWN
+            case DOWN: //Face DOWN
                 return downFree(rbtX, rbtY);
-            case 4: //Face RIGHT
+            case RIGHT: //Face RIGHT
                 return rightFree(rbtX, rbtY);
         }
         return false;
@@ -127,13 +128,13 @@ public class Exploration_Improved {
 
     private boolean lookLeftEmpty(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1: //Face UP
+            case UP: //Face UP
                 return leftFree(rbtX, rbtY);
-            case 2: //Face LEFT
+            case LEFT: //Face LEFT
                 return downFree(rbtX, rbtY);
-            case 3: //Face DOWN
+            case DOWN: //Face DOWN
                 return rightFree(rbtX, rbtY);
-            case 4: //Face RIGHT
+            case RIGHT: //Face RIGHT
                 return upFree(rbtX, rbtY);
         }
         return false;
@@ -141,13 +142,13 @@ public class Exploration_Improved {
 
     private boolean lookRightEmpty(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1: //Face UP
+            case UP: //Face UP
                 return rightFree(rbtX, rbtY);
-            case 2: //Face LEFT
+            case LEFT: //Face LEFT
                 return upFree(rbtX, rbtY);
-            case 3: //Face DOWN
+            case DOWN: //Face DOWN
                 return leftFree(rbtX, rbtY);
-            case 4: //Face RIGHT
+            case RIGHT: //Face RIGHT
                 return downFree(rbtX, rbtY);
         }
         return false;
@@ -240,9 +241,9 @@ public class Exploration_Improved {
         return false;
     }
 
-    private void moveBot(int movement, int rbtX, int rbtY){
+    private void moveBot(DIRECTION movement, int rbtX, int rbtY){
         robot.move(movement);
-        if (movement == 1){
+        if (movement == DIRECTION.UP){
             if(!(rbtX > 0 && rbtY > 0 && rbtX <= ArenaConstants.START_X + 1 && rbtY <= ArenaConstants.START_Y + 1)  && !robot.getIsAlert()){
                 explored.getCell(rbtX, rbtY).setIsMovedOver(true);
             }

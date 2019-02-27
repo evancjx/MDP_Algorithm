@@ -1,14 +1,16 @@
 package robot;
 
 import arena.Arena;
+import robot.RbtConstants.DIRECTION;
 
 public class Sensor {
-    private int posX, posY, direction;
+    private int posX, posY;
+    private DIRECTION direction;
     private final String id;
     private final int lowerLimit;
     private final int upperLimit;
 
-    public Sensor(int posX, int posY, int direction, String id, int lowerLimit, int upperLimit){
+    public Sensor(int posX, int posY, DIRECTION direction, String id, int lowerLimit, int upperLimit){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -17,7 +19,7 @@ public class Sensor {
         this.upperLimit = upperLimit;
     }
 
-    public void setSensor(int posX, int posY, int direction){
+    public void setSensor(int posX, int posY, DIRECTION direction){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -25,13 +27,13 @@ public class Sensor {
 
     public int sense(Arena exploration, Arena arena){
         switch (this.direction){
-            case 1: //UP
+            case UP:
                 return getSensorVal(exploration, arena, 0, 1);
-            case 2: //LEFT
+            case LEFT:
                 return getSensorVal(exploration, arena, -1, 0);
-            case 3: //DOWN
+            case DOWN:
                 return getSensorVal(exploration, arena, 0, -1);
-            case 4: //RIGHT
+            case RIGHT:
                 return getSensorVal(exploration, arena, 1, 0);
         }
         return -1; //Error. Will never happen

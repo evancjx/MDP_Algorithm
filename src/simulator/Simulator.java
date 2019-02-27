@@ -1,12 +1,12 @@
 package simulator;
 
-import algorithms.Exploration;
 import algorithms.Exploration_Improved;
-import algorithms.FastestPathAlgo;
+import algorithms.FastestPath;
 import arena.Arena;
 import arena.ArenaConstants;
 import robot.Robot;
 import robot.RbtConstants;
+import robot.RbtConstants.DIRECTION;
 import utils.MapDescriptor;
 
 import java.awt.*;
@@ -31,7 +31,7 @@ public class Simulator {
     private static Thread threadExplore, threadFastest;
 
     public static void main(String[] args){
-        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y,1);
+        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
         createDisplay();
         initThreads();
     }
@@ -55,8 +55,8 @@ public class Simulator {
         threadFastest = new Thread(new Runnable() {
             @Override
             public void run() {
-                FastestPathAlgo fastest = new FastestPathAlgo(explored, robot);
-                fastest.printFastestPath(fastest.FindFastestPath(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y));
+                FastestPath fastest = new FastestPath(explored, robot);
+//                fastest.printFastestPath(fastest.FindFastestPath(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y));
             }
         });
     }

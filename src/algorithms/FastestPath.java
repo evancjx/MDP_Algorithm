@@ -4,6 +4,7 @@ import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
 import robot.Robot;
+import robot.RbtConstants.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ public class FastestPath {
     private Robot robot;
     private Arena explored;
     private double[][] gCost;
+    private Cell currentCell;
+    private DIRECTION curDir;
 
     public FastestPath(Arena explored, Robot robot){
         initialize(explored, robot);
@@ -26,6 +29,8 @@ public class FastestPath {
         this.closedList = new ArrayList<>();
         this.parents = new HashMap<>();
         this.gCost = new double[ArenaConstants.ROWS][ArenaConstants.COLS];
+        this.currentCell = explored.getCell(robot.getPosX(), robot.getPosY());
+        this.curDir = robot.getDirection();
 
         // Initialise gCosts array
         for(Cell[] row: this.explored.grid){

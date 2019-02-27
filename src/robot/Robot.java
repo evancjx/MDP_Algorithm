@@ -3,6 +3,7 @@ package robot;
 // @formatter:off
 
 import arena.Arena;
+import robot.RbtConstants.*;
 
 /**
  * Represents the robot moving in the arena.
@@ -22,8 +23,8 @@ import arena.Arena;
 // @formatter:on
 
 public class Robot{
-    private int posX, posY, direction, frontX, frontY;
-    private int speed;
+    private int posX, posY, frontX, frontY, speed;
+    private DIRECTION direction;
     private final Sensor
         SRFrontLeft,
         SRFrontCenter,
@@ -33,7 +34,7 @@ public class Robot{
         SRRight;
     private boolean isAlert;
 
-    public Robot(int posX, int posY, int direction){
+    public Robot(int posX, int posY, DIRECTION direction){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -46,37 +47,38 @@ public class Robot{
             "SRFC", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         SRFrontRight = new Sensor(this.posX + 1, this.posY + 1, this.direction,
             "SRFC", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
-        SRLeft = new Sensor(this.posX - 1, this.posY + 1, 3,
+        SRLeft = new Sensor(this.posX - 1, this.posY + 1, DIRECTION.LEFT,
             "SRL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
-        LRLeft = new Sensor(this.posX - 1, this.posY, 3,
+        LRLeft = new Sensor(this.posX - 1, this.posY, DIRECTION.LEFT,
             "LRL", RbtConstants.SEN_LONG_L, RbtConstants.SEN_LONG_U);
-        SRRight = new Sensor(this.posX + 1, this.posY, 4,
+        SRRight = new Sensor(this.posX + 1, this.posY, DIRECTION.RIGHT,
             "SRR", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
 
     }
 
     public int getPosX(){ return this.posX; }
     public int getPosY(){ return this.posY; }
-    public int getDirection(){ return this.direction; }
+    public DIRECTION getDirection(){ return this.direction; }
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
     public int getSpeed(){ return this.speed; }
 
-    public void setRobotFront(int d){
-        switch (d){
-            case 1: //face UP
+    public void setRobotFront(DIRECTION dir){
+        this.direction = dir;
+        switch (dir){
+            case UP: //face UP
                 this.frontX = posX;
                 this.frontY = posY + 1;
                 break;
-            case 2: //face LEFT
+            case LEFT: //face LEFT
                 this.frontX = posX - 1;
                 this.frontY = posY;
                 break;
-            case 3: //face DOWN
+            case DOWN: //face DOWN
                 this.frontX = posX;
                 this.frontY = posY - 1;
                 break;
-            case 4: //face right
+            case RIGHT: //face right
                 this.frontX = posX + 1;
                 this.frontY = posY;
                 break;
@@ -92,37 +94,37 @@ public class Robot{
 
     public void setSenors(){
         switch (this.direction){
-            case 1: //UP
-                SRFrontLeft.setSensor(this.posX - 1, this.posY + 1, 1);
-                SRFrontCenter.setSensor(this.posX, this.posY + 1, 1);
-                SRFrontRight.setSensor(this.posX + 1, this.posY + 1, 1);
-                SRLeft.setSensor(this.posX - 1, this.posY + 1, 2);
-                LRLeft.setSensor(this.posX - 1, this.posY, 2);
-                SRRight.setSensor(this.posX + 1, this.posY, 4);
+            case UP: //UP
+                SRFrontLeft.setSensor(this.posX - 1, this.posY + 1, DIRECTION.UP);
+                SRFrontCenter.setSensor(this.posX, this.posY + 1, DIRECTION.UP);
+                SRFrontRight.setSensor(this.posX + 1, this.posY + 1, DIRECTION.UP);
+                SRLeft.setSensor(this.posX - 1, this.posY + 1, DIRECTION.LEFT);
+                LRLeft.setSensor(this.posX - 1, this.posY, DIRECTION.LEFT);
+                SRRight.setSensor(this.posX + 1, this.posY, DIRECTION.LEFT);
                 break;
-            case 2: //Left
-                SRFrontLeft.setSensor(this.posX - 1, this.posY - 1, 2);
-                SRFrontCenter.setSensor(this.posX - 1, this.posY, 2);
-                SRFrontRight.setSensor(this.posX - 1, this.posY + 1, 2);
-                SRLeft.setSensor(this.posX - 1, this.posY - 1, 3);
-                LRLeft.setSensor(this.posX, this.posY - 1, 3);
-                SRRight.setSensor(this.posX, this.posY + 1, 1);
+            case LEFT: //Left
+                SRFrontLeft.setSensor(this.posX - 1, this.posY - 1, DIRECTION.LEFT);
+                SRFrontCenter.setSensor(this.posX - 1, this.posY, DIRECTION.LEFT);
+                SRFrontRight.setSensor(this.posX - 1, this.posY + 1, DIRECTION.LEFT);
+                SRLeft.setSensor(this.posX - 1, this.posY - 1, DIRECTION.DOWN);
+                LRLeft.setSensor(this.posX, this.posY - 1, DIRECTION.DOWN);
+                SRRight.setSensor(this.posX, this.posY + 1, DIRECTION.UP);
                 break;
-            case 3: //Down
-                SRFrontLeft.setSensor(this.posX + 1, this.posY - 1, 3);
-                SRFrontCenter.setSensor(this.posX, this.posY - 1, 3);
-                SRFrontRight.setSensor(this.posX - 1, this.posY - 1, 3);
-                SRLeft.setSensor(this.posX + 1, this.posY - 1, 4);
-                LRLeft.setSensor(this.posX + 1, this.posY, 4);
-                SRRight.setSensor(this.posX - 1, this.posY, 2);
+            case DOWN: //Down
+                SRFrontLeft.setSensor(this.posX + 1, this.posY - 1, DIRECTION.DOWN);
+                SRFrontCenter.setSensor(this.posX, this.posY - 1, DIRECTION.DOWN);
+                SRFrontRight.setSensor(this.posX - 1, this.posY - 1, DIRECTION.DOWN);
+                SRLeft.setSensor(this.posX + 1, this.posY - 1, DIRECTION.RIGHT);
+                LRLeft.setSensor(this.posX + 1, this.posY, DIRECTION.RIGHT);
+                SRRight.setSensor(this.posX - 1, this.posY, DIRECTION.LEFT);
                 break;
-            case 4: //Right
-                SRFrontLeft.setSensor(this.posX + 1, this.posY + 1, 4);
-                SRFrontCenter.setSensor(this.posX + 1, this.posY, 4);
-                SRFrontRight.setSensor(this.posX + 1, this.posY - 1, 4);
-                SRLeft.setSensor(this.posX + 1, this.posY + 1, 1);
-                LRLeft.setSensor(this.posX, this.posY + 1, 1);
-                SRRight.setSensor(this.posX, this.posY - 1, 3);
+            case RIGHT: //Right
+                SRFrontLeft.setSensor(this.posX + 1, this.posY + 1, DIRECTION.RIGHT);
+                SRFrontCenter.setSensor(this.posX + 1, this.posY, DIRECTION.RIGHT);
+                SRFrontRight.setSensor(this.posX + 1, this.posY - 1, DIRECTION.RIGHT);
+                SRLeft.setSensor(this.posX + 1, this.posY + 1, DIRECTION.UP);
+                LRLeft.setSensor(this.posX, this.posY + 1, DIRECTION.UP);
+                SRRight.setSensor(this.posX, this.posY - 1, DIRECTION.DOWN);
                 break;
         }
     }
@@ -138,57 +140,57 @@ public class Robot{
 
         return result;
     }
-    public void move(int direction){
+    public void move(DIRECTION direction){
         this.move(direction, true);//send move to android
     }
-    public void move(int move, boolean sendToAndroid){
+    public void move(DIRECTION move, boolean sendToAndroid){
         switch (move){
-            case 1: //Forward
+            case UP: //Forward
                 switch (this.direction){
-                    case 1: //UP
+                    case UP: //UP
                         this.posY++; break;
-                    case 2: //LEFT
+                    case LEFT: //LEFT
                         this.posX--; break;
-                    case 3: //DOWN
+                    case DOWN: //DOWN
                         this.posY--; break;
-                    case 4: //RIGHT
+                    case RIGHT: //RIGHT
                         this.posX++; break;
                 }
                 break;
-            case 2: //Turn Left
+            case LEFT: //Turn Left
                 switch (this.direction){
-                    case 1: //UP
-                        this.direction = 2; break;
-                    case 2: //LEFT
-                        this.direction = 3; break;
-                    case 3: //DOWN
-                        this.direction = 4; break;
-                    case 4: //RIGHT
-                        this.direction = 1; break;
+                    case UP: //UP
+                        this.direction = DIRECTION.LEFT; break;
+                    case LEFT: //LEFT
+                        this.direction = DIRECTION.DOWN; break;
+                    case DOWN: //DOWN
+                        this.direction = DIRECTION.RIGHT; break;
+                    case RIGHT: //RIGHT
+                        this.direction = DIRECTION.UP; break;
                 }
                 break;
-            case 3: //Reverse
+            case DOWN: //Reverse
                 switch (this.direction) {
-                    case 1: //UP
+                    case UP: //UP
                         this.posY--; break;
-                    case 2: //LEFT
+                    case LEFT: //LEFT
                         this.posX++; break;
-                    case 3: //DOWN
+                    case DOWN: //DOWN
                         this.posY++; break;
-                    case 4: //RIGHT
+                    case RIGHT: //RIGHT
                         this.posX--; break;
                 }
                 break;
-            case 4: //Turn Right
+            case RIGHT: //Turn Right
                 switch (this.direction){
-                    case 1: //UP
-                        this.direction = 4; break;
-                    case 2: //LEFT
-                        this.direction = 1; break;
-                    case 3: //DOWN
-                        this.direction = 2; break;
-                    case 4: //RIGHT
-                        this.direction = 3; break;
+                    case UP: //UP
+                        this.direction = DIRECTION.RIGHT; break;
+                    case LEFT: //LEFT
+                        this.direction = DIRECTION.UP; break;
+                    case DOWN: //DOWN
+                        this.direction = DIRECTION.LEFT; break;
+                    case RIGHT: //RIGHT
+                        this.direction = DIRECTION.DOWN; break;
                 }
                 break;
         }

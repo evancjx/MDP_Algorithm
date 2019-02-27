@@ -3,6 +3,7 @@ package algorithms;
 import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
+import robot.RbtConstants.*;
 import robot.Robot;
 import simulator.Simulator;
 
@@ -74,28 +75,28 @@ public class Exploration {
         int rbtX = robot.getPosX();
         int rbtY = robot.getPosY();
         if(lookRightEmpty(rbtX, rbtY)){
-            moveBot(4);
-            if(lookForward(rbtX, rbtY)) moveBot(1);
+            moveBot(DIRECTION.RIGHT);
+            if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP);
         } else if (lookForward(rbtX, rbtY)){
-            moveBot(1);
+            moveBot(DIRECTION.UP);
         } else if (lookLeftEmpty(rbtX, rbtY)){
-            moveBot(2);
-            if(lookForward(rbtX, rbtY)) moveBot(1);
+            moveBot(DIRECTION.LEFT);
+            if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP);
         } else {
-            moveBot(2); //Depends on which rotation LEFT or RIGHT is better
-            moveBot(2);
+            moveBot(DIRECTION.LEFT); //Depends on which rotation LEFT or RIGHT is better
+            moveBot(DIRECTION.LEFT);
         }
     }
 
     private boolean lookForward(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1: //Face UP
+            case UP: //Face UP
                 return upFree(rbtX, rbtY);
-            case 2: //Face LEFT
+            case LEFT: //Face LEFT
                 return leftFree(rbtX, rbtY);
-            case 3: //Face DOWN
+            case DOWN: //Face DOWN
                 return downFree(rbtX, rbtY);
-            case 4: //Face RIGHT
+            case RIGHT: //Face RIGHT
                 return rightFree(rbtX, rbtY);
         }
         return false;
@@ -103,13 +104,13 @@ public class Exploration {
 
     private boolean lookLeftEmpty(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1: //Face UP
+            case UP: //Face UP
                 return leftFree(rbtX, rbtY);
-            case 2: //Face LEFT
+            case LEFT: //Face LEFT
                 return downFree(rbtX, rbtY);
-            case 3: //Face DOWN
+            case DOWN: //Face DOWN
                 return rightFree(rbtX, rbtY);
-            case 4: //Face RIGHT
+            case RIGHT: //Face RIGHT
                 return upFree(rbtX, rbtY);
         }
         return false;
@@ -117,13 +118,13 @@ public class Exploration {
 
     private boolean lookRightEmpty(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1: //Face UP
+            case UP: //Face UP
                 return rightFree(rbtX, rbtY);
-            case 2: //Face LEFT
+            case LEFT: //Face LEFT
                 return upFree(rbtX, rbtY);
-            case 3: //Face DOWN
+            case DOWN: //Face DOWN
                 return leftFree(rbtX, rbtY);
-            case 4: //Face RIGHT
+            case RIGHT: //Face RIGHT
                 return downFree(rbtX, rbtY);
         }
         return false;
@@ -169,7 +170,7 @@ public class Exploration {
         return false;
     }
 
-    private void moveBot(int direction){
+    private void moveBot(DIRECTION direction){
         robot.move(direction);
         Simulator.refresh();
         senseSurrounding();
