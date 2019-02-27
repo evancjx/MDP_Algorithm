@@ -2,6 +2,7 @@ package simulator;
 
 import algorithms.Exploration;
 import algorithms.Exploration_Improved;
+import algorithms.FastestPathAlgo;
 import arena.Arena;
 import arena.ArenaConstants;
 import robot.Robot;
@@ -25,17 +26,39 @@ public class Simulator {
 
     private static int timeLimit = 180;
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int robotSpeed = 10; //Number of steps per second
+    private static int robotSpeed = 20; //Number of steps per second
 
-    private static Thread threadExplore;
+    private static Thread threadExplore, threadFastest;
 
     public static void main(String[] args){
         robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y,1);
         createDisplay();
+        initThreads();
     }
 
     public static void refresh(){
         appFrame.repaint();
+    }
+
+    private static void initThreads(){
+        threadExplore = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                robot.setRobotSpeed(robotSpeed);
+//                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
+
+                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
+                exploration.execute();
+                MapDescriptor.generateArenaHex(explored);
+            }
+        });
+        threadFastest = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FastestPathAlgo fastest = new FastestPathAlgo(explored, robot);
+                fastest.printFastestPath(fastest.FindFastestPath(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y));
+            }
+        });
     }
 
     private static void createDisplay(){
@@ -74,18 +97,6 @@ public class Simulator {
     }
 
     private static void setupButtons(){
-        threadExplore = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                robot.setRobotSpeed(robotSpeed);
-//                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
-
-                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
-                exploration.execute();
-                MapDescriptor.generateArenaHex(explored);
-            }
-        });
-
         JButton btnLoad = new JButton("Load Arena");
         standardBtn(btnLoad);
         btnLoad.addMouseListener(new MouseAdapter() {
@@ -120,8 +131,6 @@ public class Simulator {
                 super.mousePressed(e);
                 CardLayout cl = ((CardLayout) arenaPanel.getLayout());
                 cl.show(arenaPanel, "Explore");
-//                Exploration.execute();
-
                 threadExplore.start();
             }
         });
@@ -179,6 +188,19 @@ public class Simulator {
             }
         });
         btnPanel.add(btnConfig);
+
+        JButton btnFastest = new JButton("Fastest");
+        standardBtn(btnFastest);
+        btnFastest.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                cl.show(arenaPanel, "Explore");
+                threadFastest.start();
+            }
+        });
+        btnPanel.add(btnFastest);
     }
 
     private static void standardBtn(JButton btn){

@@ -49,6 +49,7 @@ public class FastestPathAlgo {
         // Initialise starting point
         gCosts[1][1] = 0;
     }
+
     public Stack<Cell> FindFastestPath(Robot bot, int x, int y){
         Stack<Cell> actualPath = new Stack<Cell>();
         System.out.println("Finding Fastest path to Goal.....");
