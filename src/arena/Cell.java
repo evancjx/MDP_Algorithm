@@ -29,4 +29,11 @@ public class Cell {
     }
     public void setIsMovedOver(boolean value){ this.isMovedOver = value; }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }
