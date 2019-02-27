@@ -12,8 +12,7 @@ public class Exploration {
     private final Arena explored, arena;
     private final Robot robot;
     private final int coverageLimit, timeLimit;
-    private long startTime, endTime;
-    private int areaExplored;
+    private long endTime;
 
     public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit){
         this.explored = explored;
@@ -24,10 +23,8 @@ public class Exploration {
     }
 
     public void execute(){
-
         System.out.println("Starting exploration...");
-        startTime = System.currentTimeMillis();
-        endTime = startTime + (timeLimit* 1000);
+        endTime = System.currentTimeMillis() + (timeLimit* 1000);
         senseSurrounding();
         loopRun(robot.getPosX(), robot.getPosY());
     }
@@ -51,15 +48,16 @@ public class Exploration {
     }
 
     private void loopRun(int initX, int initY){
+        int areaExplored;
         do{
             areaExplored = calculateAreaExplored();
             System.out.println("Explored Area: " + areaExplored);
             nextMove();
-            if(robot.getPosX() == initX && robot.getPosY() ==initY){
-                if (areaExplored > 290){
-                    break;
-                }
-            }
+
+            if(robot.getPosX() == initX && robot.getPosY() ==initY)
+                if (areaExplored > 290) break;
+
+
             if(true){
                 try {
                     TimeUnit.MILLISECONDS.sleep(robot.getSpeed());
@@ -79,14 +77,13 @@ public class Exploration {
             moveBot(4);
             if(lookForward(rbtX, rbtY)) moveBot(1);
         } else if (lookForward(rbtX, rbtY)){
-
             moveBot(1);
         } else if (lookLeftEmpty(rbtX, rbtY)){
-            moveBot(3);
+            moveBot(2);
             if(lookForward(rbtX, rbtY)) moveBot(1);
         } else {
-            moveBot(4); //Depends on which rotation LEFT or RIGHT is better
-            moveBot(4);
+            moveBot(2); //Depends on which rotation LEFT or RIGHT is better
+            moveBot(2);
         }
     }
 
@@ -94,10 +91,10 @@ public class Exploration {
         switch (robot.getDirection()){
             case 1: //Face UP
                 return upFree(rbtX, rbtY);
-            case 2: //Face DOWN
-                return downFree(rbtX, rbtY);
-            case 3: //Face LEFT
+            case 2: //Face LEFT
                 return leftFree(rbtX, rbtY);
+            case 3: //Face DOWN
+                return downFree(rbtX, rbtY);
             case 4: //Face RIGHT
                 return rightFree(rbtX, rbtY);
         }
@@ -108,10 +105,10 @@ public class Exploration {
         switch (robot.getDirection()){
             case 1: //Face UP
                 return leftFree(rbtX, rbtY);
-            case 2: //Face DOWN
-                return rightFree(rbtX, rbtY);
-            case 3: //Face LEFT
+            case 2: //Face LEFT
                 return downFree(rbtX, rbtY);
+            case 3: //Face DOWN
+                return rightFree(rbtX, rbtY);
             case 4: //Face RIGHT
                 return upFree(rbtX, rbtY);
         }
@@ -120,12 +117,12 @@ public class Exploration {
 
     private boolean lookRightEmpty(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1:
+            case 1: //Face UP
                 return rightFree(rbtX, rbtY);
-            case 2: //Face DOWN
-                return leftFree(rbtX, rbtY);
-            case 3: //Face LEFT
+            case 2: //Face LEFT
                 return upFree(rbtX, rbtY);
+            case 3: //Face DOWN
+                return leftFree(rbtX, rbtY);
             case 4: //Face RIGHT
                 return downFree(rbtX, rbtY);
         }

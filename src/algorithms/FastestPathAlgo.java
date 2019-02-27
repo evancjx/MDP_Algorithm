@@ -1,9 +1,9 @@
 package algorithms;
 
 import arena.Arena;
+import arena.ArenaConstants;
 import arena.Cell;
 import robot.Robot;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -19,10 +19,12 @@ public class FastestPathAlgo {
     private double gCosts[][];               //array of real cost from start pos to [x][y]
     private Robot bot;
     private Arena exploredArena;               //explored Arena
+
     public FastestPathAlgo(Arena exploredMap, Robot bot) {
         this.exploredArena = exploredMap;
         init(this.exploredArena,bot);
     }
+
     public void init(Arena exploredMap, Robot bot){
         this.bot = bot;
         this.exploredArena = exploredMap;
@@ -32,22 +34,25 @@ public class FastestPathAlgo {
         this.neighbors = new Cell[4];
         this.current = exploredMap.getCell(bot.getPosX(),bot.getPosY()); // starts in the start zone, robot center.
         this.curDir = bot.getDirection();
-        this.gCosts = new double[20][15];
+        this.gCosts = new double[ArenaConstants.ROWS][ArenaConstants.COLS];
 
         // Initialise gCosts array
-        for (int i = 1; i <=20; i++) {
-            for (int j = 1; j <= 15; j++) {
-                if (!(exploredMap.getCell(i,j).getIsVirtualWall()&& exploredMap.getCell(i,j).getIsObstacle())) {
-                    gCosts[i][j] = 0;
-                } else {
-                    gCosts[i][j] = 9999;
-                }
+        for(Cell[] row: this.exploredArena.grid){
+            for(Cell cell: row){
+                if(!canBeVisited(cell))
+                    gCosts[cell.y - 1][cell.x - 1] = 9999;
+                else
+                    gCosts[cell.y - 1][cell.x - 1] = 0;
             }
         }
         openList.add(current);
 
         // Initialise starting point
         gCosts[1][1] = 0;
+    }
+
+    private boolean canBeVisited(Cell c) {
+        return c.getIsExplored() && !c.getIsObstacle() && !c.getIsVirtualWall();
     }
 
     public Stack<Cell> FindFastestPath(Robot bot, int x, int y){
@@ -80,6 +85,7 @@ public class FastestPathAlgo {
                 return actualPath;
             }
             // Find Neighbors
+
             //UP
             if (!((current.getX() + 1)>=20)&& !((current.getX()+1)<0)){
                 neighbors[0] = exploredArena.getCell(current.getX() + 1, current.getY());

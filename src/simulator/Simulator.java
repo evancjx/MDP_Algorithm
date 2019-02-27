@@ -45,9 +45,9 @@ public class Simulator {
             @Override
             public void run() {
                 robot.setRobotSpeed(robotSpeed);
-//                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
+                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
 
-                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
+//                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
                 exploration.execute();
                 MapDescriptor.generateArenaHex(explored);
             }
@@ -107,14 +107,6 @@ public class Simulator {
                 fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
                 if(fc.showOpenDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
-//                    arenaPanel.remove(arena);
-//                    arenaPanel.remove(explored);
-//                    arena =  new Arena(robot);
-//                    arena.setAllUnexplored();
-//                    explored = new Arena(robot);
-//                    explored.setAllUnexplored();
-//                    arenaPanel.add(arena, "Arena");
-//                    arenaPanel.add(explored, "Explore");
                     File selectedFile = fc.getSelectedFile();
                     MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
                     appFrame.repaint();

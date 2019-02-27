@@ -25,13 +25,13 @@ public class Sensor {
 
     public int sense(Arena exploration, Arena arena){
         switch (this.direction){
-            case 1:
+            case 1: //UP
                 return getSensorVal(exploration, arena, 0, 1);
-            case 2:
-                return getSensorVal(exploration, arena, 0, -1);
-            case 3:
+            case 2: //LEFT
                 return getSensorVal(exploration, arena, -1, 0);
-            case 4:
+            case 3: //DOWN
+                return getSensorVal(exploration, arena, 0, -1);
+            case 4: //RIGHT
                 return getSensorVal(exploration, arena, 1, 0);
         }
         return -1; //Error. Will never happen

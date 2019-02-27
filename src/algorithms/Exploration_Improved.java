@@ -56,7 +56,7 @@ public class Exploration_Improved {
             System.out.println("Explored Area: " + areaExplored);
 
             //Improved Algorithm
-            if(robot.getPosX() == 2 && robot.getPosY() < 10 && robot.getDirection() == 2 && areaExplored < 275){
+            if(robot.getPosX() == 2 && robot.getPosY() < 10 && robot.getDirection() == 3 && areaExplored < 275){
                 robot.setIsAlert(true);
             }
             nextMove();
@@ -83,9 +83,9 @@ public class Exploration_Improved {
         int rbtY = robot.getPosY();
 //        System.out.println("Rbt PosX: " + rbtX + " PosY: " + rbtY);
         if(robot.getIsAlert()){
-//            System.out.println("Alerted");
+            System.out.println("Alerted");
             if(lookLeftEmpty(rbtX, rbtY)){
-                moveBot(3, rbtX, rbtY);
+                moveBot(2, rbtX, rbtY);
                 if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
             } else if (lookForward(rbtX, rbtY)){
                 moveBot(1, rbtX, rbtY);
@@ -93,7 +93,7 @@ public class Exploration_Improved {
                 moveBot(4, rbtX, rbtY);
                 if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
             } else
-                moveBot(2, rbtX, rbtY);
+                moveBot(3, rbtX, rbtY);
         }
         else {
             if (lookRightEmpty(rbtX, rbtY)){
@@ -102,11 +102,11 @@ public class Exploration_Improved {
             } else if (lookForward(rbtX, rbtY)){
                 moveBot(1, rbtX, rbtY);
             } else if (lookLeftEmpty(rbtX, rbtY)){
-                moveBot(3, rbtX, rbtY);
+                moveBot(2, rbtX, rbtY);
                 if(lookForward(rbtX, rbtY)) moveBot(1, rbtX, rbtY);
             } else {
-                moveBot(4, rbtX, rbtY); //Depends on which rotation LEFT or RIGHT is better
-                moveBot(4, rbtX, rbtY);
+                moveBot(2, rbtX, rbtY); //Depends on which rotation LEFT or RIGHT is better
+                moveBot(2, rbtX, rbtY);
             }
         }
     }
@@ -115,10 +115,10 @@ public class Exploration_Improved {
         switch (robot.getDirection()){
             case 1: //Face UP
                 return upFree(rbtX, rbtY);
-            case 2: //Face DOWN
-                return downFree(rbtX, rbtY);
-            case 3: //Face LEFT
+            case 2: //Face LEFT
                 return leftFree(rbtX, rbtY);
+            case 3: //Face DOWN
+                return downFree(rbtX, rbtY);
             case 4: //Face RIGHT
                 return rightFree(rbtX, rbtY);
         }
@@ -129,10 +129,10 @@ public class Exploration_Improved {
         switch (robot.getDirection()){
             case 1: //Face UP
                 return leftFree(rbtX, rbtY);
-            case 2: //Face DOWN
-                return rightFree(rbtX, rbtY);
-            case 3: //Face LEFT
+            case 2: //Face LEFT
                 return downFree(rbtX, rbtY);
+            case 3: //Face DOWN
+                return rightFree(rbtX, rbtY);
             case 4: //Face RIGHT
                 return upFree(rbtX, rbtY);
         }
@@ -141,12 +141,12 @@ public class Exploration_Improved {
 
     private boolean lookRightEmpty(int rbtX, int rbtY){
         switch (robot.getDirection()){
-            case 1:
+            case 1: //Face UP
                 return rightFree(rbtX, rbtY);
-            case 2: //Face DOWN
-                return leftFree(rbtX, rbtY);
-            case 3: //Face LEFT
+            case 2: //Face LEFT
                 return upFree(rbtX, rbtY);
+            case 3: //Face DOWN
+                return leftFree(rbtX, rbtY);
             case 4: //Face RIGHT
                 return downFree(rbtX, rbtY);
         }

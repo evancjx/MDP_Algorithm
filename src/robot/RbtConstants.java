@@ -12,5 +12,9 @@ public class RbtConstants {
         FRONT_X_OFFSET = ArenaConstants.X_OFFSET + 10, FRONT_Y_OFFSET = 10,
         SEN_SHORT_L = 1, SEN_SHORT_U = 2,
         SEN_LONG_L = 3, SEN_LONG_U = 4;
+    public enum DIRECTION{
+        UP, LEFT, DOWN, RIGHT;
 
+
+    }
 }
