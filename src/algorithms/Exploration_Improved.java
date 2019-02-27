@@ -12,6 +12,7 @@ public class Exploration_Improved {
     private final Arena explored, arena;
     private final Robot robot;
     private final int coverageLimit, timeLimit;
+    private long startTime, endTime;
     private int areaExplored;
 
     public Exploration_Improved(Arena explored, Arena arena, Robot robot,
@@ -25,6 +26,8 @@ public class Exploration_Improved {
 
     public void execute(){
         System.out.println("Starting exploration...");
+        startTime = System.currentTimeMillis();
+        endTime = startTime + (timeLimit* 1000);
         senseSurrounding();
         loopRun(robot.getPosX(), robot.getPosY());
     }
@@ -65,7 +68,7 @@ public class Exploration_Improved {
             }
             if(true){
                 try {
-                    TimeUnit.MILLISECONDS.sleep(robot.speed);
+                    TimeUnit.MILLISECONDS.sleep(robot.getSpeed());
                 } catch (InterruptedException e) {
                     return;
                 }

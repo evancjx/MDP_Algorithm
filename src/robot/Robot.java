@@ -23,7 +23,7 @@ import arena.Arena;
 
 public class Robot {
     private int posX, posY, direction, frontX, frontY;
-    public int speed;
+    private int speed;
     private final Sensor
         SRFrontLeft,
         SRFrontCenter,
@@ -60,6 +60,7 @@ public class Robot {
     public int getDirection(){ return this.direction; }
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
+    public int getSpeed(){ return this.speed; }
 
     public void setRobotFront(int d){
         switch (d){
@@ -84,6 +85,9 @@ public class Robot {
     public void setRobotPos(int posX, int posY){
         this.posX = posX;
         this.posY = posY;
+    }
+    public void setRobotSpeed(int speed){
+        this.speed = 1000/speed;
     }
 
     public void setSenors(){

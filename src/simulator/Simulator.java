@@ -23,8 +23,9 @@ public class Simulator {
 
     private static Robot robot;
 
-    private static int timeLimit = 3600;
+    private static int timeLimit = 180;
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
+    private static int robotSpeed = 10; //Number of steps per second
 
     private static Thread threadExplore;
 
@@ -76,7 +77,9 @@ public class Simulator {
         threadExplore = new Thread(new Runnable() {
             @Override
             public void run() {
+                robot.setRobotSpeed(robotSpeed);
 //                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
+
                 Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
                 exploration.execute();
                 MapDescriptor.generateArenaHex(explored);
@@ -136,6 +139,46 @@ public class Simulator {
             }
         });
         btnPanel.add(btnStop);
+
+        JButton btnConfig =  new JButton("Config");
+        standardBtn(btnConfig);
+        btnConfig.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                JDialog configDialog = new JDialog(appFrame, "Config", true);
+                configDialog.setSize(400,100);
+                configDialog.setLayout(new FlowLayout());
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                configDialog.setLocation(dim.width / 2 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
+
+                final JTextField tfRobotSpeed = new JTextField(Integer.toString(robotSpeed),2);
+                final JTextField tfTimeLimit = new JTextField(Integer.toString(timeLimit),4);
+                final JTextField tfCoverageLimit = new JTextField(Integer.toString(coverageLimit), 3);
+
+                JButton btnSaveConfig = new JButton("Save");
+                btnSaveConfig.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        super.mousePressed(e);
+                        robotSpeed = Integer.parseInt(tfRobotSpeed.getText());
+                        timeLimit = Integer.parseInt(tfTimeLimit.getText());
+                        coverageLimit = Integer.parseInt(tfCoverageLimit.getText());
+                        configDialog.setVisible(false);
+                    }
+                });
+
+                configDialog.add(new JLabel("Robot Speed: "));
+                configDialog.add(tfRobotSpeed);
+                configDialog.add(new JLabel("Time Limit: "));
+                configDialog.add(tfTimeLimit);
+                configDialog.add(new JLabel("Coverage Limit: "));
+                configDialog.add(tfCoverageLimit);
+                configDialog.add(btnSaveConfig);
+                configDialog.setVisible(true);
+            }
+        });
+        btnPanel.add(btnConfig);
     }
 
     private static void standardBtn(JButton btn){

@@ -12,6 +12,7 @@ public class Exploration {
     private final Arena explored, arena;
     private final Robot robot;
     private final int coverageLimit, timeLimit;
+    private long startTime, endTime;
     private int areaExplored;
 
     public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit){
@@ -23,7 +24,10 @@ public class Exploration {
     }
 
     public void execute(){
+
         System.out.println("Starting exploration...");
+        startTime = System.currentTimeMillis();
+        endTime = startTime + (timeLimit* 1000);
         senseSurrounding();
         loopRun(robot.getPosX(), robot.getPosY());
     }
@@ -58,13 +62,13 @@ public class Exploration {
             }
             if(true){
                 try {
-                    TimeUnit.MILLISECONDS.sleep(robot.speed);
+                    TimeUnit.MILLISECONDS.sleep(robot.getSpeed());
                 } catch (InterruptedException e) {
 //                    System.out.println("Something went wrong in Robot.move()!");
                     return;
                 }
             }
-        } while (areaExplored <= coverageLimit);
+        } while (areaExplored <= coverageLimit && System.currentTimeMillis() <= endTime);
         System.out.println("finish run");
     }
 
