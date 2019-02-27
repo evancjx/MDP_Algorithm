@@ -35,7 +35,8 @@ public class Arena extends JPanel {
                 else if (inGoalZone(cell.x, cell.y)) cellColor = Color.RED;
                 else if (!cell.getIsExplored()) cellColor = Color.LIGHT_GRAY;
                 else if (cell.getIsObstacle()) cellColor = Color.BLACK;
-                else if (cell.getIsVirualWall()) cellColor = Color.YELLOW;
+                else if (cell.getIsVirtualWall()) cellColor = Color.YELLOW;
+                else if (cell.getIsMovedOver()) cellColor = Color.MAGENTA;
                 else cellColor = Color.WHITE;
 
                 g.setColor(cellColor);

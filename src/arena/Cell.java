@@ -2,7 +2,7 @@ package arena;
 
 public class Cell {
     public final int x, y, cellX, cellY, cellSize;
-    private boolean isObstacle, isVirtualWall, isExplored;
+    private boolean isObstacle, isVirtualWall, isExplored, isMovedOver;
 
     public Cell(int row, int col){
         this.x = col;
@@ -13,13 +13,10 @@ public class Cell {
         this.cellY = ArenaConstants.HEIGHT -
                 (row*CellConstants.CELL_SIZE - CellConstants.BORDER);
     }
-
-    public int getX(){ return this.x; }
-    public int getY(){ return this.y; }
-    public int getCellSize(){ return this.cellSize; }
     public boolean getIsObstacle(){ return this.isObstacle; }
     public boolean getIsExplored(){ return this.isExplored; }
-    public boolean getIsVirualWall(){ return this.isVirtualWall; }
+    public boolean getIsVirtualWall(){ return this.isVirtualWall; }
+    public boolean getIsMovedOver(){ return this.isMovedOver; }
 
     public void setIsObstacle(boolean value){ this.isObstacle = value; }
     public void setIsExplored(boolean value){ this.isExplored = value; }
@@ -30,5 +27,6 @@ public class Cell {
                 this.x != 1 && this.x != ArenaConstants.COLS)
             this.isVirtualWall = false;
     }
+    public void setIsMovedOver(boolean value){ this.isMovedOver = value; }
 
 }

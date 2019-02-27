@@ -6,14 +6,15 @@ import arena.Cell;
 import robot.Robot;
 import simulator.Simulator;
 
+import java.util.concurrent.TimeUnit;
+
 public class Exploration {
     private final Arena explored, arena;
     private final Robot robot;
     private final int coverageLimit, timeLimit;
     private int areaExplored;
 
-    public Exploration(Arena explored, Arena arena, Robot robot,
-               int coverageLimit, int timeLimit){
+    public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit){
         this.explored = explored;
         this.arena = arena;
         this.robot = robot;
@@ -24,17 +25,12 @@ public class Exploration {
     public void execute(){
         System.out.println("Starting exploration...");
         senseSurrounding();
-//        System.out.println("Calculating area explored");
-        areaExplored = calculateAreaExplored();
-        System.out.println("Explored Area: " + areaExplored);
         loopRun(robot.getPosX(), robot.getPosY());
     }
 
     private void senseSurrounding(){
-        System.out.println("Sensing surrounding");
         robot.setSenors();
         robot.sense(explored, arena);
-        System.out.println("Repaint");
         explored.repaint();
     }
 
@@ -52,12 +48,20 @@ public class Exploration {
 
     private void loopRun(int initX, int initY){
         do{
-            nextMove();
             areaExplored = calculateAreaExplored();
             System.out.println("Explored Area: " + areaExplored);
+            nextMove();
             if(robot.getPosX() == initX && robot.getPosY() ==initY){
                 if (areaExplored > 290){
                     break;
+                }
+            }
+            if(true){
+                try {
+                    TimeUnit.MILLISECONDS.sleep(robot.speed);
+                } catch (InterruptedException e) {
+//                    System.out.println("Something went wrong in Robot.move()!");
+                    return;
                 }
             }
         } while (areaExplored <= coverageLimit);
@@ -67,7 +71,6 @@ public class Exploration {
     private void nextMove(){
         int rbtX = robot.getPosX();
         int rbtY = robot.getPosY();
-        System.out.println("Rbt PosX: " + rbtX + " PosY: " + rbtY);
         if(lookRightEmpty(rbtX, rbtY)){
             moveBot(4);
             if(lookForward(rbtX, rbtY)) moveBot(1);
@@ -126,35 +129,27 @@ public class Exploration {
     }
 
     private boolean upFree(int rbtX, int rbtY){
-        System.out.println("upFree");
         return  isExploredNotObstacle(rbtX - 1, rbtY + 1) &&
                 isExploredAndFree(rbtX, rbtY + 1) &&
-                isExploredNotObstacle(rbtX + 1, rbtY + 1) &&
-                explored(rbtX, rbtY + 2);
+                isExploredNotObstacle(rbtX + 1, rbtY + 1);
     }
 
     private boolean downFree(int rbtX, int rbtY){
-        System.out.println("downFree");
         return  isExploredNotObstacle(rbtX - 1, rbtY - 1) &&
                 isExploredAndFree(rbtX, rbtY - 1) &&
-                isExploredNotObstacle(rbtX + 1, rbtY - 1) &&
-                explored(rbtX, rbtY - 2);
+                isExploredNotObstacle(rbtX + 1, rbtY - 1);
     }
 
     private boolean leftFree(int rbtX, int rbtY){
-        System.out.println("leftFree");
         return  isExploredNotObstacle(rbtX -1, rbtY - 1) &&
                 isExploredAndFree(rbtX -1, rbtY) &&
-                isExploredNotObstacle(rbtX - 1, rbtY + 1) &&
-                explored(rbtX - 2, rbtY);
+                isExploredNotObstacle(rbtX - 1, rbtY + 1);
     }
 
     private boolean rightFree(int rbtX, int rbtY){
-        System.out.println("rightFree");
         return  isExploredNotObstacle(rbtX + 1, rbtY + 1) &&
                 isExploredAndFree(rbtX + 1, rbtY) &&
-                isExploredNotObstacle(rbtX + 1, rbtY - 1) &&
-                explored(rbtX + 2, rbtY);
+                isExploredNotObstacle(rbtX + 1, rbtY - 1);
     }
 
     private boolean isExploredNotObstacle(int posX, int posY){
@@ -168,25 +163,14 @@ public class Exploration {
     private boolean isExploredAndFree(int posX, int posY){
         if(explored.checkValidCoord(posX, posY)){
             Cell temp = explored.getCell(posX, posY);
-            return temp.getIsExplored() && !temp.getIsObstacle() && !temp.getIsVirualWall();
+            return temp.getIsExplored() && !temp.getIsObstacle() && !temp.getIsVirtualWall();
         }
         return false;
     }
-
-    private boolean explored(int posX, int posY){
-        if(explored.checkValidCoord(posX, posY)){
-            Cell temp = explored.getCell(posX, posY);
-            System.out.println("PosX: " + posX + " PosY: " + posX + " Explored: " + temp.getIsExplored());
-        }
-        return true;
-    }
-
 
     private void moveBot(int direction){
         robot.move(direction);
         Simulator.refresh();
         senseSurrounding();
     }
-
-//    goHome();
 }

@@ -1,7 +1,9 @@
 package simulator;
 
 import algorithms.Exploration;
+import algorithms.Exploration_Improved;
 import arena.Arena;
+import arena.ArenaConstants;
 import robot.Robot;
 import robot.RbtConstants;
 import utils.MapDescriptor;
@@ -14,21 +16,25 @@ import javax.swing.*;
 
 public class Simulator {
     private static JFrame appFrame = null;
-    private static JPanel arenaPanel = null;
-    private static JPanel btnPanel = null;
+    private static JPanel arenaPanel = null, btnPanel = null;
     private static Container contentPane;
 
-    private static Arena arena = null;
-    private static Arena explored = null;
+    private static Arena arena = null, explored = null;
 
     private static Robot robot;
 
     private static int timeLimit = 3600;
-    private static int coverageLimit = 300;
+    private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
+
+    private static Thread threadExplore;
 
     public static void main(String[] args){
         robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y,1);
         createDisplay();
+    }
+
+    public static void refresh(){
+        appFrame.repaint();
     }
 
     private static void createDisplay(){
@@ -42,8 +48,6 @@ public class Simulator {
 
         arenaPanel = new JPanel(new CardLayout());
         btnPanel = new JPanel(new GridLayout());
-        arenaPanel.setBackground(Color.LIGHT_GRAY);
-
 
         contentPane = appFrame.getContentPane();
         contentPane.add(arenaPanel, BorderLayout.CENTER);
@@ -69,6 +73,16 @@ public class Simulator {
     }
 
     private static void setupButtons(){
+        threadExplore = new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
+                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
+                exploration.execute();
+                MapDescriptor.generateArenaHex(explored);
+            }
+        });
+
         JButton btnLoad = new JButton("Load Arena");
         standardBtn(btnLoad);
         btnLoad.addMouseListener(new MouseAdapter() {
@@ -79,36 +93,21 @@ public class Simulator {
                 fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
                 if(fc.showOpenDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
-                    arena.clearArena();
+//                    arenaPanel.remove(arena);
+//                    arenaPanel.remove(explored);
+//                    arena =  new Arena(robot);
+//                    arena.setAllUnexplored();
+//                    explored = new Arena(robot);
+//                    explored.setAllUnexplored();
+//                    arenaPanel.add(arena, "Arena");
+//                    arenaPanel.add(explored, "Explore");
                     File selectedFile = fc.getSelectedFile();
                     MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
-                    System.out.println("Here");
                     appFrame.repaint();
                 }
             }
         });
         btnPanel.add(btnLoad);
-
-        class Explore extends SwingWorker<Integer, String>{
-            protected Integer doInBackground() throws Exception {
-                int x, y;
-
-                x = RbtConstants.START_X;
-                y = RbtConstants.START_Y;
-
-                robot.setRobotPos(x, y);
-//                explored.repaint();
-                appFrame.repaint();
-
-                Exploration exploration;
-                exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
-
-                exploration.execute();
-
-                return 111;
-            }
-        }
-
 
         JButton btnExplore = new JButton("Start explore");
         standardBtn(btnExplore);
@@ -118,18 +117,29 @@ public class Simulator {
                 super.mousePressed(e);
                 CardLayout cl = ((CardLayout) arenaPanel.getLayout());
                 cl.show(arenaPanel, "Explore");
-                new Explore().execute();
+//                Exploration.execute();
+
+                threadExplore.start();
             }
         });
         btnPanel.add(btnExplore);
+
+        JButton btnStop = new JButton("Stop");
+        standardBtn(btnStop);
+        btnStop.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                if (threadExplore!=null){
+                    threadExplore.interrupt();
+                }
+            }
+        });
+        btnPanel.add(btnStop);
     }
 
     private static void standardBtn(JButton btn){
         btn.setFont(new Font("Arial", Font.BOLD, 13));
         btn.setFocusPainted(false);
-    }
-
-    public static void refresh(){
-        appFrame.repaint();
     }
 }

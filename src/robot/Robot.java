@@ -4,8 +4,6 @@ package robot;
 
 import arena.Arena;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Represents the robot moving in the arena.
  *
@@ -24,7 +22,8 @@ import java.util.concurrent.TimeUnit;
 // @formatter:on
 
 public class Robot {
-    private int posX, posY, direction, frontX, frontY, speed;
+    private int posX, posY, direction, frontX, frontY;
+    public int speed;
     private final Sensor
         SRFrontLeft,
         SRFrontCenter,
@@ -32,12 +31,13 @@ public class Robot {
         SRLeft,
         LRLeft,
         SRRight;
+    private boolean isAlert;
 
     public Robot(int posX, int posY, int direction){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
-        robotFront(direction);
+        setRobotFront(direction);
         this.speed = RbtConstants.SPEED;
 
         SRFrontLeft = new Sensor(this.posX - 1, this.posY + 1, this.direction,
@@ -61,7 +61,7 @@ public class Robot {
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
 
-    public void robotFront(int d){
+    public void setRobotFront(int d){
         switch (d){
             case 1: //face up
                 this.frontX = posX;
@@ -81,13 +81,12 @@ public class Robot {
                 break;
         }
     }
-
     public void setRobotPos(int posX, int posY){
         this.posX = posX;
         this.posY = posY;
     }
+
     public void setSenors(){
-        System.out.println("Setting sensors");
         switch (this.direction){
             case 1: //UP
                 SRFrontLeft.setSensor(this.posX - 1, this.posY + 1, 1);
@@ -123,9 +122,7 @@ public class Robot {
                 break;
         }
     }
-
     public int[] sense(Arena explored, Arena arena){
-        System.out.println("Sensing");
         int[] result = new int[6];
 
         result[0] = SRFrontLeft.sense(explored, arena);
@@ -137,20 +134,10 @@ public class Robot {
 
         return result;
     }
-
     public void move(int direction){
         this.move(direction, true);//send move to android
     }
-
     public void move(int move, boolean sendToAndroid){
-        if(true){
-            try {
-                TimeUnit.MILLISECONDS.sleep(speed);
-            } catch (InterruptedException e) {
-                System.out.println("Something went wrong in Robot.move()!");
-            }
-        }
-
         switch (move){
             case 1: //Forward
                 switch (this.direction){
@@ -201,9 +188,10 @@ public class Robot {
                 }
                 break;
         }
-        this.robotFront(this.direction);
-        System.out.println("Move: " + move);
+        this.setRobotFront(this.direction);
     }
 
-
+    //Improved Algorithm
+    public boolean getIsAlert(){ return this.isAlert; }
+    public void setIsAlert(boolean value){ this.isAlert = value;}
 }
