@@ -100,7 +100,7 @@ public class Robot{
                 SRFrontRight.setSensor(this.posX + 1, this.posY + 1, DIRECTION.UP);
                 SRLeft.setSensor(this.posX - 1, this.posY + 1, DIRECTION.LEFT);
                 LRLeft.setSensor(this.posX - 1, this.posY, DIRECTION.LEFT);
-                SRRight.setSensor(this.posX + 1, this.posY, DIRECTION.LEFT);
+                SRRight.setSensor(this.posX + 1, this.posY, DIRECTION.RIGHT);
                 break;
             case LEFT: //Left
                 SRFrontLeft.setSensor(this.posX - 1, this.posY - 1, DIRECTION.LEFT);

@@ -64,10 +64,11 @@ public class Exploration {
                     TimeUnit.MILLISECONDS.sleep(robot.getSpeed());
                 } catch (InterruptedException e) {
 //                    System.out.println("Something went wrong in Robot.move()!");
-                    return;
+                    break;
                 }
             }
         } while (areaExplored <= coverageLimit && System.currentTimeMillis() <= endTime);
+        turnToDirection(DIRECTION.UP);
         System.out.println("finish run");
     }
 
@@ -174,5 +175,22 @@ public class Exploration {
         robot.move(direction);
         Simulator.refresh();
         senseSurrounding();
+    }
+
+    private void turnToDirection(DIRECTION target){
+        int numOfTurn = Math.abs(robot.getDirection().ordinal() - target.ordinal());
+        if (numOfTurn > 2) numOfTurn%=2;
+        if (numOfTurn == 1){
+            if (DIRECTION.getNext(robot.getDirection()) == target){
+                moveBot(DIRECTION.LEFT);
+            }
+            else {
+                moveBot(DIRECTION.RIGHT);
+            }
+        }
+        else if (numOfTurn == 2){
+            moveBot(DIRECTION.LEFT);
+            moveBot(DIRECTION.LEFT);
+        }
     }
 }

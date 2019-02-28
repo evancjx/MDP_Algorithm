@@ -21,7 +21,7 @@ public class MapDescriptor {
             String grid = sb.toString();
             boolean isHEX = false;
             for(char c : grid.toCharArray()){
-                if(c != '1' || c != '0'){
+                if(c == 'f' || c == 'd'){
                     isHEX = true;
                     break;
                 }

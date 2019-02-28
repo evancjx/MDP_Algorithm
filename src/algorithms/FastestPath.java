@@ -3,11 +3,14 @@ package algorithms;
 import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
+import robot.RbtConstants;
 import robot.Robot;
 import robot.RbtConstants.*;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class FastestPath {
     private ArrayList<Cell> openList, closedList;
@@ -15,8 +18,10 @@ public class FastestPath {
     private Robot robot;
     private Arena explored;
     private double[][] gCost;
-    private Cell currentCell;
+    private Cell curCell;
     private DIRECTION curDir;
+    private Cell[] neighbors;
+    private int loop;
 
     public FastestPath(Arena explored, Robot robot){
         initialize(explored, robot);
@@ -28,22 +33,273 @@ public class FastestPath {
         this.openList = new ArrayList<>();
         this.closedList = new ArrayList<>();
         this.parents = new HashMap<>();
+        this.neighbors = new Cell[4];
         this.gCost = new double[ArenaConstants.ROWS][ArenaConstants.COLS];
-        this.currentCell = explored.getCell(robot.getPosX(), robot.getPosY());
+        this.curCell = explored.getCell(robot.getPosX(), robot.getPosY());
         this.curDir = robot.getDirection();
 
         // Initialise gCosts array
         for(Cell[] row: this.explored.grid){
             for(Cell cell: row){
                 if(!canBeVisited(cell))
-                    gCost[cell.y - 1][cell.x - 1] = 9999;
+                    gCost[cell.posY() - 1][cell.posX() - 1] = 9999;
                 else
-                    gCost[cell.y - 1][cell.x - 1] = 0;
+                    gCost[cell.posY() - 1][cell.posX() - 1] = 0;
             }
         }
+        openList.add(curCell);
+        gCost[robot.getPosY()][robot.getPosX()] = 0;
     }
 
     private boolean canBeVisited(Cell c) {
         return c.getIsExplored() && !c.getIsObstacle() && !c.getIsVirtualWall();
     }
+
+    public String run(int targetX, int targetY){
+        System.out.println("Calculating fastest path from (" + curCell.posX() + ", " + curCell.posY() + ") to goal (" + targetX + ", " + targetY + ")...");
+
+        Stack<Cell> path;
+        try{
+            do{
+                loop++;
+                curCell = minCostCell(targetX, targetY);
+
+                if(parents.containsKey(curCell)){
+                    curDir = getTargetDir(
+                            parents.get(curCell).posX(), parents.get(curCell).posY(),
+                            curDir, curCell);
+                }
+
+                closedList.add(curCell);
+                openList.remove(curCell);
+
+                if(closedList.contains(explored.getCell(targetX, targetY))){
+                    System.out.println("Goal visited. Path found!");
+                    path = getPath(targetX, targetY);
+                    printFastestPath(path);
+                    executePath(path, targetX, targetY);
+                    return null;
+                }
+
+                //TOP
+                if(explored.checkValidCoord(curCell.posX(), curCell.posY() + 1)){
+                    neighbors[0] = explored.getCell(curCell.posX(), curCell.posY() + 1);
+                    if(!canBeVisited(neighbors[0])) neighbors[0] = null;
+                }
+                //BOTTOM
+                if(explored.checkValidCoord(curCell.posX(), curCell.posY() - 1)){
+                    neighbors[1] = explored.getCell(curCell.posX(), curCell.posY() - 1 );
+                    if(!canBeVisited(neighbors[1])) neighbors[1] = null;
+                }
+                //LEFT
+                if(explored.checkValidCoord(curCell.posX() - 1, curCell.posY())){
+                    neighbors[2] = explored.getCell(curCell.posX() - 1, curCell.posY());
+                    if(!canBeVisited(neighbors[2])) neighbors[2] = null;
+                }
+                //RIGHT
+                if(explored.checkValidCoord(curCell.posX() + 1, curCell.posY())){
+                    neighbors[3] = explored.getCell(curCell.posX() + 1, curCell.posY());
+                    if(!canBeVisited(neighbors[3])) neighbors[3] = null;
+                }
+                double currentG, newG;
+                for(Cell cell : neighbors){
+                    if (cell != null){
+                        if (closedList.contains(cell)) continue;
+
+                        if (!openList.contains(cell)){
+                            parents.put(cell, curCell);
+                            gCost[cell.posY()][cell.posX()] = gCost[curCell.posY()][curCell.posX()] + costG(curCell, cell, curDir);
+                            openList.add(cell);
+                        }
+                        else {
+                            currentG = gCost[cell.posY()][cell.posX()];
+                            newG = gCost[curCell.posY()][curCell.posX()] + costG(curCell, cell, curDir);
+                            if( newG < currentG){
+                                gCost[cell.posY()][cell.posX()] = newG;
+                                parents.put(cell, curCell);
+                            }
+                        }
+                    }
+                }
+
+            } while (!openList.isEmpty());
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Path not found!");
+        return null;
+    }
+
+    private Cell minCostCell(int targetX, int targetY){
+        int size = openList.size();
+        double minCost = 9999;
+        Cell result = null;
+        double gCost, cost;
+        for (int i = size - 1; i >= 0; i--){
+            gCost = this.gCost[openList.get(i).posY() - 1][openList.get(i).posX() - 1];
+            cost = gCost + heuCost(openList.get(i), targetX, targetY);
+            if (cost < minCost){
+                minCost = cost;
+                result = openList.get(i);
+            }
+        }
+
+        return result;
+    }
+
+    private double heuCost(Cell cell, int targetX, int targetY){
+        double movementCost = (
+            Math.abs(targetY - cell.posY()) +
+            Math.abs(targetX - cell.posX()) )* 10;
+
+        if (movementCost == 0) return 0;
+
+        double turnCost = 0;
+        if(targetX - cell.posX() != 0 || targetY - cell.posY() != 0)
+            turnCost = 20;
+
+        return movementCost + turnCost;
+    }
+
+    private DIRECTION getTargetDir(int rbtX, int rbtY, DIRECTION rbtDir, Cell target){
+        if(rbtX - target.posX() > 0){
+            return DIRECTION.LEFT;
+        } else if (target.posX() - rbtX > 0){
+            return DIRECTION.RIGHT;
+        } else {
+            if (rbtY - target.posY() > 0){
+                return DIRECTION.DOWN;
+            } else if (target.posY() - rbtY > 0){
+                return DIRECTION.UP;
+            } else {
+                return rbtDir;
+            }
+        }
+    }
+
+    private double costG(Cell from, Cell to, DIRECTION fromDir){
+        double moveCost = 10;
+        DIRECTION targetDir = getTargetDir(from.posX(), from.posY(), fromDir, to);
+        return getTurnCost(fromDir, targetDir) + moveCost;
+    }
+
+    private double getTurnCost(DIRECTION from, DIRECTION to){
+        int numOfTurn = Math.abs(from.ordinal() - to.ordinal());
+        if (numOfTurn > 2) numOfTurn%=2;
+        return numOfTurn;
+    }
+
+    private Stack<Cell> getPath(int targetX, int targetY) {
+        Stack<Cell> actualPath = new Stack<>();
+        Cell temp = explored.getCell(targetX, targetY);
+
+        while (true) {
+            actualPath.push(temp);
+            temp = parents.get(temp);
+            if (temp == null)break;
+        }
+
+        return actualPath;
+    }
+
+    private void printFastestPath(Stack<Cell> path) {
+        System.out.println("\nLooped " + loop + " times.");
+        System.out.println("The number of steps is: " + (path.size() - 1) + "\n");
+
+        Stack<Cell> pathForPrint = (Stack<Cell>) path.clone();
+        Cell temp;
+        System.out.println("Path:");
+        while (!pathForPrint.isEmpty()) {
+            temp = pathForPrint.pop();
+            if (!pathForPrint.isEmpty()) System.out.print("(" + temp.posY() + ", " + temp.posX() + ")\n --> ");
+            else System.out.print("(" + temp.posY() + ", " + temp.posX() + ")");
+        }
+
+        System.out.println("\n");
+    }
+
+    private String executePath(Stack<Cell> path, int targetX, int targetY) {
+        StringBuilder pathString = new StringBuilder();
+
+        Cell tempCell = path.pop();
+        DIRECTION targetDir;
+
+        ArrayList<DIRECTION> movements = new ArrayList<>();
+
+        Robot tempRobot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
+        while(tempRobot.getPosX() != targetX || tempRobot.getPosY() != targetY){
+            if(tempRobot.getPosX() == tempCell.posX() && tempRobot.getPosY() == tempCell.posY())
+                tempCell = path.pop();
+
+            targetDir = getTargetDir(tempRobot.getPosX(), tempRobot.getPosY(), tempRobot.getDirection(), tempCell);
+
+            DIRECTION nextDirection;
+            if(tempRobot.getDirection() != targetDir){
+                nextDirection = getNextDirection(tempRobot.getDirection(), targetDir);
+            }
+            else {
+                nextDirection = DIRECTION.UP;
+            }
+
+            System.out.println("Movement " + nextDirection + "\nfrom (" + tempRobot.getPosX() + ", " + tempRobot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
+
+            tempRobot.move(nextDirection);
+            movements.add(nextDirection);
+            pathString.append(nextDirection + " ");
+        }
+
+        System.out.println("\nMovements: " + pathString.toString());
+        return pathString.toString();
+    }
+
+    private DIRECTION getNextDirection(DIRECTION from, DIRECTION to){
+        switch (from){
+            case UP:
+                switch (to){
+                    // no case UP
+                    case LEFT:
+                        return DIRECTION.LEFT;
+                    case DOWN:
+                        return DIRECTION.DOWN;
+                    case RIGHT:
+                        return DIRECTION.RIGHT;
+                }
+                break;
+            case LEFT:
+                switch (to){
+                    case UP:
+                        return DIRECTION.RIGHT;
+                    // no case LEFT
+                    case DOWN:
+                        return DIRECTION.LEFT;
+                    case RIGHT:
+                        return DIRECTION.LEFT;
+                }
+                break;
+            case DOWN:
+                switch (to){
+                    case UP:
+                        return DIRECTION.LEFT;
+                    case LEFT:
+                        return DIRECTION.RIGHT;
+                    // no case DOWN
+                    case RIGHT:
+                        return DIRECTION.LEFT;
+                }
+                break;
+            case RIGHT:
+                switch (to){
+                    case UP:
+                        return DIRECTION.LEFT;
+                    case LEFT:
+                        return DIRECTION.LEFT;
+                    case DOWN:
+                        return DIRECTION.RIGHT;
+                    // no case RIGHT
+                }
+
+        }
+        return null;
+    }
+
 }

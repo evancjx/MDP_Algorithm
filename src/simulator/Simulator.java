@@ -1,5 +1,6 @@
 package simulator;
 
+import algorithms.Exploration;
 import algorithms.Exploration_Improved;
 import algorithms.FastestPath;
 import arena.Arena;
@@ -15,6 +16,8 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import javax.swing.*;
 
+import static utils.MapDescriptor.generateArenaHex;
+
 public class Simulator {
     private static JFrame appFrame = null;
     private static JPanel arenaPanel = null, btnPanel = null;
@@ -26,41 +29,16 @@ public class Simulator {
 
     private static int timeLimit = 180;
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int robotSpeed = 20; //Number of steps per second
-
-    private static Thread threadExplore, threadFastest;
+    private static int robotSpeed = 200; //Number of steps per second
 
     public static void main(String[] args){
         robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
         createDisplay();
-        initThreads();
     }
 
     public static void refresh(){
         appFrame.repaint();
     }
-
-    private static void initThreads(){
-        threadExplore = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                robot.setRobotSpeed(robotSpeed);
-                Exploration_Improved exploration = new Exploration_Improved(explored, arena, robot, coverageLimit, timeLimit);
-
-//                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
-                exploration.execute();
-                MapDescriptor.generateArenaHex(explored);
-            }
-        });
-        threadFastest = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FastestPath fastest = new FastestPath(explored, robot);
-//                fastest.printFastestPath(fastest.FindFastestPath(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y));
-            }
-        });
-    }
-
     private static void createDisplay(){
         appFrame = new JFrame();
         appFrame.setTitle("MDP Group 1 Simulator");
@@ -84,11 +62,12 @@ public class Simulator {
         appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+
     private static void setupArena(){
         arena =  new Arena(robot);
-        arena.setAllUnexplored();
+        arena.clearArena();
         explored = new Arena(robot);
-        explored.setAllUnexplored();
+        explored.clearArena();
         arenaPanel.add(arena, "Arena");
         arenaPanel.add(explored, "Explore");
 
@@ -97,6 +76,32 @@ public class Simulator {
     }
 
     private static void setupButtons(){
+        class Explore extends SwingWorker<Integer, String>{
+            protected Integer doInBackground() throws Exception{
+                robot.setRobotPos(RbtConstants.START_X, RbtConstants.START_Y);
+                robot.setRobotSpeed(robotSpeed);
+                explored.repaint();
+
+                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
+                exploration.execute();
+
+                generateArenaHex(arena);
+
+                return 111;
+            }
+        }
+        class Fastest extends SwingWorker<Integer, String>{
+            protected Integer doInBackground() throws Exception{
+                robot.setRobotPos(RbtConstants.START_X, RbtConstants.START_Y);
+                explored.repaint();
+
+                FastestPath fastestPath = new FastestPath(explored, robot);
+                fastestPath.run(RbtConstants.GOAL_X, RbtConstants.GOAL_Y);
+
+                return 222;
+            }
+        }
+
         JButton btnLoad = new JButton("Load Arena");
         standardBtn(btnLoad);
         btnLoad.addMouseListener(new MouseAdapter() {
@@ -115,7 +120,7 @@ public class Simulator {
         });
         btnPanel.add(btnLoad);
 
-        JButton btnExplore = new JButton("Start explore");
+        JButton btnExplore = new JButton("Explore");
         standardBtn(btnExplore);
         btnExplore.addMouseListener(new MouseAdapter() {
             @Override
@@ -123,7 +128,7 @@ public class Simulator {
                 super.mousePressed(e);
                 CardLayout cl = ((CardLayout) arenaPanel.getLayout());
                 cl.show(arenaPanel, "Explore");
-                threadExplore.start();
+                new Explore().execute();
             }
         });
         btnPanel.add(btnExplore);
@@ -134,12 +139,10 @@ public class Simulator {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                if (threadExplore!=null){
-                    threadExplore.interrupt();
-                }
+
             }
         });
-        btnPanel.add(btnStop);
+//        btnPanel.add(btnStop);
 
         JButton btnConfig =  new JButton("Config");
         standardBtn(btnConfig);
@@ -189,7 +192,8 @@ public class Simulator {
                 super.mousePressed(e);
                 CardLayout cl = ((CardLayout) arenaPanel.getLayout());
                 cl.show(arenaPanel, "Explore");
-                threadFastest.start();
+                appFrame.repaint();
+                new Fastest().execute();
             }
         });
         btnPanel.add(btnFastest);

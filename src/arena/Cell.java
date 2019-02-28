@@ -1,7 +1,7 @@
 package arena;
 
 public class Cell {
-    public final int x, y, cellX, cellY, cellSize;
+    private final int x, y, cellX, cellY, cellSize;
     private boolean isObstacle, isVirtualWall, isExplored, isMovedOver;
 
     public Cell(int row, int col){
@@ -29,11 +29,9 @@ public class Cell {
     }
     public void setIsMovedOver(boolean value){ this.isMovedOver = value; }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+    public int posX(){ return this.x; }
+    public int posY(){ return this.y; }
+    public int cellX(){ return this.cellX; }
+    public int cellY(){ return this.cellY; }
+    public int cellSize(){ return this.cellSize; }
 }

@@ -31,8 +31,8 @@ public class Arena extends JPanel {
         for (Cell row[] : grid){
             for (Cell cell : row){
                 Color cellColor;
-                if (inStartZone(cell.x, cell.y)) cellColor = Color.GREEN;
-                else if (inGoalZone(cell.x, cell.y)) cellColor = Color.RED;
+                if (inStartZone(cell.posX(), cell.posY())) cellColor = Color.GREEN;
+                else if (inGoalZone(cell.posX(), cell.posY())) cellColor = Color.RED;
                 else if (!cell.getIsExplored()) cellColor = Color.LIGHT_GRAY;
                 else if (cell.getIsObstacle()) cellColor = Color.BLACK;
 //                else if (cell.getIsVirtualWall()) cellColor = Color.YELLOW;
@@ -40,7 +40,7 @@ public class Arena extends JPanel {
                 else cellColor = Color.WHITE;
 
                 g.setColor(cellColor);
-                g.fillRect(cell.cellX, cell.cellY, cell.cellSize, cell.cellSize);
+                g.fillRect(cell.cellX(), cell.cellY(), cell.cellSize(), cell.cellSize());
             }
         }
         //ROBOT
@@ -105,7 +105,7 @@ public class Arena extends JPanel {
         for (Cell row[] : this.grid){
             for (Cell cell : row){
                 cell.setIsObstacle(false);
-                if (inStartZone(cell.x, cell.y) || inGoalZone(cell.x, cell.y)) {
+                if (inStartZone(cell.posX(), cell.posY()) || inGoalZone(cell.posX(), cell.posY())) {
                     cell.setIsExplored(true);
                 }
                 else {
@@ -129,19 +129,6 @@ public class Arena extends JPanel {
         for (Cell row[] : grid) {
             for (Cell cell : row) {
                 cell.setIsExplored(true);
-            }
-        }
-    }
-
-    public void setAllUnexplored(){
-        for (Cell row[] : grid) {
-            for (Cell cell : row) {
-                if (inStartZone(cell.x, cell.y) || inGoalZone(cell.x, cell.y)) {
-                    cell.setIsExplored(true);
-                }
-                else {
-                    cell.setIsExplored(false);
-                }
             }
         }
     }
