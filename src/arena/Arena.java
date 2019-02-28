@@ -37,6 +37,7 @@ public class Arena extends JPanel {
                 else if (cell.getIsObstacle()) cellColor = Color.BLACK;
 //                else if (cell.getIsVirtualWall()) cellColor = Color.YELLOW;
 //                else if (cell.getIsMovedOver()) cellColor = Color.MAGENTA;
+                else if (cell.getIsWayPoint()) cellColor = Color.CYAN;
                 else cellColor = Color.WHITE;
 
                 g.setColor(cellColor);
@@ -112,6 +113,7 @@ public class Arena extends JPanel {
                     cell.setIsExplored(false);
                     cell.setVirtualWall(false);
                 }
+                cell.setWayPoint(false);
             }
         }
     }

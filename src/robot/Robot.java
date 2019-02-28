@@ -3,7 +3,10 @@ package robot;
 // @formatter:off
 
 import arena.Arena;
+import arena.ArenaConstants;
 import robot.RbtConstants.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the robot moving in the arena.
@@ -32,7 +35,7 @@ public class Robot{
         SRLeft,
         LRLeft,
         SRRight;
-    private boolean isAlert;
+    private boolean isAlert, crossGoal ,calledHome;
 
     public Robot(int posX, int posY, DIRECTION direction){
         this.posX = posX;
@@ -40,6 +43,8 @@ public class Robot{
         this.direction = direction;
         setRobotFront(direction);
         this.speed = RbtConstants.SPEED;
+        this.isAlert = false;
+        this.calledHome = false;
 
         SRFrontLeft = new Sensor(this.posX - 1, this.posY + 1, this.direction,
             "SRFL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
@@ -62,6 +67,7 @@ public class Robot{
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
     public int getSpeed(){ return this.speed; }
+    public Boolean getCalledHome(){ return this.calledHome; }
 
     public void setRobotFront(DIRECTION dir){
         this.direction = dir;
@@ -88,10 +94,8 @@ public class Robot{
         this.posX = posX;
         this.posY = posY;
     }
-    public void setRobotSpeed(int speed){
-        this.speed = 1000/speed;
+    public void setRobotSpeed(int speed){ this.speed = 1000/speed;
     }
-
     public void setSenors(){
         switch (this.direction){
             case UP: //UP
@@ -128,6 +132,8 @@ public class Robot{
                 break;
         }
     }
+    public void setCalledHome(Boolean value){ this.calledHome = value; }
+
     public int[] sense(Arena explored, Arena arena){
         int[] result = new int[6];
 
@@ -144,6 +150,14 @@ public class Robot{
         this.move(direction, true);//send move to android
     }
     public void move(DIRECTION move, boolean sendToAndroid){
+        if(true){
+            try {
+                TimeUnit.MILLISECONDS.sleep(this.getSpeed());
+            } catch (InterruptedException e) {
+                System.out.println("Something went wrong in Robot.move()!");
+//                return;
+            }
+        }
         switch (move){
             case UP: //Forward
                 switch (this.direction){
@@ -195,6 +209,13 @@ public class Robot{
                 break;
         }
         this.setRobotFront(this.direction);
+
+        crossGoal();
+    }
+
+    private void crossGoal(){
+        if(this.getPosX() == ArenaConstants.GOAL_X && this.getPosY() == ArenaConstants.GOAL_Y)
+            this.crossGoal = true;
     }
 
     //Improved Algorithm

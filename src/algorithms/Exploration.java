@@ -7,13 +7,13 @@ import robot.RbtConstants.*;
 import robot.Robot;
 import simulator.Simulator;
 
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
 public class Exploration {
     private final Arena explored, arena;
     private final Robot robot;
     private final int coverageLimit, timeLimit;
-    private long endTime;
+    private long startTime, endTime;
 
     public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit){
         this.explored = explored;
@@ -25,7 +25,8 @@ public class Exploration {
 
     public void execute(){
         System.out.println("Starting exploration...");
-        endTime = System.currentTimeMillis() + (timeLimit* 1000);
+        startTime = System.currentTimeMillis();
+        endTime = startTime + (timeLimit* 1000);
         senseSurrounding();
         loopRun(robot.getPosX(), robot.getPosY());
     }
@@ -55,21 +56,15 @@ public class Exploration {
             System.out.println("Explored Area: " + areaExplored);
             nextMove();
 
-            if(robot.getPosX() == initX && robot.getPosY() ==initY)
-                if (areaExplored > 290) break;
+            if(robot.getPosX() == initX && robot.getPosY() ==initY && areaExplored > 290) break;
+            else if (robot.getCalledHome()) break;
 
-
-            if(true){
-                try {
-                    TimeUnit.MILLISECONDS.sleep(robot.getSpeed());
-                } catch (InterruptedException e) {
-//                    System.out.println("Something went wrong in Robot.move()!");
-                    break;
-                }
-            }
         } while (areaExplored <= coverageLimit && System.currentTimeMillis() <= endTime);
-        turnToDirection(DIRECTION.UP);
-        System.out.println("finish run");
+
+        goBackStart();
+
+
+        System.out.println("Finish exploration");
     }
 
     private void nextMove(){
@@ -192,5 +187,19 @@ public class Exploration {
             moveBot(DIRECTION.LEFT);
             moveBot(DIRECTION.LEFT);
         }
+    }
+
+    private void goBackStart(){
+        FastestPath returnToStart = new FastestPath(explored);
+        ArrayList<DIRECTION> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
+        returnToStart.executeMovements(movements, robot);
+
+        System.out.println("Exploration complete!");
+        int areaExplored = calculateAreaExplored();
+        System.out.printf("%.2f%% Coverage", (areaExplored / 300.0) * 100.0);
+        System.out.println(", " + areaExplored + " Cells");
+        System.out.println((System.currentTimeMillis() - startTime) / 1000 + " Seconds");
+
+        turnToDirection(DIRECTION.UP); //return to UP ward direction
     }
 }

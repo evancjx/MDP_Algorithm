@@ -75,7 +75,7 @@ public class Exploration_Improved {
                 }
             }
         } while (areaExplored <= coverageLimit);
-        System.out.println("Finished run");
+        System.out.println("Finished get");
         System.out.println("Explored Area: " + areaExplored);
     }
 

@@ -3,41 +3,41 @@ package algorithms;
 import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
-import robot.RbtConstants;
 import robot.Robot;
 import robot.RbtConstants.*;
+import simulator.Simulator;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Stack;
 
 public class FastestPath {
     private ArrayList<Cell> openList, closedList;
     private HashMap<Cell, Cell> parents;
-    private Robot robot;
     private Arena explored;
     private double[][] gCost;
     private Cell curCell;
     private DIRECTION curDir;
     private Cell[] neighbors;
     private int loop;
+    private Boolean explorationMode;
 
-    public FastestPath(Arena explored, Robot robot){
-        initialize(explored, robot);
+    public FastestPath(Arena explored){
+        this.explorationMode = false;
+        this.explored = explored;
     }
 
-    private void initialize(Arena explored, Robot robot){
+    public FastestPath(Arena explored, boolean explorationMode){
+        this.explorationMode = explorationMode;
         this.explored = explored;
-        this.robot = robot;
+    }
+
+    private void initialize(){
         this.openList = new ArrayList<>();
         this.closedList = new ArrayList<>();
         this.parents = new HashMap<>();
         this.neighbors = new Cell[4];
         this.gCost = new double[ArenaConstants.ROWS][ArenaConstants.COLS];
-        this.curCell = explored.getCell(robot.getPosX(), robot.getPosY());
-        this.curDir = robot.getDirection();
-
         // Initialise gCosts array
         for(Cell[] row: this.explored.grid){
             for(Cell cell: row){
@@ -47,15 +47,20 @@ public class FastestPath {
                     gCost[cell.posY() - 1][cell.posX() - 1] = 0;
             }
         }
-        openList.add(curCell);
-        gCost[robot.getPosY()][robot.getPosX()] = 0;
     }
 
     private boolean canBeVisited(Cell c) {
         return c.getIsExplored() && !c.getIsObstacle() && !c.getIsVirtualWall();
     }
 
-    public String run(int targetX, int targetY){
+    public ArrayList<DIRECTION> get(Robot robot, int targetX, int targetY){
+        initialize();
+        int initX = robot.getPosX(), initY = robot.getPosY();
+        DIRECTION initDir = robot.getDirection();
+        this.curCell = explored.getCell(robot.getPosX(), robot.getPosY());
+        this.curDir = robot.getDirection();
+        openList.add(curCell);
+        gCost[robot.getPosY()][robot.getPosX()] = 0;
         System.out.println("Calculating fastest path from (" + curCell.posX() + ", " + curCell.posY() + ") to goal (" + targetX + ", " + targetY + ")...");
 
         Stack<Cell> path;
@@ -77,8 +82,12 @@ public class FastestPath {
                     System.out.println("Goal visited. Path found!");
                     path = getPath(targetX, targetY);
                     printFastestPath(path);
-                    executePath(path, targetX, targetY);
-                    return null;
+                    robot.setRobotPos(initX, initY);
+                    robot.setRobotFront(DIRECTION.UP);
+                    ArrayList<DIRECTION> movements = getPathMovements(path, robot, targetX, targetY);
+                    robot.setRobotPos(initX, initY);
+                    robot.setRobotFront(DIRECTION.UP);
+                    return movements;
                 }
 
                 //TOP
@@ -218,38 +227,46 @@ public class FastestPath {
         System.out.println("\n");
     }
 
-    private String executePath(Stack<Cell> path, int targetX, int targetY) {
+    private ArrayList<DIRECTION> getPathMovements(Stack<Cell> path, Robot robot, int targetX, int targetY) {
         StringBuilder pathString = new StringBuilder();
 
         Cell tempCell = path.pop();
+        Robot tempBot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection());
+        tempBot.setRobotSpeed(1000);
         DIRECTION targetDir;
 
         ArrayList<DIRECTION> movements = new ArrayList<>();
 
-        Robot tempRobot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
-        while(tempRobot.getPosX() != targetX || tempRobot.getPosY() != targetY){
-            if(tempRobot.getPosX() == tempCell.posX() && tempRobot.getPosY() == tempCell.posY())
+        while(tempBot.getPosX() != targetX || tempBot.getPosY() != targetY){
+            if(tempBot.getPosX() == tempCell.posX() && tempBot.getPosY() == tempCell.posY())
                 tempCell = path.pop();
 
-            targetDir = getTargetDir(tempRobot.getPosX(), tempRobot.getPosY(), tempRobot.getDirection(), tempCell);
+            targetDir = getTargetDir(tempBot.getPosX(), tempBot.getPosY(), tempBot.getDirection(), tempCell);
 
             DIRECTION nextDirection;
-            if(tempRobot.getDirection() != targetDir){
-                nextDirection = getNextDirection(tempRobot.getDirection(), targetDir);
+            if(tempBot.getDirection() != targetDir){
+                nextDirection = getNextDirection(tempBot.getDirection(), targetDir);
             }
             else {
                 nextDirection = DIRECTION.UP;
             }
 
-            System.out.println("Movement " + nextDirection + "\nfrom (" + tempRobot.getPosX() + ", " + tempRobot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
+            System.out.println("Movement " + nextDirection + "\nfrom (" + tempBot.getPosX() + ", " + tempBot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
 
-            tempRobot.move(nextDirection);
+
+            tempBot.move(nextDirection);
             movements.add(nextDirection);
             pathString.append(nextDirection + " ");
         }
-
         System.out.println("\nMovements: " + pathString.toString());
-        return pathString.toString();
+        return movements;
+    }
+
+    public void executeMovements(ArrayList<DIRECTION> movements, Robot robot){
+        for (DIRECTION move: movements){
+            robot.move(move);
+            Simulator.refresh();
+        }
     }
 
     private DIRECTION getNextDirection(DIRECTION from, DIRECTION to){
