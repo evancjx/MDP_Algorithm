@@ -4,6 +4,7 @@ import algorithms.Exploration_Improved;
 import algorithms.FastestPath;
 import arena.Arena;
 import arena.ArenaConstants;
+import arena.Cell;
 import robot.Robot;
 import robot.RbtConstants;
 import robot.RbtConstants.DIRECTION;
@@ -13,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Stack;
 import javax.swing.*;
 
 public class Simulator {
@@ -55,8 +57,13 @@ public class Simulator {
         threadFastest = new Thread(new Runnable() {
             @Override
             public void run() {
-                FastestPath fastest = new FastestPath(explored, robot);
-//                fastest.printFastestPath(fastest.FindFastestPath(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y));
+                Stack<Cell> path = new Stack<>();
+                robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
+                FastestPath fastestP1 = new FastestPath(explored, robot);
+//                fastestP1.execute(fastestP1.FindFastestPath(2, 11));
+//                FastestPath fastestP2 = new FastestPath(explored, robot);
+//                fastestP2.printFastestPath(fastestP2.FindFastestPath(ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y));
+                // fastest.printGCosts();
             }
         });
     }
