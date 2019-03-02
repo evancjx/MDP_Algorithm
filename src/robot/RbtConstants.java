@@ -11,15 +11,33 @@ public class RbtConstants {
         FRONT_X_OFFSET = ArenaConstants.X_OFFSET + 10, FRONT_Y_OFFSET = 10,
         SEN_SHORT_L = 1, SEN_SHORT_U = 2,
         SEN_LONG_L = 3, SEN_LONG_U = 4;
+
     public enum DIRECTION{
         UP, LEFT, DOWN, RIGHT;
 
         public static DIRECTION getNext(DIRECTION curDir){
             return values()[(curDir.ordinal() + 1) % values().length];
         }
+
         public static DIRECTION getPrev(DIRECTION curDir){
             return values()[(curDir.ordinal() + values().length - 1) % values().length];
         }
 
+    }
+
+    public enum MOVEMENT{
+        FORWARD, LEFT, RIGHT;
+        public static char getChar(MOVEMENT m){
+            switch(m){
+                case FORWARD:
+                    return 'F';
+                case LEFT:
+                    return 'L';
+                case RIGHT:
+                    return 'R';
+                default:
+                    return 'E';
+            }
+        }
     }
 }

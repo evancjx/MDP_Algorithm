@@ -8,6 +8,7 @@ import arena.Cell;
 import robot.Robot;
 import robot.RbtConstants;
 import robot.RbtConstants.DIRECTION;
+import utils.CommMgr;
 import utils.MapDescriptor;
 
 import java.awt.*;
@@ -41,7 +42,8 @@ public class Simulator {
     private static boolean  pressedFastest = false;
 
     public static void main(String[] args){
-        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
+        boolean realRobot = true;
+        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, realRobot);
         createDisplay();
     }
 
