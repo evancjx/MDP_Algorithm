@@ -5,6 +5,8 @@ package robot;
 import arena.Arena;
 import arena.ArenaConstants;
 import robot.RbtConstants.*;
+import utils.CommMgr;
+import utils.MapDescriptor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +38,9 @@ public class Robot{
         LRLeft,
         SRRight;
     private boolean isAlert, crossGoal ,calledHome;
+    private boolean realRobot = false;
 
-    public Robot(int posX, int posY, DIRECTION direction){
+    public Robot(int posX, int posY, DIRECTION direction, boolean realRobot){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -45,6 +48,7 @@ public class Robot{
         this.speed = RbtConstants.SPEED;
         this.isAlert = false;
         this.calledHome = false;
+        this.realRobot = realRobot;
 
         SRFrontLeft = new Sensor(this.posX - 1, this.posY + 1, this.direction,
             "SRFL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
@@ -94,8 +98,10 @@ public class Robot{
         this.posX = posX;
         this.posY = posY;
     }
-    public void setRobotSpeed(int speed){ this.speed = 1000/speed;
+    public void setRobotSpeed(int speed){
+        this.speed = 1000/speed;
     }
+
     public void setSenors(){
         switch (this.direction){
             case UP: //UP
@@ -136,19 +142,44 @@ public class Robot{
 
     public int[] sense(Arena explored, Arena arena){
         int[] result = new int[6];
+        if(!realRobot){
 
-        result[0] = SRFrontLeft.sense(explored, arena);
-        result[1] = SRFrontCenter.sense(explored, arena);
-        result[2] = SRFrontRight.sense(explored, arena);
-        result[3] = SRLeft.sense(explored, arena);
-        result[4] = LRLeft.sense(explored, arena);
-        result[5] = SRRight.sense(explored, arena);
+            result[0] = SRFrontLeft.sense(explored, arena);
+            result[1] = SRFrontCenter.sense(explored, arena);
+            result[2] = SRFrontRight.sense(explored, arena);
+            result[3] = SRLeft.sense(explored, arena);
+            result[4] = LRLeft.sense(explored, arena);
+            result[5] = SRRight.sense(explored, arena);
+        }
+        else{
+            CommMgr commMgr = CommMgr.getCommMgr();
+            String msg = commMgr.recvMsg();
+            String[] sensorValues = msg.split(":");
+            result[0] = Integer.parseInt(sensorValues[0]);
+            result[1] = Integer.parseInt(sensorValues[1]);
+            result[2] = Integer.parseInt(sensorValues[2]);
+            result[3] = Integer.parseInt(sensorValues[3]);
+            result[4] = Integer.parseInt(sensorValues[4]);
+            result[5] = Integer.parseInt(sensorValues[5]);
 
+            SRFrontLeft.senseReal(explored, result[0]);
+            SRFrontCenter.senseReal(explored, result[1]);
+            SRFrontRight.senseReal(explored, result[2]);
+            SRLeft.senseReal(explored, result[3]);
+            LRLeft.senseReal(explored, result[4]);
+            SRRight.senseReal(explored, result[5]);
+
+            String[] mapStrings = MapDescriptor.generateArenaHex(explored);
+            String message = String.format("{\"P1\":%s, \"P2\": %s }", mapStrings[0], mapStrings[1]);
+            commMgr.sendMsg(message, CommMgr.MSG_TYPE_ANDROID);
+        }
         return result;
     }
+
     public void move(DIRECTION direction){
         this.move(direction, true);//send move to android
     }
+
     public void move(DIRECTION move, boolean sendToAndroid){
         if(true){
             try {

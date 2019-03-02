@@ -231,7 +231,7 @@ public class FastestPath {
         StringBuilder pathString = new StringBuilder();
 
         Cell tempCell = path.pop();
-        Robot tempBot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection());
+        Robot tempBot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false);
         tempBot.setRobotSpeed(1000);
         DIRECTION targetDir;
 
