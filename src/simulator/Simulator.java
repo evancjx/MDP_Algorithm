@@ -8,6 +8,7 @@ import arena.Cell;
 import robot.Robot;
 import robot.RbtConstants;
 import robot.RbtConstants.DIRECTION;
+import utils.CommMgr;
 import utils.MapDescriptor;
 
 import java.awt.*;
@@ -35,14 +36,17 @@ public class Simulator {
     private static int wayPointX = 0;
     private static int wayPointY = 0;
 
-    private static ArrayList<DIRECTION> fPathWayPoint;
-    private static ArrayList<DIRECTION> fPathGoal;
+    private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint;
+    private static ArrayList<RbtConstants.MOVEMENT> fPathGoal;
 
     private static boolean  pressedFastest = false;
 
     public static void main(String[] args){
-        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP);
-        createDisplay();
+        CommMgr commMgr = CommMgr.getCommMgr();
+        commMgr.sendMsg("F", CommMgr.MSG_TYPE_ARDUINO);
+        System.out.println(commMgr.recvMsg());
+//        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, false);
+//        createDisplay();
     }
 
     public static void refresh(){
