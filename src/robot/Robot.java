@@ -176,21 +176,20 @@ public class Robot{
         return result;
     }
 
-    public void move(DIRECTION direction){
-        this.move(direction, true);//send move to android
+    public void move(MOVEMENT movement){
+        this.move(movement, true);//send move to android
     }
 
-    public void move(DIRECTION move, boolean sendToAndroid){
-        if(true){
+    public void move(MOVEMENT movement, boolean sendToAndroid){
+        if(!realRobot){
             try {
                 TimeUnit.MILLISECONDS.sleep(this.getSpeed());
             } catch (InterruptedException e) {
                 System.out.println("Something went wrong in Robot.move()!");
-//                return;
             }
         }
-        switch (move){
-            case UP: //Forward
+        switch (movement){
+            case FORWARD: //Forward
                 switch (this.direction){
                     case UP: //UP
                         this.posY++; break;
@@ -214,18 +213,6 @@ public class Robot{
                         this.direction = DIRECTION.UP; break;
                 }
                 break;
-            case DOWN: //Reverse
-                switch (this.direction) {
-                    case UP: //UP
-                        this.posY--; break;
-                    case LEFT: //LEFT
-                        this.posX++; break;
-                    case DOWN: //DOWN
-                        this.posY++; break;
-                    case RIGHT: //RIGHT
-                        this.posX--; break;
-                }
-                break;
             case RIGHT: //Turn Right
                 switch (this.direction){
                     case UP: //UP
@@ -242,11 +229,19 @@ public class Robot{
         this.setRobotFront(this.direction);
 
         crossGoal();
+        if(realRobot){
+            CommMgr commMgr = CommMgr.getCommMgr();
+            commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
+        }
     }
 
     private void crossGoal(){
         if(this.getPosX() == ArenaConstants.GOAL_X && this.getPosY() == ArenaConstants.GOAL_Y)
             this.crossGoal = true;
+    }
+
+    public boolean isRealRobot(){
+        return realRobot;
     }
 
     //Improved Algorithm

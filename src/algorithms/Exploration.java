@@ -71,16 +71,16 @@ public class Exploration {
         int rbtX = robot.getPosX();
         int rbtY = robot.getPosY();
         if(lookRightEmpty(rbtX, rbtY)){
-            moveBot(DIRECTION.RIGHT);
-            if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP);
+            moveBot(MOVEMENT.RIGHT);
+            if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else if (lookForward(rbtX, rbtY)){
-            moveBot(DIRECTION.UP);
+            moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
-            moveBot(DIRECTION.LEFT);
-            if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP);
+            moveBot(MOVEMENT.LEFT);
+            if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else {
-            moveBot(DIRECTION.LEFT); //Depends on which rotation LEFT or RIGHT is better
-            moveBot(DIRECTION.LEFT);
+            moveBot(MOVEMENT.LEFT); //Depends on which rotation LEFT or RIGHT is better
+            moveBot(MOVEMENT.LEFT);
         }
     }
 
@@ -166,8 +166,8 @@ public class Exploration {
         return false;
     }
 
-    private void moveBot(DIRECTION direction){
-        robot.move(direction);
+    private void moveBot(MOVEMENT movement){
+        robot.move(movement);
         Simulator.refresh();
         senseSurrounding();
     }
@@ -177,21 +177,21 @@ public class Exploration {
         if (numOfTurn > 2) numOfTurn%=2;
         if (numOfTurn == 1){
             if (DIRECTION.getNext(robot.getDirection()) == target){
-                moveBot(DIRECTION.LEFT);
+                moveBot(MOVEMENT.LEFT);
             }
             else {
-                moveBot(DIRECTION.RIGHT);
+                moveBot(MOVEMENT.RIGHT);
             }
         }
         else if (numOfTurn == 2){
-            moveBot(DIRECTION.LEFT);
-            moveBot(DIRECTION.LEFT);
+            moveBot(MOVEMENT.LEFT);
+            moveBot(MOVEMENT.LEFT);
         }
     }
 
     private void goBackStart(){
         FastestPath returnToStart = new FastestPath(explored);
-        ArrayList<DIRECTION> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
+        ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
         returnToStart.executeMovements(movements, robot);
 
         System.out.println("Exploration complete!");

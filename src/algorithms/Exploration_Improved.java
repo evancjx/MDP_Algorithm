@@ -3,6 +3,7 @@ package algorithms;
 import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
+import robot.RbtConstants;
 import robot.Robot;
 import robot.RbtConstants.DIRECTION;
 import simulator.Simulator;
@@ -86,28 +87,28 @@ public class Exploration_Improved {
         if(robot.getIsAlert()){
             System.out.println("Alerted");
             if(lookLeftEmpty(rbtX, rbtY)){
-                moveBot(DIRECTION.LEFT, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.LEFT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(RbtConstants.MOVEMENT.FORWARD, rbtX, rbtY);
             } else if (lookForward(rbtX, rbtY)){
-                moveBot(DIRECTION.UP, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.FORWARD, rbtX, rbtY);
             } else if (lookRightEmpty(rbtX, rbtY)){
-                moveBot(DIRECTION.RIGHT, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.RIGHT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(RbtConstants.MOVEMENT.FORWARD, rbtX, rbtY);
             } else
-                moveBot(DIRECTION.DOWN, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.BACKWARD, rbtX, rbtY);
         }
         else {
             if (lookRightEmpty(rbtX, rbtY)){
-                moveBot(DIRECTION.RIGHT, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.RIGHT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(RbtConstants.MOVEMENT.FORWARD, rbtX, rbtY);
             } else if (lookForward(rbtX, rbtY)){
-                moveBot(DIRECTION.UP, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.FORWARD, rbtX, rbtY);
             } else if (lookLeftEmpty(rbtX, rbtY)){
-                moveBot(DIRECTION.LEFT, rbtX, rbtY);
-                if(lookForward(rbtX, rbtY)) moveBot(DIRECTION.UP, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.LEFT, rbtX, rbtY);
+                if(lookForward(rbtX, rbtY)) moveBot(RbtConstants.MOVEMENT.FORWARD, rbtX, rbtY);
             } else {
-                moveBot(DIRECTION.LEFT, rbtX, rbtY); //Depends on which rotation LEFT or RIGHT is better
-                moveBot(DIRECTION.LEFT, rbtX, rbtY);
+                moveBot(RbtConstants.MOVEMENT.LEFT, rbtX, rbtY); //Depends on which rotation LEFT or RIGHT is better
+                moveBot(RbtConstants.MOVEMENT.LEFT, rbtX, rbtY);
             }
         }
     }
@@ -241,9 +242,9 @@ public class Exploration_Improved {
         return false;
     }
 
-    private void moveBot(DIRECTION movement, int rbtX, int rbtY){
+    private void moveBot(RbtConstants.MOVEMENT movement, int rbtX, int rbtY){
         robot.move(movement);
-        if (movement == DIRECTION.UP){
+        if (movement == RbtConstants.MOVEMENT.FORWARD){
             if(!(rbtX > 0 && rbtY > 0 && rbtX <= ArenaConstants.START_X + 1 && rbtY <= ArenaConstants.START_Y + 1)  && !robot.getIsAlert()){
                 explored.getCell(rbtX, rbtY).setIsMovedOver(true);
             }
