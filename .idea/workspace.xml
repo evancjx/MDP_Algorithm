@@ -3,16 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d9367c61-71e4-4178-b497-9e96d0c8331b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MDP_Algorithm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MDP_Algorithm.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration_Improved$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration_Improved$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration_Improved.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration_Improved.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$MOVEMENT.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$MOVEMENT.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Sensor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Sensor.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Explore.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Explore.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Fastest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Fastest.class" afterDir="false" />
@@ -23,11 +13,6 @@
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$6.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithms/Exploration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/Exploration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithms/Exploration_Improved.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/Exploration_Improved.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithms/FastestPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/FastestPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/robot/RbtConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/RbtConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/Robot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/simulator/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/simulator/Simulator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/CommMgr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/CommMgr.java" afterDir="false" />
     </list>
@@ -44,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="176">
-              <caret line="45" column="52" selection-start-line="45" selection-start-column="52" selection-end-line="45" selection-end-column="52" />
+              <caret line="50" column="40" lean-forward="true" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -52,13 +37,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/CommMgr.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="603">
-              <caret line="96" column="31" selection-start-line="96" selection-start-column="31" selection-end-line="96" selection-end-column="31" />
+            <state relative-caret-position="1408">
+              <caret line="64" selection-start-line="64" selection-end-line="64" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3549#3550#0" expanded="true" />
-                <element signature="e#3591#3592#0" expanded="true" />
-                <marker date="1551663450295" expanded="true" signature="2263:2343" ph="..." />
+                <element signature="e#4042#4043#0" expanded="true" />
+                <marker date="1551664740660" expanded="true" signature="2600:2680" ph="..." />
               </folding>
             </state>
           </provider>
@@ -178,8 +162,8 @@
         <option value="$PROJECT_DIR$/src/algorithms/FastestPath.java" />
         <option value="$PROJECT_DIR$/src/algorithms/Exploration_Improved.java" />
         <option value="$PROJECT_DIR$/src/algorithms/Exploration.java" />
-        <option value="$PROJECT_DIR$/src/simulator/Simulator.java" />
         <option value="$PROJECT_DIR$/src/utils/CommMgr.java" />
+        <option value="$PROJECT_DIR$/src/simulator/Simulator.java" />
       </list>
     </option>
   </component>
@@ -254,7 +238,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551663429258" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551665297382" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Modules" />
@@ -307,12 +291,12 @@
       <workItem from="1551402012490" duration="5382000" />
       <workItem from="1551521456352" duration="8822000" />
       <workItem from="1551591753389" duration="5027000" />
-      <workItem from="1551663211525" duration="244000" />
+      <workItem from="1551663211525" duration="1921000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21032000" />
+    <option name="totallyTimeSpent" value="22709000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -327,7 +311,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32866243" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32866243" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -485,13 +469,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/CommMgr.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="96" column="31" selection-start-line="96" selection-start-column="31" selection-end-line="96" selection-end-column="31" />
+        <state relative-caret-position="1408">
+          <caret line="64" selection-start-line="64" selection-end-line="64" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3549#3550#0" expanded="true" />
-            <element signature="e#3591#3592#0" expanded="true" />
-            <marker date="1551663450295" expanded="true" signature="2263:2343" ph="..." />
+            <element signature="e#4042#4043#0" expanded="true" />
+            <marker date="1551664740660" expanded="true" signature="2600:2680" ph="..." />
           </folding>
         </state>
       </provider>
@@ -499,7 +482,7 @@
     <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
-          <caret line="45" column="52" selection-start-line="45" selection-start-column="52" selection-end-line="45" selection-end-column="52" />
+          <caret line="50" column="40" lean-forward="true" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
         </state>
       </provider>
     </entry>

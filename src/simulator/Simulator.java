@@ -16,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 import javax.swing.*;
 
 import static utils.MapDescriptor.generateArenaHex;
@@ -43,8 +44,21 @@ public class Simulator {
 
     public static void main(String[] args){
         CommMgr commMgr = CommMgr.getCommMgr();
+        commMgr.setConnection(10);
         commMgr.sendMsg("F", CommMgr.MSG_TYPE_ARDUINO);
-        System.out.println(commMgr.recvMsg());
+        Scanner sc = new Scanner(System.in);
+        while(true){
+            System.out.println("enter your command:");
+            System.out.println("1.send");
+            System.out.println("2.receive");
+            int input = sc.nextInt();
+            if(input == 1){
+                commMgr.sendMsg("F",CommMgr.MSG_TYPE_ARDUINO);
+            }
+            else{
+                System.out.println(commMgr.recvMsg());
+            }
+        }
 //        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, false);
 //        createDisplay();
     }
