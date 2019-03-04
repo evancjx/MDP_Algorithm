@@ -53,7 +53,7 @@ public class FastestPath {
         return c.getIsExplored() && !c.getIsObstacle() && !c.getIsVirtualWall();
     }
 
-    public ArrayList<DIRECTION> get(Robot robot, int targetX, int targetY){
+    public ArrayList<MOVEMENT> get(Robot robot, int targetX, int targetY){
         initialize();
         int initX = robot.getPosX(), initY = robot.getPosY();
         DIRECTION initDir = robot.getDirection();
@@ -84,7 +84,7 @@ public class FastestPath {
                     printFastestPath(path);
                     robot.setRobotPos(initX, initY);
                     robot.setRobotFront(DIRECTION.UP);
-                    ArrayList<DIRECTION> movements = getPathMovements(path, robot, targetX, targetY);
+                    ArrayList<MOVEMENT> movements = getPathMovements(path, robot, targetX, targetY);
                     robot.setRobotPos(initX, initY);
                     robot.setRobotFront(DIRECTION.UP);
                     return movements;
@@ -227,7 +227,7 @@ public class FastestPath {
         System.out.println("\n");
     }
 
-    private ArrayList<DIRECTION> getPathMovements(Stack<Cell> path, Robot robot, int targetX, int targetY) {
+    private ArrayList<MOVEMENT> getPathMovements(Stack<Cell> path, Robot robot, int targetX, int targetY) {
         StringBuilder pathString = new StringBuilder();
 
         Cell tempCell = path.pop();
@@ -235,7 +235,7 @@ public class FastestPath {
         tempBot.setRobotSpeed(1000);
         DIRECTION targetDir;
 
-        ArrayList<DIRECTION> movements = new ArrayList<>();
+        ArrayList<MOVEMENT> movements = new ArrayList<>();
 
         while(tempBot.getPosX() != targetX || tempBot.getPosY() != targetY){
             if(tempBot.getPosX() == tempCell.posX() && tempBot.getPosY() == tempCell.posY())
@@ -243,76 +243,75 @@ public class FastestPath {
 
             targetDir = getTargetDir(tempBot.getPosX(), tempBot.getPosY(), tempBot.getDirection(), tempCell);
 
-            DIRECTION nextDirection;
+            MOVEMENT nextMovement;
             if(tempBot.getDirection() != targetDir){
-                nextDirection = getNextDirection(tempBot.getDirection(), targetDir);
+                nextMovement = getNextMovement(tempBot.getDirection(), targetDir);
             }
             else {
-                nextDirection = DIRECTION.UP;
+                nextMovement = MOVEMENT.FORWARD;
             }
 
-            System.out.println("Movement " + nextDirection + "\nfrom (" + tempBot.getPosX() + ", " + tempBot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
+            System.out.println("Movement " + nextMovement + "\nfrom (" + tempBot.getPosX() + ", " + tempBot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
 
 
-            tempBot.move(nextDirection);
-            movements.add(nextDirection);
-            pathString.append(nextDirection + " ");
+            tempBot.move(nextMovement);
+            movements.add(nextMovement);
+            pathString.append(nextMovement + " ");
         }
         System.out.println("\nMovements: " + pathString.toString());
         return movements;
     }
 
-    public void executeMovements(ArrayList<DIRECTION> movements, Robot robot){
-        for (DIRECTION move: movements){
+    public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
+        for (MOVEMENT move: movements){
             robot.move(move);
             Simulator.refresh();
         }
     }
 
-    private DIRECTION getNextDirection(DIRECTION from, DIRECTION to){
+    private MOVEMENT getNextMovement(DIRECTION from, DIRECTION to){
         switch (from){
             case UP:
                 switch (to){
                     // no case UP
                     case LEFT:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                     case DOWN:
-                        return DIRECTION.DOWN;
+                        return MOVEMENT.LEFT;
                     case RIGHT:
-                        return DIRECTION.RIGHT;
+                        return MOVEMENT.RIGHT;
                 }
                 break;
             case LEFT:
                 switch (to){
                     case UP:
-                        return DIRECTION.RIGHT;
+                        return MOVEMENT.RIGHT;
                     // no case LEFT
                     case DOWN:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                     case RIGHT:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                 }
                 break;
             case DOWN:
                 switch (to){
                     case UP:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                     case LEFT:
-                        return DIRECTION.RIGHT;
+                        return MOVEMENT.RIGHT;
                     // no case DOWN
                     case RIGHT:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                 }
                 break;
             case RIGHT:
                 switch (to){
                     case UP:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                     case LEFT:
-                        return DIRECTION.LEFT;
+                        return MOVEMENT.LEFT;
                     case DOWN:
-                        return DIRECTION.RIGHT;
-                    // no case RIGHT
+                        return MOVEMENT.RIGHT;
                 }
 
         }

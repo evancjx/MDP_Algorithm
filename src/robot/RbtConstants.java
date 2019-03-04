@@ -26,13 +26,15 @@ public class RbtConstants {
     }
 
     public enum MOVEMENT{
-        FORWARD, LEFT, RIGHT;
+        FORWARD, LEFT, RIGHT, BACKWARD;
         public static char getChar(MOVEMENT m){
             switch(m){
                 case FORWARD:
                     return 'F';
                 case LEFT:
                     return 'L';
+                case BACKWARD:
+                    return 'B';
                 case RIGHT:
                     return 'R';
                 default:

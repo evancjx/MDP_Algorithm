@@ -29,6 +29,7 @@ public class CommMgr {
         if (_commMgr == null) {
             _commMgr = new CommMgr();
         }
+        System.out.println(_commMgr==null);
 
         return _commMgr;
     }
@@ -53,6 +54,7 @@ public class CommMgr {
             System.out.println("setConnection() -> IO Exception");
         } catch (Exception e) {
             System.out.println("setConnection() -> Exception");
+            e.printStackTrace();
         }
         finally {
             System.out.println("failed to set connection");
@@ -93,6 +95,7 @@ public class CommMgr {
             System.out.println("sendMsg() -> IOException");
         } catch (Exception e) {
             System.out.println("sendMsg() -> Exception");
+            e.printStackTrace();
         }
 
         return false;
