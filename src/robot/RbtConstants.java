@@ -23,6 +23,19 @@ public class RbtConstants {
             return values()[(curDir.ordinal() + values().length - 1) % values().length];
         }
 
+        public static int getInt(DIRECTION direction){
+            switch(direction){
+                case UP:
+                    return 1;
+                case DOWN:
+                    return 2;
+                case LEFT:
+                    return 3;
+                default:
+                    return 4;
+            }
+        }
+
     }
 
     public enum MOVEMENT{

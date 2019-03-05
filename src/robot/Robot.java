@@ -8,7 +8,9 @@ import robot.RbtConstants.*;
 import utils.CommMgr;
 import utils.MapDescriptor;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 
 /**
  * Represents the robot moving in the arena.
@@ -169,9 +171,7 @@ public class Robot{
             LRLeft.senseReal(explored, result[4]);
             SRRight.senseReal(explored, result[5]);
 
-            String[] mapStrings = MapDescriptor.generateArenaHex(explored);
-            String message = String.format("{\"P1\":%s, \"P2\": %s }", mapStrings[0], mapStrings[1]);
-            commMgr.sendMsg(message, CommMgr.MSG_TYPE_ANDROID);
+
         }
         return result;
     }
@@ -232,6 +232,10 @@ public class Robot{
         if(realRobot){
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("movement", MOVEMENT.getChar(movement));
+            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
+            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
     }
 

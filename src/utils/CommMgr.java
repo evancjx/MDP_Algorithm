@@ -56,8 +56,10 @@ public class CommMgr {
 
         } catch (UnknownHostException e) {
             System.out.println("setConnection() -> Unknown Host Exception");
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("setConnection() -> IO Exception");
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("setConnection() -> Exception");
             e.printStackTrace();
@@ -107,6 +109,7 @@ public class CommMgr {
             return true;
         } catch (IOException e) {
             System.out.println("sendMsg() -> IOException");
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("sendMsg() -> Exception");
             e.printStackTrace();
@@ -125,8 +128,10 @@ public class CommMgr {
             }
         } catch (IOException e) {
             System.out.println("recvMsg() -> IO exception");
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("recvMsg() -> Exception");
+            e.printStackTrace();
         }
 
         return null;
