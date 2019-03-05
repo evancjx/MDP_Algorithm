@@ -83,9 +83,11 @@ public class FastestPath {
                     path = getPath(targetX, targetY);
                     printFastestPath(path);
                     robot.setRobotPos(initX, initY);
+                    robot.setDirection(DIRECTION.UP);
                     robot.setRobotFront(DIRECTION.UP);
                     ArrayList<MOVEMENT> movements = getPathMovements(path, robot, targetX, targetY);
                     robot.setRobotPos(initX, initY);
+                    robot.setDirection(DIRECTION.UP);
                     robot.setRobotFront(DIRECTION.UP);
                     return movements;
                 }

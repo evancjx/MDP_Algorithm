@@ -70,6 +70,23 @@ public class Robot{
     public int getPosX(){ return this.posX; }
     public int getPosY(){ return this.posY; }
     public DIRECTION getDirection(){ return this.direction; }
+    public void setDirection(DIRECTION direction) {
+        if(realRobot){
+            switch (direction){
+                case LEFT:
+                    move(MOVEMENT.RIGHT);
+                    break;
+                case RIGHT:
+                    move(MOVEMENT.LEFT);
+                    break;
+                default:
+                    return;
+            }
+        }
+        else {
+            this.direction = direction;
+        }
+    }
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
     public int getSpeed(){ return this.speed; }

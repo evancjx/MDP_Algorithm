@@ -45,37 +45,37 @@ public class Simulator {
     private static boolean  pressedFastest = false;
 
     public static void main(String[] args){
-//        CommMgr commMgr = CommMgr.getCommMgr();
-//        commMgr.setConnection(10);
-//        Scanner sc = new Scanner(System.in);
-//        while(true){
-//            System.out.println("enter your command:");
-//            System.out.println("1.forward");
-//            System.out.println("2.left");
-//            System.out.println("3.right");
-//            System.out.println("4.receive");
-//            int input = sc.nextInt();
-//            if(input == 1){
-//                commMgr.sendMsg("F",CommMgr.MSG_TYPE_ARDUINO);
-//            }
-//            else if(input==2){
-//                commMgr.sendMsg("L", CommMgr.MSG_TYPE_ARDUINO);
-//            }
-//            else if(input==3){
-//                commMgr.sendMsg("R", CommMgr.MSG_TYPE_ARDUINO);
-//            }
-//            else{
-//                System.out.println(commMgr.recvMsg());
-//            }
-//        }
+        CommMgr commMgr = CommMgr.getCommMgr();
+        commMgr.setConnection(100);
+        Scanner sc = new Scanner(System.in);
+        while(true){
+            System.out.println("enter your command:");
+            System.out.println("1.forward");
+            System.out.println("2.left");
+            System.out.println("3.right");
+            System.out.println("4.receive");
+            int input = sc.nextInt();
+            if(input == 1){
+                commMgr.sendMsg("F",CommMgr.MSG_TYPE_ARDUINO);
+            }
+            else if(input==2){
+                commMgr.sendMsg("L", CommMgr.MSG_TYPE_ARDUINO);
+            }
+            else if(input==3){
+                commMgr.sendMsg("R", CommMgr.MSG_TYPE_ARDUINO);
+            }
+            else{
+                System.out.println(commMgr.recvMsg());
+            }
+        }
 //        String tmp = null;
 //        while(tmp == null){
 //            tmp = CommMgr.getCommMgr().recvMsg();
 //        }
 //        JSONObject startParameters = new JSONObject(tmp);
 //        int[] array = (int[])startParameters.get("robotPosition");
-//        int posX = array[0];
-//        int posY = array[1];
+//        wayPointX = array[0];
+//        wayPointY = array[1];
 //        int directionNum = array[2];
 //        DIRECTION direction;
 //        switch(directionNum){
@@ -93,8 +93,8 @@ public class Simulator {
 //            default:
 //                direction = DIRECTION.RIGHT;
 //        }
-        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, false);
-        createDisplay();
+//        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, false);
+//        createDisplay();
     }
 
     public static void refresh(){
@@ -144,6 +144,7 @@ public class Simulator {
                 FastestPath fastestPath = new FastestPath(explored);
                 if (fPathWayPoint != null && pressedFastest){
                     fastestPath.executeMovements(fPathWayPoint, robot);
+                    robot.setDirection(DIRECTION.UP);
                 }
                 if (fPathGoal != null && pressedFastest){
                     System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
