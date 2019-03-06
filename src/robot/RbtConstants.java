@@ -9,8 +9,8 @@ public class RbtConstants {
         X_OFFSET = 10, Y_OFFSET = 20,
         FRONT_SIZE = 10, SPEED = 50,
         FRONT_X_OFFSET = ArenaConstants.X_OFFSET + 10, FRONT_Y_OFFSET = 10,
-        SEN_SHORT_L = 1, SEN_SHORT_U = 2,
-        SEN_LONG_L = 3, SEN_LONG_U = 4;
+        SEN_SHORT_L = 1, SEN_SHORT_U = 3,
+        SEN_LONG_L = 4, SEN_LONG_U = 6;
 
     public enum DIRECTION{
         UP, LEFT, DOWN, RIGHT;
@@ -39,7 +39,7 @@ public class RbtConstants {
     }
 
     public enum MOVEMENT{
-        FORWARD, LEFT, RIGHT, BACKWARD;
+        FORWARD, LEFT, RIGHT, BACKWARD, CALIBRATE;
         public static char getChar(MOVEMENT m){
             switch(m){
                 case FORWARD:
@@ -50,6 +50,8 @@ public class RbtConstants {
                     return 'B';
                 case RIGHT:
                     return 'R';
+                case CALIBRATE:
+                    return 'C';
                 default:
                     return 'E';
             }

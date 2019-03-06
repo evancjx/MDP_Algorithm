@@ -3,23 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="d9367c61-71e4-4178-b497-9e96d0c8331b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Explore.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Explore.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Fastest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Fastest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$6.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithms/FastestPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/FastestPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithms/Exploration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/Exploration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/robot/RbtConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/RbtConstants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/robot/Sensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/Sensor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/simulator/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/simulator/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/CommMgr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/CommMgr.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,13 +19,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-493">
-              <caret line="53" column="41" lean-forward="true" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
+            <state relative-caret-position="3060">
+              <caret line="181" column="31" selection-start-line="181" selection-start-column="31" selection-end-line="181" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3166#3167#0" expanded="true" />
+                <element signature="e#3200#3201#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -45,8 +36,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="682">
-              <caret line="33" column="16" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
+            <state relative-caret-position="264">
+              <caret line="12" column="37" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -54,11 +45,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/CommMgr.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2860">
-              <caret line="133" column="31" selection-start-line="133" selection-start-column="31" selection-end-line="133" selection-end-column="31" />
+            <state relative-caret-position="460">
+              <caret line="105" column="34" selection-start-line="105" selection-start-column="34" selection-end-line="105" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1551672918382" expanded="true" signature="2666:2746" ph="..." />
+                <element signature="e#4356#4357#0" expanded="true" />
+                <marker date="1551843856505" expanded="true" signature="2640:2720" ph="..." />
               </folding>
             </state>
           </provider>
@@ -67,8 +59,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/arena/Arena.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="104" column="16" selection-start-line="104" selection-start-column="16" selection-end-line="104" selection-end-column="16" />
+            <state relative-caret-position="2266">
+              <caret line="107" column="39" selection-start-line="107" selection-start-column="39" selection-end-line="107" selection-end-column="39" />
               <folding>
                 <element signature="e#4749#4750#0" expanded="true" />
                 <element signature="e#4796#4797#0" expanded="true" />
@@ -80,8 +72,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/robot/Robot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="109">
-              <caret line="84" column="8" selection-start-line="84" selection-start-column="8" selection-end-line="84" selection-end-column="8" />
+            <state relative-caret-position="-23">
+              <caret line="161" column="22" selection-start-line="161" selection-start-column="17" selection-end-line="161" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3718#3719#0" expanded="true" />
@@ -96,15 +88,6 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4092">
-              <caret line="193" column="57" selection-start-line="193" selection-start-column="57" selection-end-line="193" selection-end-column="57" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/arena/CellConstants.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="44">
@@ -114,19 +97,28 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration_Improved.java">
+        <entry file="file://$PROJECT_DIR$/src/arena/ArenaConstants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2112">
-              <caret line="104" column="66" selection-start-line="104" selection-start-column="66" selection-end-line="104" selection-end-column="66" />
+            <state relative-caret-position="44">
+              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="194">
+              <caret line="35" selection-start-line="35" selection-end-line="35" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/algorithms/FastestPath.java">
+        <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration_Improved.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="86" column="50" selection-start-line="86" selection-start-column="50" selection-end-line="86" selection-end-column="50" />
+            <state relative-caret-position="1814">
+              <caret line="132" column="28" selection-start-line="132" selection-start-column="28" selection-end-line="132" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -134,8 +126,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/robot/Sensor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2134">
-              <caret line="98" column="46" selection-start-line="98" selection-start-column="46" selection-end-line="98" selection-end-column="46" />
+            <state relative-caret-position="-483">
+              <caret line="27" column="15" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -152,7 +144,6 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>config</find>
-      <find>sense</find>
       <find>wayPoint</find>
       <find>senseReal</find>
       <find>getTargetDIr</find>
@@ -166,6 +157,11 @@
       <find>get</find>
       <find>Robot</find>
       <find>setRobot</find>
+      <find>rePatin</find>
+      <find>senseSurround</find>
+      <find>setSen</find>
+      <find>sense</find>
+      <find>explore</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -174,19 +170,20 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/robot/Sensor.java" />
         <option value="$PROJECT_DIR$/src/algorithms/Exploration_Improved.java" />
-        <option value="$PROJECT_DIR$/src/algorithms/Exploration.java" />
-        <option value="$PROJECT_DIR$/src/utils/CommMgr.java" />
-        <option value="$PROJECT_DIR$/src/robot/RbtConstants.java" />
         <option value="$PROJECT_DIR$/src/algorithms/FastestPath.java" />
+        <option value="$PROJECT_DIR$/src/robot/Sensor.java" />
+        <option value="$PROJECT_DIR$/src/robot/RbtConstants.java" />
         <option value="$PROJECT_DIR$/src/robot/Robot.java" />
         <option value="$PROJECT_DIR$/src/simulator/Simulator.java" />
+        <option value="$PROJECT_DIR$/src/algorithms/Exploration.java" />
+        <option value="$PROJECT_DIR$/src/utils/CommMgr.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="23" />
+    <option name="x" value="-207" />
+    <option name="y" value="27" />
     <option name="width" value="1440" />
     <option name="height" value="877" />
   </component>
@@ -214,6 +211,12 @@
               <item name="MDP_Algorithm" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="algorithms" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MDP_Algorithm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MDP_Algorithm" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="arena" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="MDP_Algorithm" type="b2602c69:ProjectViewProjectNode" />
@@ -250,7 +253,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551768675508" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551843913578" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Modules" />
@@ -306,18 +309,17 @@
       <workItem from="1551591753389" duration="5027000" />
       <workItem from="1551663211525" duration="2396000" />
       <workItem from="1551669851938" duration="7108000" />
-      <workItem from="1551749920147" duration="8234000" />
+      <workItem from="1551749920147" duration="17946000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38526000" />
+    <option name="totallyTimeSpent" value="48238000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19957082" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19957082" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -389,28 +391,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
+    <entry file="file://$PROJECT_DIR$/src/algorithms/FastestPath.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="33" column="16" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
+        <state relative-caret-position="187">
+          <caret line="86" column="50" selection-start-line="86" selection-start-column="50" selection-end-line="86" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/CommMgr.java">
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/src.zip!/java/awt/Component.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2860">
-          <caret line="133" column="31" selection-start-line="133" selection-start-column="31" selection-end-line="133" selection-end-column="31" />
+        <state relative-caret-position="296">
+          <caret line="3309" column="16" selection-start-line="3309" selection-start-column="16" selection-end-line="3309" selection-end-column="16" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <marker date="1551672918382" expanded="true" signature="2666:2746" ph="..." />
+            <element signature="e#114480#114481#0" expanded="true" />
+            <element signature="e#114527#114528#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration.java">
+    <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration_Improved.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4092">
-          <caret line="193" column="57" selection-start-line="193" selection-start-column="57" selection-end-line="193" selection-end-column="57" />
+        <state relative-caret-position="1814">
+          <caret line="132" column="28" selection-start-line="132" selection-start-column="28" selection-end-line="132" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/arena/Arena.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2266">
+          <caret line="107" column="39" selection-start-line="107" selection-start-column="39" selection-end-line="107" selection-end-column="39" />
+          <folding>
+            <element signature="e#4749#4750#0" expanded="true" />
+            <element signature="e#4796#4797#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -421,42 +434,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration_Improved.java">
+    <entry file="file://$PROJECT_DIR$/src/arena/ArenaConstants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2112">
-          <caret line="104" column="66" selection-start-line="104" selection-start-column="66" selection-end-line="104" selection-end-column="66" />
+        <state relative-caret-position="44">
+          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="12" column="37" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/robot/Sensor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2134">
-          <caret line="98" column="46" selection-start-line="98" selection-start-column="46" selection-end-line="98" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/arena/Arena.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="104" column="16" selection-start-line="104" selection-start-column="16" selection-end-line="104" selection-end-column="16" />
-          <folding>
-            <element signature="e#4749#4750#0" expanded="true" />
-            <element signature="e#4796#4797#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/algorithms/FastestPath.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="86" column="50" selection-start-line="86" selection-start-column="50" selection-end-line="86" selection-end-column="50" />
+        <state relative-caret-position="-483">
+          <caret line="27" column="15" selection-start-line="27" selection-start-column="15" selection-end-line="27" selection-end-column="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/robot/Robot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="109">
-          <caret line="84" column="8" selection-start-line="84" selection-start-column="8" selection-end-line="84" selection-end-column="8" />
+        <state relative-caret-position="-23">
+          <caret line="161" column="22" selection-start-line="161" selection-start-column="17" selection-end-line="161" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3718#3719#0" expanded="true" />
@@ -471,11 +473,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-493">
-          <caret line="53" column="41" lean-forward="true" selection-start-line="53" selection-start-column="41" selection-end-line="53" selection-end-column="41" />
+        <state relative-caret-position="3060">
+          <caret line="181" column="31" selection-start-line="181" selection-start-column="31" selection-end-line="181" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3166#3167#0" expanded="true" />
+            <element signature="e#3200#3201#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/CommMgr.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="105" column="34" selection-start-line="105" selection-start-column="34" selection-end-line="105" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4356#4357#0" expanded="true" />
+            <marker date="1551843856505" expanded="true" signature="2640:2720" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
         </state>
       </provider>
     </entry>

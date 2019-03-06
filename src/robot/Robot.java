@@ -180,6 +180,11 @@ public class Robot{
             result[3] = Integer.parseInt(sensorValues[3]);
             result[4] = Integer.parseInt(sensorValues[4]);
             result[5] = Integer.parseInt(sensorValues[5]);
+            for(int i : result){
+                i = (i+5) / 10;
+            }
+            System.out.println("========================>");
+            System.out.println(Arrays.toString(result));
 
             SRFrontLeft.senseReal(explored, result[0]);
             SRFrontCenter.senseReal(explored, result[1]);
@@ -204,6 +209,7 @@ public class Robot{
             } catch (InterruptedException e) {
                 System.out.println("Something went wrong in Robot.move()!");
             }
+
         }
         switch (movement){
             case FORWARD: //Forward

@@ -35,13 +35,13 @@ public class CommMgr {
         return _commMgr;
     }
 
-    public boolean setConnection(int timeoutInMs) {
+    public boolean setConnection() {
 
         try {
 
             _conn = new Socket();
-            _conn.connect(new InetSocketAddress(HOST, PORT), timeoutInMs);
-            _conn.setSoTimeout(timeoutInMs);
+            _conn.connect(new InetSocketAddress(HOST, PORT));
+//            _conn.setSoTimeout(timeoutInMs);
 
             _bos = new BufferedOutputStream(_conn.getOutputStream());
             _osw = new OutputStreamWriter(_bos, "US-ASCII");
@@ -103,7 +103,7 @@ public class CommMgr {
 
             System.out.println("Sending out msg: " + outputMsg);
             if(_osw==null) _osw = new OutputStreamWriter(_bos, "US-ASCII");
-            _osw.write(outputMsg); // Something requested by rpi to denote end of msg (ability to tokenise msg)
+            _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to tokenise msg)
             _osw.flush();
 
             return true;
@@ -120,11 +120,13 @@ public class CommMgr {
 
     public String recvMsg() {
         try {
-            String inputMsg = _br.readLine();
-            if (inputMsg != null && inputMsg.length() > 0) {
+            for(int i = 0; i<10; ++i){
+                String inputMsg = _br.readLine();
+                if (inputMsg != null && inputMsg.length() > 0) {
                 // Fox debug - print out received msg
-                System.out.println(inputMsg);
-                return inputMsg;
+                    System.out.println("Message received: " + inputMsg);
+                    return inputMsg;
+                }
             }
         } catch (IOException e) {
             System.out.println("recvMsg() -> IO exception");

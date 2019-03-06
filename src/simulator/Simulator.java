@@ -45,29 +45,29 @@ public class Simulator {
     private static boolean  pressedFastest = false;
 
     public static void main(String[] args){
-        CommMgr commMgr = CommMgr.getCommMgr();
-        commMgr.setConnection(100);
-        Scanner sc = new Scanner(System.in);
-        while(true){
-            System.out.println("enter your command:");
-            System.out.println("1.forward");
-            System.out.println("2.left");
-            System.out.println("3.right");
-            System.out.println("4.receive");
-            int input = sc.nextInt();
-            if(input == 1){
-                commMgr.sendMsg("F",CommMgr.MSG_TYPE_ARDUINO);
-            }
-            else if(input==2){
-                commMgr.sendMsg("L", CommMgr.MSG_TYPE_ARDUINO);
-            }
-            else if(input==3){
-                commMgr.sendMsg("R", CommMgr.MSG_TYPE_ARDUINO);
-            }
-            else{
-                System.out.println(commMgr.recvMsg());
-            }
-        }
+//        CommMgr commMgr = CommMgr.getCommMgr();
+//        commMgr.setConnection(100);
+//        Scanner sc = new Scanner(System.in);
+//        while(true){
+//            System.out.println("enter your command:");
+//            System.out.println("1.forward");
+//            System.out.println("2.left");
+//            System.out.println("3.right");
+//            System.out.println("4.receive");
+//            int input = sc.nextInt();
+//            if(input == 1){
+//                commMgr.sendMsg("F",CommMgr.MSG_TYPE_ARDUINO);
+//            }
+//            else if(input==2){
+//                commMgr.sendMsg("L", CommMgr.MSG_TYPE_ARDUINO);
+//            }
+//            else if(input==3){
+//                commMgr.sendMsg("R", CommMgr.MSG_TYPE_ARDUINO);
+//            }
+//            else{
+//                commMgr.recvMsg();
+//            }
+//        }
 //        String tmp = null;
 //        while(tmp == null){
 //            tmp = CommMgr.getCommMgr().recvMsg();
@@ -93,8 +93,10 @@ public class Simulator {
 //            default:
 //                direction = DIRECTION.RIGHT;
 //        }
-//        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, false);
-//        createDisplay();
+        CommMgr commMgr = CommMgr.getCommMgr();
+        commMgr.setConnection();
+        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, true);
+        createDisplay();
     }
 
     public static void refresh(){
