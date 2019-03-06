@@ -99,7 +99,7 @@ public class Sensor {
             int row = this.posX + (rowInc * i);
             int col = this.posY + (colInc * i);
 
-            if (!exploredMap.checkValidCoord(row, col)) continue;
+            if (!exploredMap.checkValidCoord(row, col)) break;
 
             exploredMap.getCell(row, col).setIsExplored(true);
 

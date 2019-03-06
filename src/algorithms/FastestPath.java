@@ -83,9 +83,11 @@ public class FastestPath {
                     path = getPath(targetX, targetY);
                     printFastestPath(path);
                     robot.setRobotPos(initX, initY);
+                    robot.setDirection(DIRECTION.UP);
                     robot.setRobotFront(DIRECTION.UP);
                     ArrayList<MOVEMENT> movements = getPathMovements(path, robot, targetX, targetY);
                     robot.setRobotPos(initX, initY);
+                    robot.setDirection(DIRECTION.UP);
                     robot.setRobotFront(DIRECTION.UP);
                     return movements;
                 }
@@ -117,14 +119,14 @@ public class FastestPath {
 
                         if (!openList.contains(cell)){
                             parents.put(cell, curCell);
-                            gCost[cell.posY()][cell.posX()] = gCost[curCell.posY()][curCell.posX()] + costG(curCell, cell, curDir);
+                            gCost[cell.posY()-1][cell.posX()-1] = gCost[curCell.posY()-1][curCell.posX()-1] + costG(curCell, cell, curDir);
                             openList.add(cell);
                         }
                         else {
-                            currentG = gCost[cell.posY()][cell.posX()];
-                            newG = gCost[curCell.posY()][curCell.posX()] + costG(curCell, cell, curDir);
+                            currentG = gCost[cell.posY()-1][cell.posX()-1];
+                            newG = gCost[curCell.posY()-1][curCell.posX()-1] + costG(curCell, cell, curDir);
                             if( newG < currentG){
-                                gCost[cell.posY()][cell.posX()] = newG;
+                                gCost[cell.posY()-1][cell.posX()-1] = newG;
                                 parents.put(cell, curCell);
                             }
                         }

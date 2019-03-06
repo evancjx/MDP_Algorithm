@@ -8,7 +8,9 @@ import robot.RbtConstants.*;
 import utils.CommMgr;
 import utils.MapDescriptor;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import org.json.JSONObject;
 
 /**
  * Represents the robot moving in the arena.
@@ -68,6 +70,23 @@ public class Robot{
     public int getPosX(){ return this.posX; }
     public int getPosY(){ return this.posY; }
     public DIRECTION getDirection(){ return this.direction; }
+    public void setDirection(DIRECTION direction) {
+        if(realRobot){
+            switch (direction){
+                case LEFT:
+                    move(MOVEMENT.RIGHT);
+                    break;
+                case RIGHT:
+                    move(MOVEMENT.LEFT);
+                    break;
+                default:
+                    return;
+            }
+        }
+        else {
+            this.direction = direction;
+        }
+    }
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
     public int getSpeed(){ return this.speed; }
@@ -161,6 +180,11 @@ public class Robot{
             result[3] = Integer.parseInt(sensorValues[3]);
             result[4] = Integer.parseInt(sensorValues[4]);
             result[5] = Integer.parseInt(sensorValues[5]);
+            for(int i : result){
+                i = (i+5) / 10;
+            }
+            System.out.println("========================>");
+            System.out.println(Arrays.toString(result));
 
             SRFrontLeft.senseReal(explored, result[0]);
             SRFrontCenter.senseReal(explored, result[1]);
@@ -169,9 +193,7 @@ public class Robot{
             LRLeft.senseReal(explored, result[4]);
             SRRight.senseReal(explored, result[5]);
 
-            String[] mapStrings = MapDescriptor.generateArenaHex(explored);
-            String message = String.format("{\"P1\":%s, \"P2\": %s }", mapStrings[0], mapStrings[1]);
-            commMgr.sendMsg(message, CommMgr.MSG_TYPE_ANDROID);
+
         }
         return result;
     }
@@ -187,6 +209,7 @@ public class Robot{
             } catch (InterruptedException e) {
                 System.out.println("Something went wrong in Robot.move()!");
             }
+
         }
         switch (movement){
             case FORWARD: //Forward
@@ -232,6 +255,10 @@ public class Robot{
         if(realRobot){
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("movement", MOVEMENT.getChar(movement));
+            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
+            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
     }
 

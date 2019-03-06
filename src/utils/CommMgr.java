@@ -1,6 +1,7 @@
 package utils;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -18,8 +19,9 @@ public class CommMgr {
 
     private static Socket _conn = null;
 
-    private BufferedReader reader;
-    private BufferedWriter writer;
+    private static BufferedOutputStream _bos = null;
+    private static OutputStreamWriter _osw = null;
+    private static BufferedReader _br = null;
 
 
     //Singleton class is used. Only one CommMgr is present at any time
@@ -29,7 +31,6 @@ public class CommMgr {
         if (_commMgr == null) {
             _commMgr = new CommMgr();
         }
-        System.out.println(_commMgr==null);
 
         return _commMgr;
     }
@@ -38,10 +39,15 @@ public class CommMgr {
 
         try {
 
-            _conn = new Socket(HOST, PORT);
+            _conn = new Socket();
+            _conn.connect(new InetSocketAddress(HOST, PORT));
+//            _conn.setSoTimeout(timeoutInMs);
 
-            writer = new BufferedWriter(new OutputStreamWriter(new BufferedOutputStream(_conn.getOutputStream())));
-            reader = new BufferedReader(new InputStreamReader(_conn.getInputStream()));
+            _bos = new BufferedOutputStream(_conn.getOutputStream());
+            _osw = new OutputStreamWriter(_bos, "US-ASCII");
+            _br = new BufferedReader(new InputStreamReader(
+                    _conn.getInputStream()));
+
 
             // Successful connection, return true
             System.out.println("setConnection() -> Connection established successfully!");
@@ -50,14 +56,13 @@ public class CommMgr {
 
         } catch (UnknownHostException e) {
             System.out.println("setConnection() -> Unknown Host Exception");
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("setConnection() -> IO Exception");
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("setConnection() -> Exception");
             e.printStackTrace();
-        }
-        finally {
-            System.out.println("failed to set connection");
         }
 
         return false;
@@ -65,11 +70,19 @@ public class CommMgr {
 
     public void closeConnection() {
         try {
-            reader.close();
-            writer.close();
+            if (_bos != null) {
+            _bos.close();
+            }
+            if (_osw != null) {
+            _osw.close();
+            }
+            if (_br != null) {
+            _br.close();
+            }
+
             if (_conn != null) {
-                _conn.close();
-                _conn = null;
+            _conn.close();
+            _conn = null;
             }
             System.out.println("connection closed successfully");
         } catch (IOException e) {
@@ -87,12 +100,16 @@ public class CommMgr {
     public boolean sendMsg(String msg, String msgType) {
         try {
             String outputMsg = msgType + msg;
+
             System.out.println("Sending out msg: " + outputMsg);
-            writer.write(outputMsg);
-            writer.flush();
+            if(_osw==null) _osw = new OutputStreamWriter(_bos, "US-ASCII");
+            _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to tokenise msg)
+            _osw.flush();
+
             return true;
         } catch (IOException e) {
             System.out.println("sendMsg() -> IOException");
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("sendMsg() -> Exception");
             e.printStackTrace();
@@ -103,16 +120,20 @@ public class CommMgr {
 
     public String recvMsg() {
         try {
-            String inputMsg = reader.readLine();
-            if (inputMsg != null && inputMsg.length() > 0) {
+            for(int i = 0; i<10; ++i){
+                String inputMsg = _br.readLine();
+                if (inputMsg != null && inputMsg.length() > 0) {
                 // Fox debug - print out received msg
-                System.out.println("Received message is " + inputMsg);
-                return inputMsg;
+                    System.out.println("Message received: " + inputMsg);
+                    return inputMsg;
+                }
             }
         } catch (IOException e) {
             System.out.println("recvMsg() -> IO exception");
+            e.printStackTrace();
         } catch (Exception e) {
             System.out.println("recvMsg() -> Exception");
+            e.printStackTrace();
         }
 
         return null;

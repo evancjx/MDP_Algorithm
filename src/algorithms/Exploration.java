@@ -6,6 +6,7 @@ import arena.Cell;
 import robot.RbtConstants.*;
 import robot.Robot;
 import simulator.Simulator;
+import utils.CommMgr;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,19 @@ public class Exploration {
         System.out.println("Starting exploration...");
         startTime = System.currentTimeMillis();
         endTime = startTime + (timeLimit* 1000);
+        System.out.println("Doing calibration");
+        CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
+        while(true){
+            System.out.println("calibration not done yet!");
+            if(CommMgr.getCommMgr().recvMsg().equals("Done")){
+                break;
+            }
+        }
+        System.out.println("done with calibration");
+        System.out.println("senseSurrounding");
+        CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();
+        System.out.println("done senseSurrounding");
         loopRun(robot.getPosX(), robot.getPosY());
     }
 
