@@ -176,6 +176,7 @@ public class Simulator {
             protected Integer doInBackground() throws Exception{
                 robot.setRobotPos(RbtConstants.START_X, RbtConstants.START_Y);
                 robot.setRobotSpeed(robotSpeed);
+                robot.setSenors();
                 explored.repaint();
 
                 Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);

@@ -57,7 +57,7 @@ public class Robot{
         SRFrontCenter = new Sensor(this.posX, this.posY + 1, this.direction,
             "SRFC", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         SRFrontRight = new Sensor(this.posX + 1, this.posY + 1, this.direction,
-            "SRFC", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
+            "SRFR", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         SRLeft = new Sensor(this.posX - 1, this.posY + 1, DIRECTION.LEFT,
             "SRL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         LRLeft = new Sensor(this.posX - 1, this.posY, DIRECTION.LEFT,
@@ -174,26 +174,24 @@ public class Robot{
             CommMgr commMgr = CommMgr.getCommMgr();
             String msg = commMgr.recvMsg();
             String[] sensorValues = msg.split(":");
-            result[0] = Integer.parseInt(sensorValues[0]);
-            result[1] = Integer.parseInt(sensorValues[1]);
-            result[2] = Integer.parseInt(sensorValues[2]);
-            result[3] = Integer.parseInt(sensorValues[3]);
-            result[4] = Integer.parseInt(sensorValues[4]);
-            result[5] = Integer.parseInt(sensorValues[5]);
-            for(int i : result){
-                i = (i+5) / 10;
+            for(int i = 0; i<6; ++i){
+                result[i] = (Integer.parseInt(sensorValues[i])+5)/10;
             }
             System.out.println("========================>");
             System.out.println(Arrays.toString(result));
-
-            SRFrontLeft.senseReal(explored, result[0]);
-            SRFrontCenter.senseReal(explored, result[1]);
+            SRFrontCenter.senseReal(explored, result[0]);
+            System.out.println("SRFrontCenter is " + SRFrontCenter.getPosX()+","+SRFrontCenter.getPosY());
+            SRFrontLeft.senseReal(explored, result[1]);
+            System.out.println("SRFrontLeft is " + SRFrontLeft.getPosX()+","+SRFrontCenter.getPosY());
             SRFrontRight.senseReal(explored, result[2]);
-            SRLeft.senseReal(explored, result[3]);
-            LRLeft.senseReal(explored, result[4]);
-            SRRight.senseReal(explored, result[5]);
-
-
+            System.out.println("SRFrontRight is " + SRFrontRight.getPosX()+","+SRFrontCenter.getPosY());
+            SRRight.senseReal(explored, result[3]);
+            System.out.println("SRRight is " + SRRight.getPosX()+","+SRFrontCenter.getPosY());
+            SRLeft.senseReal(explored, result[4]);
+            System.out.println("SRLeft is " + SRLeft.getPosX()+","+SRFrontCenter.getPosY());
+            LRLeft.senseReal(explored, result[5]);
+            System.out.println("LRLeft is " + LRLeft.getPosX()+","+SRFrontCenter.getPosY());
+            System.out.println("<========================");
         }
         return result;
     }
@@ -250,13 +248,14 @@ public class Robot{
                 break;
         }
         this.setRobotFront(this.direction);
+        this.setSenors();
 
         crossGoal();
         if(realRobot){
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("movement", MOVEMENT.getChar(movement));
+            jsonObject.put("movement", Character.toString(MOVEMENT.getChar(movement)));
             jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
             commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }

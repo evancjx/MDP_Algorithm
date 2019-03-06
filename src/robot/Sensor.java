@@ -68,55 +68,63 @@ public class Sensor {
     public void senseReal(Arena exploredMap, int sensorVal){
         switch (direction) {
             case UP:
-                processSensorVal(exploredMap, sensorVal, 1, 0);
-                break;
-            case RIGHT:
                 processSensorVal(exploredMap, sensorVal, 0, 1);
                 break;
+            case RIGHT:
+                processSensorVal(exploredMap, sensorVal, 1, 0);
+                break;
             case DOWN:
-                processSensorVal(exploredMap, sensorVal, -1, 0);
+                processSensorVal(exploredMap, sensorVal, 0, -1);
                 break;
             case LEFT:
-                processSensorVal(exploredMap, sensorVal, 0, -1);
+                processSensorVal(exploredMap, sensorVal, -1, 0);
                 break;
         }
     }
 
-    private void processSensorVal(Arena exploredMap, int sensorVal, int rowInc, int colInc) {
+    private void processSensorVal(Arena exploredMap, int sensorVal, int incX, int incY) {
         if (sensorVal == 0) return;  // return value for LR sensor if obstacle before lowerRange
 
         // If above fails, check if starting point is valid for sensors with lowerRange > 1.
         for (int i = 1; i < this.lowerLimit; i++) {
-            int row = this.posX + (rowInc * i);
-            int col = this.posY + (colInc * i);
+            int x = this.posX + (incX * i);
+            int y = this.posY + (incY * i);
 
-            if (!exploredMap.checkValidCoord(row, col)) return;
-            if (exploredMap.getCell(row, col).getIsObstacle()) return;
+            if (!exploredMap.checkValidCoord(x, y)) return;
+            if (exploredMap.getCell(x, y).getIsObstacle()) return;
         }
 
         // Update map according to sensor's value.
         for (int i = this.lowerLimit; i <= this.upperLimit; i++) {
-            int row = this.posX + (rowInc * i);
-            int col = this.posY + (colInc * i);
+            int x = this.posY + (incX * i);
+            int y = this.posX + (incY * i);
 
-            if (!exploredMap.checkValidCoord(row, col)) break;
+            if (!exploredMap.checkValidCoord(x, y)) break;
 
-            exploredMap.getCell(row, col).setIsExplored(true);
+            exploredMap.getCell(x, y).setIsExplored(true);
 
             if (sensorVal == i) {
-                exploredMap.setObstacle(row, col, true);
+                exploredMap.setObstacle(x, y, true);
                 break;
             }
 
             // Override previous obstacle value if front sensors detect no obstacle.
-            if (exploredMap.getCell(row, col).getIsObstacle()) {
+            if (exploredMap.getCell(x, y).getIsObstacle()) {
                 if (id.equals("SRFL") || id.equals("SRFC") || id.equals("SRFR")) {
-                    exploredMap.setObstacle(row, col, false);
+                    exploredMap.setObstacle(x, y, false);
                 } else {
                     break;
                 }
             }
         }
+    }
+
+    public int getPosX(){
+        return posX;
+    }
+
+    public int getPosY(){
+        return posY;
     }
 
 
