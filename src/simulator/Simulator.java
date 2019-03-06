@@ -4,8 +4,6 @@ import algorithms.Exploration;
 import algorithms.FastestPath;
 import arena.Arena;
 import arena.ArenaConstants;
-import arena.Cell;
-import org.json.JSONObject;
 import robot.Robot;
 import robot.RbtConstants;
 import robot.RbtConstants.DIRECTION;
@@ -16,9 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.nio.file.DirectoryIteratorException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import javax.swing.*;
 
 import static utils.MapDescriptor.generateArenaHex;
@@ -42,7 +38,9 @@ public class Simulator {
     private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint;
     private static ArrayList<RbtConstants.MOVEMENT> fPathGoal;
 
-    private static boolean  pressedFastest = false;
+    private static boolean pressedFastest = false;
+
+    private static boolean realRun = true;
 
     public static void main(String[] args){
 //        CommMgr commMgr = CommMgr.getCommMgr();
@@ -93,9 +91,11 @@ public class Simulator {
 //            default:
 //                direction = DIRECTION.RIGHT;
 //        }
-        CommMgr commMgr = CommMgr.getCommMgr();
-        commMgr.setConnection();
-        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, true);
+        if(realRun){
+            CommMgr commMgr = CommMgr.getCommMgr();
+            commMgr.setConnection();
+        }
+        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, realRun);
         createDisplay();
     }
 
@@ -178,7 +178,7 @@ public class Simulator {
                 robot.setRobotSpeed(robotSpeed);
                 explored.repaint();
 
-                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit);
+                Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit, realRun);
                 exploration.execute();
 
                 generateArenaHex(arena);

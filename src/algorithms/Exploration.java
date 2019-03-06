@@ -8,6 +8,7 @@ import robot.Robot;
 import simulator.Simulator;
 import utils.CommMgr;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Exploration {
@@ -15,32 +16,36 @@ public class Exploration {
     private final Robot robot;
     private final int coverageLimit, timeLimit;
     private long startTime, endTime;
+    private boolean realRun;
 
-    public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit){
+    public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit, boolean realRun){
         this.explored = explored;
         this.arena = arena;
         this.robot = robot;
         this.coverageLimit = coverageLimit;
         this.timeLimit = timeLimit;
+        this.realRun = realRun;
     }
 
     public void execute(){
         System.out.println("Starting exploration...");
         startTime = System.currentTimeMillis();
         endTime = startTime + (timeLimit* 1000);
-        System.out.println("Doing calibration");
-        CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
-        while(true){
+        if(realRun){
+            System.out.println("Doing calibration");
+            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
             System.out.println("calibration not done yet!");
-            if(CommMgr.getCommMgr().recvMsg().equals("Done")){
-                break;
+            while(true){
+                if(CommMgr.getCommMgr().recvMsg().equals("Done")){
+                    break;
+                }
             }
+            System.out.println("done with calibration");
         }
-        System.out.println("done with calibration");
-        System.out.println("senseSurrounding");
+
         CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();
-        System.out.println("done senseSurrounding");
+        System.out.println("done sense Surrounding");
         loopRun(robot.getPosX(), robot.getPosY());
     }
 
@@ -75,6 +80,12 @@ public class Exploration {
         } while (areaExplored <= coverageLimit && System.currentTimeMillis() <= endTime);
 
         goBackStart();
+
+        System.out.println("Exploration complete!");
+        areaExplored = calculateAreaExplored();
+        System.out.printf("%.2f%% Coverage", (areaExplored / 300.0) * 100.0);
+        System.out.println(", " + areaExplored + " Cells");
+        System.out.println((System.currentTimeMillis() - startTime) / 1000 + " Seconds");
 
 
         System.out.println("Finish exploration");
@@ -203,15 +214,15 @@ public class Exploration {
     }
 
     private void goBackStart(){
+        if(!robot.getHasCrossGoal()){
+            FastestPath goToGoal = new FastestPath(explored);
+            ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
+            goToGoal.executeMovements(movements, robot);
+        }
+
         FastestPath returnToStart = new FastestPath(explored);
         ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
         returnToStart.executeMovements(movements, robot);
-
-        System.out.println("Exploration complete!");
-        int areaExplored = calculateAreaExplored();
-        System.out.printf("%.2f%% Coverage", (areaExplored / 300.0) * 100.0);
-        System.out.println(", " + areaExplored + " Cells");
-        System.out.println((System.currentTimeMillis() - startTime) / 1000 + " Seconds");
 
         turnToDirection(DIRECTION.UP); //return to UP ward direction
     }
