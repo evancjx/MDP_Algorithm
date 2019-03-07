@@ -32,6 +32,21 @@ public class RbtConstants {
             }
         }
 
+        public static DIRECTION getDirection(int d){
+            switch(d){
+                case 1:
+                    return UP;
+                case 2:
+                    return DOWN;
+                case 3:
+                    return LEFT;
+                case 4:
+                    return RIGHT;
+                default:
+                    return UP;
+            }
+        }
+
     }
 
     public enum MOVEMENT{

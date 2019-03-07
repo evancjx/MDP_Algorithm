@@ -265,10 +265,30 @@ public class FastestPath {
     }
 
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
-        for (MOVEMENT move: movements){
-            robot.move(move);
-            Simulator.refresh();
+        int count = 0;
+        if(!robot.isRealRobot()){
+            for(MOVEMENT move: movements){
+                robot.move(move);
+                Simulator.refresh();
+            }
         }
+        else{
+            for (MOVEMENT move: movements){
+                if(move==MOVEMENT.FORWARD){
+                    count+=1;
+                    continue;
+                }
+                else{
+                    if(count != 0 ){
+                        robot.moveForwardMultiple(count);
+                        count = 0;
+                    }
+                    robot.move(move);
+                }
+                Simulator.refresh();
+            }
+        }
+
     }
 
     private MOVEMENT getNextMovement(DIRECTION from, DIRECTION to){

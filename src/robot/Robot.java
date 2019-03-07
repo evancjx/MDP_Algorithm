@@ -4,6 +4,7 @@ package robot;
 
 import arena.Arena;
 import arena.ArenaConstants;
+import org.json.JSONObject;
 import robot.RbtConstants.*;
 import utils.CommMgr;
 
@@ -256,11 +257,34 @@ public class Robot{
             System.out.println("Sending instruction");
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("movement", MOVEMENT.getChar(movement));
-//            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
-//            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("movement", Character.toString(MOVEMENT.getChar(movement)));
+            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
+            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
+    }
+
+    public void moveForwardMultiple(int count){
+        switch(direction){
+            case UP:
+                posY+=count;
+                break;
+            case LEFT:
+                posX-=count;
+                break;
+            case DOWN:
+                posY-=count;
+                break;
+            default:
+                posX+=count;
+        }
+        CommMgr commMgr = CommMgr.getCommMgr();
+        commMgr.sendMsg("F"+count, CommMgr.MSG_TYPE_ARDUINO);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("movement", "F"+count);
+        jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
+        commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
+        while(commMgr.recvMsg()==null){}
     }
 
     private void crossGoal(){

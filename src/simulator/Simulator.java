@@ -4,6 +4,7 @@ import algorithms.Exploration;
 import algorithms.FastestPath;
 import arena.Arena;
 import arena.ArenaConstants;
+import org.json.JSONObject;
 import robot.Robot;
 import robot.RbtConstants;
 import robot.RbtConstants.DIRECTION;
@@ -42,61 +43,38 @@ public class Simulator {
 
     private static boolean realRun = true;
 
+    private static JButton btnExplore = null;
+
     public static void main(String[] args){
-//        CommMgr commMgr = CommMgr.getCommMgr();
-//        commMgr.setConnection(100);
-//        Scanner sc = new Scanner(System.in);
-//        while(true){
-//            System.out.println("enter your command:");
-//            System.out.println("1.forward");
-//            System.out.println("2.left");
-//            System.out.println("3.right");
-//            System.out.println("4.receive");
-//            int input = sc.nextInt();
-//            if(input == 1){
-//                commMgr.sendMsg("F",CommMgr.MSG_TYPE_ARDUINO);
-//            }
-//            else if(input==2){
-//                commMgr.sendMsg("L", CommMgr.MSG_TYPE_ARDUINO);
-//            }
-//            else if(input==3){
-//                commMgr.sendMsg("R", CommMgr.MSG_TYPE_ARDUINO);
-//            }
-//            else{
-//                commMgr.recvMsg();
-//            }
-//        }
-//        String tmp = null;
-//        while(tmp == null){
-//            tmp = CommMgr.getCommMgr().recvMsg();
-//        }
-//        JSONObject startParameters = new JSONObject(tmp);
-//        int[] array = (int[])startParameters.get("robotPosition");
-//        wayPointX = array[0];
-//        wayPointY = array[1];
-//        int directionNum = array[2];
-//        DIRECTION direction;
-//        switch(directionNum){
-//            case 1:
-//                direction = DIRECTION.UP;
-//                break;
-//            case 2:
-//                direction = DIRECTION.DOWN;
-//                break;
-//            case 3:
-//                direction = DIRECTION.LEFT;
-//                break;
-//            case 4:
-//                direction = DIRECTION.RIGHT;
-//            default:
-//                direction = DIRECTION.RIGHT;
-//        }
         if(realRun){
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.setConnection();
         }
-        robot = new Robot(RbtConstants.START_X, RbtConstants.START_Y, DIRECTION.UP, realRun);
+
+        CommMgr commMgr = CommMgr.getCommMgr();
+        String tmp = null;
+        while(tmp == null){
+            tmp = commMgr.recvMsg();
+        }
+        JSONObject startParameters = new JSONObject(tmp);
+        int[] waypoints = (int[])startParameters.get("waypoint");
+        wayPointX = waypoints[0];
+        wayPointY = waypoints[1];
+        int[] array = (int[])startParameters.get("robotPosition");
+        int startX = array[0];
+        int startY = array[1];
+        int directionNum = array[2];
+        robot = new Robot(startX, startY, DIRECTION.getDirection(directionNum), realRun);
         createDisplay();
+        tmp = null;
+        while(tmp == null){
+            tmp = commMgr.recvMsg();
+        }
+        JSONObject exploreCommand = new JSONObject(tmp);
+        if(exploreCommand.has("EX_START")){
+            btnExplore.doClick();
+        }
+
     }
 
     public static void refresh(){
@@ -198,7 +176,7 @@ public class Simulator {
 
         JButton btnLoad = new JButton("Load Arena");
         standardBtn(btnLoad);
-        JButton btnExplore = new JButton("Explore");
+        btnExplore = new JButton("Explore");
         standardBtn(btnExplore);
         JButton btnStop = new JButton("Stop");
         standardBtn(btnStop);

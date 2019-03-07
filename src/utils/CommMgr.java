@@ -13,7 +13,7 @@ public class CommMgr {
     private static final String HOST = "192.168.1.1";
     private static final int PORT = 5555;
 
-    public static final String MSG_TYPE_ANDROID = "";
+    public static final String MSG_TYPE_ANDROID = "b";
     public static final String MSG_TYPE_RPI = "i";
     public static final String MSG_TYPE_ARDUINO = "a";
 
