@@ -4,6 +4,7 @@ import algorithms.Exploration;
 import algorithms.FastestPath;
 import arena.Arena;
 import arena.ArenaConstants;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import robot.Robot;
 import robot.RbtConstants;
@@ -43,7 +44,8 @@ public class Simulator {
 
     private static boolean realRun = true;
 
-    private static JButton btnExplore = null;
+    private static Thread exploreThread;
+    private static Thread fastestThread;
 
     public static void main(String[] args){
         if(realRun){
@@ -57,13 +59,13 @@ public class Simulator {
             tmp = commMgr.recvMsg();
         }
         JSONObject startParameters = new JSONObject(tmp);
-        int[] waypoints = (int[])startParameters.get("waypoint");
-        wayPointX = waypoints[0];
-        wayPointY = waypoints[1];
-        int[] array = (int[])startParameters.get("robotPosition");
-        int startX = array[0];
-        int startY = array[1];
-        int directionNum = array[2];
+        JSONArray waypoints = (JSONArray)startParameters.get("waypoint");
+        wayPointX = waypoints.getInt(0);
+        wayPointY = waypoints.getInt(1);
+        JSONArray array = (JSONArray) startParameters.get("robotPosition");
+        int startX = array.getInt(0);
+        int startY = array.getInt(1);
+        int directionNum = array.getInt(2);
         robot = new Robot(startX, startY, DIRECTION.getDirection(directionNum), realRun);
         createDisplay();
         tmp = null;
@@ -72,7 +74,9 @@ public class Simulator {
         }
         JSONObject exploreCommand = new JSONObject(tmp);
         if(exploreCommand.has("EX_START")){
-            btnExplore.doClick();
+            CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+            cl.show(arenaPanel, "Explore");
+            exploreThread.run();
         }
 
     }
@@ -167,16 +171,22 @@ public class Simulator {
             }
         }
 
-        Thread exploreThread = new Thread(new Runnable() {
+        exploreThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 new Explore().execute();
             }
         });
+        fastestThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new Fastest().execute();
+            }
+        });
 
         JButton btnLoad = new JButton("Load Arena");
         standardBtn(btnLoad);
-        btnExplore = new JButton("Explore");
+        JButton btnExplore = new JButton("Explore");
         standardBtn(btnExplore);
         JButton btnStop = new JButton("Stop");
         standardBtn(btnStop);
@@ -200,8 +210,6 @@ public class Simulator {
             }
         });
         btnPanel.add(btnLoad);
-
-
         btnExplore.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {

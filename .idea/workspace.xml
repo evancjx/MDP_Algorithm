@@ -2,34 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d9367c61-71e4-4178-b497-9e96d0c8331b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/MDP_Algorithm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MDP_Algorithm.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/FastestPath.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$DIRECTION.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$DIRECTION.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$MOVEMENT.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$MOVEMENT.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Robot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Sensor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Sensor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Explore.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Explore.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Fastest.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$1Fastest.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$6.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/CommMgr.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/CommMgr.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/MapDescriptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/MapDescriptor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/algorithms/FastestPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/FastestPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/robot/RbtConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/RbtConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/simulator/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/simulator/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/CommMgr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/CommMgr.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -43,12 +17,16 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="210" column="41" selection-start-line="210" selection-start-column="41" selection-end-line="210" selection-end-column="42" />
+            <state relative-caret-position="74">
+              <caret line="188" column="33" lean-forward="true" selection-start-line="188" selection-start-column="33" selection-end-line="188" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#3493#3494#0" expanded="true" />
                 <element signature="e#3527#3528#0" expanded="true" />
+                <element signature="e#8061#8655#0" expanded="true" />
+                <element signature="e#8654#8655#0" expanded="true" />
+                <element signature="e#7947#8359#0" expanded="true" />
+                <element signature="e#8358#8359#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -66,8 +44,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="660">
-              <caret line="46" column="12" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
+            <state relative-caret-position="308">
+              <caret line="14" column="25" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
+              <folding>
+                <element signature="class#DIRECTION#0;class#RbtConstants#0" />
+                <element signature="class#MOVEMENT#0;class#RbtConstants#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -260,7 +242,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551930503787" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551932895436" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Modules" />
@@ -318,18 +300,18 @@
       <workItem from="1551669851938" duration="7108000" />
       <workItem from="1551749920147" duration="8234000" />
       <workItem from="1551862115672" duration="519000" />
-      <workItem from="1551923332895" duration="6404000" />
+      <workItem from="1551923332895" duration="8456000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45674000" />
+    <option name="totallyTimeSpent" value="47726000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2081545" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2081545" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -513,19 +495,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="46" column="12" selection-start-line="46" selection-start-column="12" selection-end-line="46" selection-end-column="12" />
+        <state relative-caret-position="308">
+          <caret line="14" column="25" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
+          <folding>
+            <element signature="class#DIRECTION#0;class#RbtConstants#0" />
+            <element signature="class#MOVEMENT#0;class#RbtConstants#0" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="210" column="41" selection-start-line="210" selection-start-column="41" selection-end-line="210" selection-end-column="42" />
+        <state relative-caret-position="74">
+          <caret line="188" column="33" lean-forward="true" selection-start-line="188" selection-start-column="33" selection-end-line="188" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#3493#3494#0" expanded="true" />
             <element signature="e#3527#3528#0" expanded="true" />
+            <element signature="e#8061#8655#0" expanded="true" />
+            <element signature="e#8654#8655#0" expanded="true" />
+            <element signature="e#7947#8359#0" expanded="true" />
+            <element signature="e#8358#8359#0" expanded="true" />
           </folding>
         </state>
       </provider>
