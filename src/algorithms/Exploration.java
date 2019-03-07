@@ -3,6 +3,7 @@ package algorithms;
 import arena.Arena;
 import arena.ArenaConstants;
 import arena.Cell;
+import org.json.JSONObject;
 import robot.RbtConstants.*;
 import robot.Robot;
 import simulator.Simulator;
@@ -10,6 +11,9 @@ import utils.CommMgr;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static utils.MapDescriptor.generateArenaHex;
 
 public class Exploration {
     private final Arena explored, arena;
@@ -73,6 +77,13 @@ public class Exploration {
             areaExplored = calculateAreaExplored();
             System.out.println("Explored Area: " + areaExplored);
             nextMove();
+
+            String[] mapValues = generateArenaHex(arena);
+            CommMgr commMgr = CommMgr.getCommMgr();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("explored", mapValues[0]);
+            jsonObject.put("obstacle", mapValues[1]);
+            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
 
             if(robot.getPosX() == initX && robot.getPosY() ==initY && areaExplored > 290) break;
             else if (robot.getCalledHome()) break;

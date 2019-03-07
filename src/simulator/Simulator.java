@@ -86,8 +86,6 @@ public class Simulator {
         if(fastestCommand.has("FP_START")){
             fastestThread.run();
         }
-
-
     }
 
     public static void refresh(){
@@ -115,7 +113,6 @@ public class Simulator {
         appFrame.setVisible(true);
         appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
-
     private static void setupArena(){
         arena =  new Arena(robot);
         arena.clearArena();
@@ -127,7 +124,6 @@ public class Simulator {
         CardLayout cl = (CardLayout) arenaPanel.getLayout();
         cl.show(arenaPanel,"Arena");
     }
-
     private static void setupButtons(){
 
         class Fastest extends SwingWorker<Integer, String>{
