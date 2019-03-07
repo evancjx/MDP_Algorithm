@@ -78,6 +78,15 @@ public class Simulator {
             cl.show(arenaPanel, "Explore");
             exploreThread.run();
         }
+        tmp = null;
+        while(tmp == null){
+            tmp = commMgr.recvMsg();
+        }
+        JSONObject fastestCommand = new JSONObject(tmp);
+        if(fastestCommand.has("FP_START")){
+            fastestThread.run();
+        }
+
 
     }
 
