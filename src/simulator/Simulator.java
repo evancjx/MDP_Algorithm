@@ -39,7 +39,7 @@ public class Simulator {
     private static int timeLimit = 180;
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
     private static int robotSpeed = 20; //Number of steps per second
-    private static boolean realRun =true;
+    private static boolean realRun = false;
 
     public static void main(String[] args){
         robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun);
@@ -87,15 +87,15 @@ public class Simulator {
                 exploreThread.run();
             }
 
-            //wait for message
-            tmp = null;
-            while (tmp == null) {
-                tmp = commMgr.recvMsg();
-            }
-            JSONObject fastestCommand = new JSONObject(tmp);
-            if (fastestCommand.has("FP_START")) {
-                fastestThread.run();
-            }
+//            //wait for message
+//            tmp = null;
+//            while (tmp == null) {
+//                tmp = commMgr.recvMsg();
+//            }
+//            JSONObject fastestCommand = new JSONObject(tmp);
+//            if (fastestCommand.has("FP_START")) {
+//                fastestThread.run();
+//            }
         }
     }
 

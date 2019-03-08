@@ -9,9 +9,7 @@ import robot.Robot;
 import simulator.Simulator;
 import utils.CommMgr;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static utils.MapDescriptor.generateArenaHex;
 
@@ -21,6 +19,9 @@ public class Exploration {
     private final int coverageLimit, timeLimit;
     private long startTime, endTime;
     private boolean realRun;
+
+    private int countRight;
+    private int countForward;
 
     public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit, boolean realRun){
         this.explored = explored;
@@ -67,12 +68,16 @@ public class Exploration {
             System.out.println("Explored Area: " + areaExplored);
             nextMove();
 
-            String[] mapValues = generateArenaHex(arena);
-            CommMgr commMgr = CommMgr.getCommMgr();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("explored", mapValues[0]);
-            jsonObject.put("obstacle", mapValues[1]);
-            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
+            if(realRun){
+                String[] mapValues = generateArenaHex(explored);
+                CommMgr commMgr = CommMgr.getCommMgr();
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("explored", mapValues[0]);
+                jsonObject.put("obstacle", mapValues[1]);
+                System.out.println("P1:" + mapValues[0]);
+                System.out.println("P2:" + mapValues[1]);
+                commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
+            }
 
             if(robot.getPosX() == initX && robot.getPosY() ==initY && areaExplored > 290) break;
             else if (robot.getCalledHome()) break;
@@ -94,10 +99,15 @@ public class Exploration {
     private void nextMove(){
         int rbtX = robot.getPosX();
         int rbtY = robot.getPosY();
-        if(lookRightEmpty(rbtX, rbtY)){
+        if (countRight == 5){
+            moveBot(MOVEMENT.LEFT);
+            countRight = 0;
+        }else if (lookRightEmpty(rbtX, rbtY)){
             moveBot(MOVEMENT.RIGHT);
+            countRight++;
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else if (lookForward(rbtX, rbtY)){
+            countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
             moveBot(MOVEMENT.LEFT);
