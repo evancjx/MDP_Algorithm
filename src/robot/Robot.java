@@ -259,7 +259,6 @@ public class Robot{
             commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("movement", Character.toString(MOVEMENT.getChar(movement)));
-            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
             commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
     }

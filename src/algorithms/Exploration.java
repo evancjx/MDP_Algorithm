@@ -35,17 +35,6 @@ public class Exploration {
         System.out.println("Starting exploration...");
         startTime = System.currentTimeMillis();
         endTime = startTime + (timeLimit* 1000);
-        if(realRun){
-            System.out.println("Doing calibration");
-            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
-            System.out.println("calibration not done yet!");
-            while(true){
-                if(CommMgr.getCommMgr().recvMsg().equals("Done")){
-                    break;
-                }
-            }
-            System.out.println("done with calibration");
-        }
 
         CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();

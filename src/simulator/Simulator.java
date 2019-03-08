@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Scanner;
 import javax.swing.*;
 
 import static utils.MapDescriptor.generateArenaHex;
@@ -27,64 +28,74 @@ public class Simulator {
     private static Container contentPane;
 
     private static Arena arena = null, explored = null;
-
     private static Robot robot;
-
-    private static int timeLimit = 180;
-    private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int robotSpeed = 2; //Number of steps per second
-
-    private static int wayPointX = 0;
-    private static int wayPointY = 0;
-
-    private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint;
-    private static ArrayList<RbtConstants.MOVEMENT> fPathGoal;
+    private static int wayPointX = 0, wayPointY = 0;
+    private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal;
 
     private static boolean pressedFastest = false;
-
-    private static boolean realRun = true;
-
     private static Thread exploreThread;
     private static Thread fastestThread;
 
-    public static void main(String[] args){
-        if(realRun){
-            CommMgr commMgr = CommMgr.getCommMgr();
-            commMgr.setConnection();
-        }
+    private static int timeLimit = 180;
+    private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
+    private static int robotSpeed = 20; //Number of steps per second
+    private static boolean realRun =true;
 
-        CommMgr commMgr = CommMgr.getCommMgr();
-        String tmp = null;
-        while(tmp == null){
-            tmp = commMgr.recvMsg();
-        }
-        JSONObject startParameters = new JSONObject(tmp);
-        JSONArray waypoints = (JSONArray)startParameters.get("waypoint");
-        wayPointX = waypoints.getInt(0);
-        wayPointY = waypoints.getInt(1);
-        JSONArray array = (JSONArray) startParameters.get("robotPosition");
-        int startX = array.getInt(0);
-        int startY = array.getInt(1);
-        int directionNum = array.getInt(2);
-        robot = new Robot(startX, startY, DIRECTION.getDirection(directionNum), realRun);
+    public static void main(String[] args){
+        robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun);
         createDisplay();
-        tmp = null;
-        while(tmp == null){
-            tmp = commMgr.recvMsg();
-        }
-        JSONObject exploreCommand = new JSONObject(tmp);
-        if(exploreCommand.has("EX_START")){
-            CardLayout cl = ((CardLayout) arenaPanel.getLayout());
-            cl.show(arenaPanel, "Explore");
-            exploreThread.run();
-        }
-        tmp = null;
-        while(tmp == null){
-            tmp = commMgr.recvMsg();
-        }
-        JSONObject fastestCommand = new JSONObject(tmp);
-        if(fastestCommand.has("FP_START")){
-            fastestThread.run();
+
+        if(realRun) {
+            //Setup communication
+            CommMgr commMgr = CommMgr.getCommMgr();
+            if(!commMgr.setConnection()){
+                System.out.println("Error");
+               return;
+            }
+
+            //wait for message
+            String tmp = null;
+            while (tmp == null) {
+                tmp = commMgr.recvMsg();
+            }
+            JSONObject startParameters = new JSONObject(tmp);
+            JSONArray wayPoint = (JSONArray) startParameters.get("waypoint");
+            wayPointX = wayPoint.getInt(0);
+            wayPointY = wayPoint.getInt(1);
+            JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
+            robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
+            robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+//            robot = new Robot(array.getInt(0), array.getInt(1), DIRECTION.getDirection(array.getInt(2)), realRun);
+            System.out.println("Doing calibration");
+            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
+            System.out.println("calibration not done yet!");
+            while(true){
+                if(CommMgr.getCommMgr().recvMsg().equals("Done")){
+                    break;
+                }
+            }
+            System.out.println("done with calibration");
+            //wait for message
+            tmp = null;
+            while (tmp == null) {
+                tmp = commMgr.recvMsg();
+            }
+            JSONObject exploreCommand = new JSONObject(tmp);
+            if (exploreCommand.has("EX_START")) {
+                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                cl.show(arenaPanel, "Explore");
+                exploreThread.run();
+            }
+
+            //wait for message
+            tmp = null;
+            while (tmp == null) {
+                tmp = commMgr.recvMsg();
+            }
+            JSONObject fastestCommand = new JSONObject(tmp);
+            if (fastestCommand.has("FP_START")) {
+                fastestThread.run();
+            }
         }
     }
 
@@ -108,7 +119,7 @@ public class Simulator {
         contentPane.add(btnPanel, BorderLayout.PAGE_END);
 
         setupArena();
-        setupButtons();
+        setupActions();
 
         appFrame.setVisible(true);
         appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -124,8 +135,7 @@ public class Simulator {
         CardLayout cl = (CardLayout) arenaPanel.getLayout();
         cl.show(arenaPanel,"Arena");
     }
-    private static void setupButtons(){
-
+    private static void setupActions(){
         class Fastest extends SwingWorker<Integer, String>{
             protected Integer doInBackground() throws Exception{
                 explored.repaint();
@@ -189,124 +199,127 @@ public class Simulator {
             }
         });
 
-        JButton btnLoad = new JButton("Load Arena");
-        standardBtn(btnLoad);
-        JButton btnExplore = new JButton("Explore");
-        standardBtn(btnExplore);
-        JButton btnStop = new JButton("Stop");
-        standardBtn(btnStop);
-        JButton btnConfig =  new JButton("Config");
-        standardBtn(btnConfig);
-        JButton btnFastest = new JButton("Fastest");
-        standardBtn(btnFastest);
+        if(!realRun){
+            JButton btnLoad = new JButton("Load Arena");
+            standardBtn(btnLoad);
+            JButton btnExplore = new JButton("Explore");
+            standardBtn(btnExplore);
+            JButton btnStop = new JButton("Stop");
+            standardBtn(btnStop);
+            JButton btnConfig =  new JButton("Config");
+            standardBtn(btnConfig);
+            JButton btnFastest = new JButton("Fastest");
+            standardBtn(btnFastest);
 
-        btnLoad.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                final JFileChooser fc = new JFileChooser();
-                fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
+            btnLoad.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+                    final JFileChooser fc = new JFileChooser();
+                    fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
-                if(fc.showOpenDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fc.getSelectedFile();
-                    MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
-                    appFrame.repaint();
-                }
-            }
-        });
-        btnPanel.add(btnLoad);
-        btnExplore.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
-                cl.show(arenaPanel, "Explore");
-//                new Explore().execute();
-                exploreThread.run();
-            }
-        });
-        btnPanel.add(btnExplore);
-
-
-        btnStop.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                robot.setCalledHome(true);
-            }
-        });
-        btnPanel.add(btnStop);
-
-        btnConfig.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                JDialog configDialog = new JDialog(appFrame, "Config", true);
-                configDialog.setSize(400,150);
-                configDialog.setLayout(new FlowLayout());
-                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-                configDialog.setLocation(dim.width / 2 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
-
-                final JTextField tfRobotSpeed = new JTextField(Integer.toString(robotSpeed),2);
-                final JTextField tfTimeLimit = new JTextField(Integer.toString(timeLimit),4);
-                final JTextField tfCoverageLimit = new JTextField(Integer.toString(coverageLimit), 3);
-                final JTextField tfWayPointX = new JTextField(Integer.toString(wayPointX),2);
-                final JTextField tfWayPointY = new JTextField(Integer.toString(wayPointY),2);
-
-                JPanel tfPanel1 = new JPanel();
-                JPanel tfPanel2 = new JPanel();
-                JPanel savePanel = new JPanel();
-
-                JButton btnSaveConfig = new JButton("Save");
-                btnSaveConfig.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        super.mousePressed(e);
-                        robotSpeed = Integer.parseInt(tfRobotSpeed.getText());
-                        timeLimit = Integer.parseInt(tfTimeLimit.getText());
-                        coverageLimit = Integer.parseInt(tfCoverageLimit.getText());
-                        wayPointX = Integer.parseInt(tfWayPointX.getText());
-                        wayPointY = Integer.parseInt(tfWayPointY.getText());
-                        if(arena.checkValidCoord(wayPointX,wayPointY)){
-                            explored.getCell(wayPointX,wayPointY).setWayPoint(true);
-                            arena.getCell(wayPointX, wayPointY).setWayPoint(true);
-                        }
-                        configDialog.setVisible(false);
+                    if(fc.showOpenDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fc.getSelectedFile();
+                        MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
                         appFrame.repaint();
                     }
-                });
+                }
+            });
+            btnPanel.add(btnLoad);
+            btnExplore.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+                    CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                    cl.show(arenaPanel, "Explore");
+//                new Explore().execute();
+                    exploreThread.run();
+                }
+            });
+            btnPanel.add(btnExplore);
 
-                tfPanel1.add(new JLabel("Robot Speed: "));
-                tfPanel1.add(tfRobotSpeed);
-                tfPanel1.add(new JLabel("Time Limit: "));
-                tfPanel1.add(tfTimeLimit);
-                tfPanel1.add(new JLabel("Coverage Limit: "));
-                tfPanel1.add(tfCoverageLimit);
-                tfPanel2.add(new JLabel("WayPoint x coord: "));
-                tfPanel2.add(tfWayPointX);
-                tfPanel2.add(new JLabel("WayPoint y coord: "));
-                tfPanel2.add(tfWayPointY);
-                savePanel.add(btnSaveConfig);
-                configDialog.add(tfPanel1);
-                configDialog.add(tfPanel2);
-                configDialog.add(savePanel);
-                configDialog.setVisible(true);
-            }
-        });
-        btnPanel.add(btnConfig);
 
-        btnFastest.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
-                cl.show(arenaPanel, "Explore");
-                appFrame.repaint();
-                pressedFastest = true;
-                new Fastest().execute();
-            }
-        });
-        btnPanel.add(btnFastest);
+            btnStop.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+                    robot.setCalledHome(true);
+                }
+            });
+            btnPanel.add(btnStop);
+
+            btnConfig.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+                    JDialog configDialog = new JDialog(appFrame, "Config", true);
+                    configDialog.setSize(400,150);
+                    configDialog.setLayout(new FlowLayout());
+                    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                    configDialog.setLocation(dim.width / 2 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
+
+                    final JTextField tfRobotSpeed = new JTextField(Integer.toString(robotSpeed),2);
+                    final JTextField tfTimeLimit = new JTextField(Integer.toString(timeLimit),4);
+                    final JTextField tfCoverageLimit = new JTextField(Integer.toString(coverageLimit), 3);
+                    final JTextField tfWayPointX = new JTextField(Integer.toString(wayPointX),2);
+                    final JTextField tfWayPointY = new JTextField(Integer.toString(wayPointY),2);
+
+                    JPanel tfPanel1 = new JPanel();
+                    JPanel tfPanel2 = new JPanel();
+                    JPanel savePanel = new JPanel();
+
+                    JButton btnSaveConfig = new JButton("Save");
+                    btnSaveConfig.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            super.mousePressed(e);
+                            robotSpeed = Integer.parseInt(tfRobotSpeed.getText());
+                            timeLimit = Integer.parseInt(tfTimeLimit.getText());
+                            coverageLimit = Integer.parseInt(tfCoverageLimit.getText());
+                            wayPointX = Integer.parseInt(tfWayPointX.getText());
+                            wayPointY = Integer.parseInt(tfWayPointY.getText());
+                            if(arena.checkValidCoord(wayPointX,wayPointY)){
+                                explored.getCell(wayPointX,wayPointY).setWayPoint(true);
+                                arena.getCell(wayPointX, wayPointY).setWayPoint(true);
+                            }
+                            configDialog.setVisible(false);
+                            appFrame.repaint();
+                        }
+                    });
+
+                    tfPanel1.add(new JLabel("Robot Speed: "));
+                    tfPanel1.add(tfRobotSpeed);
+                    tfPanel1.add(new JLabel("Time Limit: "));
+                    tfPanel1.add(tfTimeLimit);
+                    tfPanel1.add(new JLabel("Coverage Limit: "));
+                    tfPanel1.add(tfCoverageLimit);
+                    tfPanel2.add(new JLabel("WayPoint x coord: "));
+                    tfPanel2.add(tfWayPointX);
+                    tfPanel2.add(new JLabel("WayPoint y coord: "));
+                    tfPanel2.add(tfWayPointY);
+                    savePanel.add(btnSaveConfig);
+                    configDialog.add(tfPanel1);
+                    configDialog.add(tfPanel2);
+                    configDialog.add(savePanel);
+                    configDialog.setVisible(true);
+                }
+            });
+            btnPanel.add(btnConfig);
+
+            btnFastest.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    super.mousePressed(e);
+                    CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                    cl.show(arenaPanel, "Explore");
+                    appFrame.repaint();
+                    pressedFastest = true;
+                    new Fastest().execute();
+                }
+            });
+            btnPanel.add(btnFastest);
+        }
+
     }
 
     private static void standardBtn(JButton btn){

@@ -41,7 +41,6 @@ public class CommMgr {
 
             _conn = new Socket();
             _conn.connect(new InetSocketAddress(HOST, PORT));
-//            _conn.setSoTimeout(timeoutInMs);
 
             _bos = new BufferedOutputStream(_conn.getOutputStream());
             _osw = new OutputStreamWriter(_bos, "US-ASCII");
@@ -64,7 +63,6 @@ public class CommMgr {
             System.out.println("setConnection() -> Exception");
             e.printStackTrace();
         }
-
         return false;
     }
 
