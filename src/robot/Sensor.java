@@ -2,6 +2,7 @@ package robot;
 
 import arena.Arena;
 import robot.RbtConstants.DIRECTION;
+import utils.CommMgr;
 
 public class Sensor {
     private int posX, posY;
@@ -105,6 +106,14 @@ public class Sensor {
 
             if (sensorVal == i) {
                 exploredMap.setObstacle(x, y, true);
+//                if(this.id=="SRL"){
+//                    DIRECTION d = DIRECTION.getNext(this.direction);
+//                    d =DIRECTION.getNext(d);
+//                    int dir = DIRECTION.getInt(d);
+//                    CommMgr comMgr = CommMgr.getCommMgr();
+//                    String s = String.format("%d,%d,%d", x, y, dir);
+//                    comMgr.sendMsg(s, CommMgr.MSG_TYPE_RPI);
+//                }
                 break;
             }
 
