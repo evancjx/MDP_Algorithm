@@ -21,7 +21,6 @@ public class Exploration {
     private boolean realRun;
 
     private int countRight;
-    private int countForward;
 
     public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit, boolean realRun){
         this.explored = explored;
@@ -32,17 +31,6 @@ public class Exploration {
         this.realRun = realRun;
     }
 
-    public void execute(){
-        System.out.println("Starting exploration...");
-        startTime = System.currentTimeMillis();
-        endTime = startTime + (timeLimit* 1000);
-
-        CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
-        senseSurrounding();
-        System.out.println("done sense Surrounding");
-        loopRun(robot.getPosX(), robot.getPosY());
-    }
-
     private void senseSurrounding(){
         robot.setSenors();
         robot.sense(explored, arena);
@@ -51,18 +39,20 @@ public class Exploration {
 
     private int calculateAreaExplored(){
         int result = 0;
-        for (int y = 1; y <= ArenaConstants.ROWS; y++) {
-            for (int x = 1; x <=  ArenaConstants.COLS; x++) {
-                if (explored.getCell(x, y).getIsExplored()) {
-                    result++;
-                }
-            }
-        }
+        for (Cell[] row : explored.grid)
+            for (Cell cell : row)
+                if(cell.getIsExplored()) result++;
         return result;
     }
 
-    private void loopRun(int initX, int initY){
-        int areaExplored;
+    public boolean execute(){
+        int areaExplored, initX = robot.getPosX(), initY = robot.getPosY();
+        System.out.println("Starting exploration...");
+        startTime = System.currentTimeMillis();
+        endTime = startTime + (timeLimit* 1000);
+        if(realRun) CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
+        senseSurrounding();
+        System.out.println("done sense Surrounding");
         do{
             areaExplored = calculateAreaExplored();
             System.out.println("Explored Area: " + areaExplored);
@@ -74,8 +64,6 @@ public class Exploration {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("explored", mapValues[0]);
                 jsonObject.put("obstacle", mapValues[1]);
-                System.out.println("P1:" + mapValues[0]);
-                System.out.println("P2:" + mapValues[1]);
                 commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
             }
 
@@ -92,8 +80,8 @@ public class Exploration {
         System.out.println(", " + areaExplored + " Cells");
         System.out.println((System.currentTimeMillis() - startTime) / 1000 + " Seconds");
 
-
         System.out.println("Finish exploration");
+        return true;
     }
 
     private void nextMove(){

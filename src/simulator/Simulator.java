@@ -32,13 +32,11 @@ public class Simulator {
     private static int wayPointX = 0, wayPointY = 0;
     private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal;
 
-    private static boolean pressedFastest = false;
-    private static Thread exploreThread;
-    private static Thread fastestThread;
+    private static boolean pressedFastest = false, arenaExplored = false;
+    private static Thread exploreThread, fastestThread;
 
-    private static int timeLimit = 180;
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int robotSpeed = 20; //Number of steps per second
+    private static int timeLimit = 360, robotSpeed = 20; //Number of steps per second
     private static boolean realRun = false;
 
     public static void main(String[] args){
@@ -65,7 +63,6 @@ public class Simulator {
             JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
             robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
             robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
-//            robot = new Robot(array.getInt(0), array.getInt(1), DIRECTION.getDirection(array.getInt(2)), realRun);
             System.out.println("Doing calibration");
             CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
             System.out.println("calibration not done yet!");
@@ -87,15 +84,17 @@ public class Simulator {
                 exploreThread.run();
             }
 
-//            //wait for message
-//            tmp = null;
-//            while (tmp == null) {
-//                tmp = commMgr.recvMsg();
-//            }
-//            JSONObject fastestCommand = new JSONObject(tmp);
-//            if (fastestCommand.has("FP_START")) {
-//                fastestThread.run();
-//            }
+            //wait arena to be explored
+            while(!arenaExplored);
+            //wait for message
+            tmp = null;
+            while (tmp == null) {
+                tmp = commMgr.recvMsg();
+            }
+            JSONObject fastestCommand = new JSONObject(tmp);
+            if (fastestCommand.has("FP_START")) {
+                fastestThread.run();
+            }
         }
     }
 
@@ -141,11 +140,11 @@ public class Simulator {
                 explored.repaint();
 
                 FastestPath fastestPath = new FastestPath(explored);
-                if (fPathWayPoint != null && pressedFastest){
+                if (fPathWayPoint != null){
                     fastestPath.executeMovements(fPathWayPoint, robot);
                     robot.setDirection(DIRECTION.UP);
                 }
-                if (fPathGoal != null && pressedFastest){
+                if (fPathGoal != null){
                     System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
                     fastestPath.executeMovements(fPathGoal, robot);
                 }
@@ -176,7 +175,7 @@ public class Simulator {
                 explored.repaint();
 
                 Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit, realRun);
-                exploration.execute();
+                arenaExplored = exploration.execute();
 
                 generateArenaHex(arena);
 
