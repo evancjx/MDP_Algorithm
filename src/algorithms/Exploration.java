@@ -217,10 +217,11 @@ public class Exploration {
             ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
             goToGoal.executeMovements(movements, robot);
         }
-
-        FastestPath returnToStart = new FastestPath(explored);
-        ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
-        returnToStart.executeMovements(movements, robot);
+        if(!(robot.getPosX() == ArenaConstants.START_X) && !(robot.getPosY() == ArenaConstants.START_Y)){
+            FastestPath returnToStart = new FastestPath(explored);
+            ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
+            returnToStart.executeMovements(movements, robot);
+        }
 
         turnToDirection(DIRECTION.UP); //return to UP ward direction
     }

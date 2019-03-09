@@ -56,7 +56,6 @@ public class FastestPath {
     public ArrayList<MOVEMENT> get(Robot robot, int targetX, int targetY){
         initialize();
         int initX = robot.getPosX(), initY = robot.getPosY();
-        DIRECTION initDir = robot.getDirection();
         this.curCell = explored.getCell(robot.getPosX(), robot.getPosY());
         this.curDir = robot.getDirection();
         openList.add(curCell);
