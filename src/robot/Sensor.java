@@ -102,10 +102,13 @@ public class Sensor {
             int y = this.posY + (incY * i);
 
             if (!exploredMap.checkValidCoord(x, y)) break;
-
+            if((id.equals("SRL") || id.equals("LRL") || id.equals("SRR")) && exploredMap.getCell(x,y).getIsExplored()){
+                continue;
+            }
             exploredMap.getCell(x, y).setIsExplored(true);
 
             if (sensorVal == i) {
+
                 exploredMap.setObstacle(x, y, true);
 //                if(this.id=="SRL"){
 //                    DIRECTION d = DIRECTION.getNext(this.direction);

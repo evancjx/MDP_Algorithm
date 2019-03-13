@@ -38,8 +38,8 @@ public class Simulator {
     private static boolean realRun = true;
 
     public static void main(String[] args){
-        robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun);
         realOrSimulation();
+        robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun);
         createDisplay();
         if(realRun) {
             //Setup communication
@@ -60,7 +60,7 @@ public class Simulator {
             wayPointY = wayPoint.getInt(1);
             JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
             robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
-            robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+            robot.setInitialRealDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
             System.out.println("Doing calibration");
             CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
             System.out.println("calibration not done yet!");

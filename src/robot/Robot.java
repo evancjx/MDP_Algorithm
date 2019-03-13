@@ -59,7 +59,7 @@ public class Robot{
         SRFrontCenter = new Sensor(this.posX, this.posY + 1, this.direction,
             "SRFC", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         SRFrontRight = new Sensor(this.posX + 1, this.posY + 1, this.direction,
-            "SRFC", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
+            "SRFR", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         SRLeft = new Sensor(this.posX - 1, this.posY + 1, DIRECTION.getNext(this.direction),
             "SRL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
         LRLeft = new Sensor(this.posX - 1, this.posY, DIRECTION.getNext(this.direction),
@@ -71,7 +71,12 @@ public class Robot{
 
     public int getPosX(){ return this.posX; }
     public int getPosY(){ return this.posY; }
-    public DIRECTION getDirection(){ return this.direction; }
+    public DIRECTION getDirection(){return this.direction; }
+
+    public void setInitialRealDirection(DIRECTION direction){
+        this.direction = direction;
+    }
+
     public void setDirection(DIRECTION direction) {
         if(realRobot){
             switch (direction){
