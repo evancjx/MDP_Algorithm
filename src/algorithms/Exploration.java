@@ -49,7 +49,7 @@ public class Exploration {
         int areaExplored, initX = robot.getPosX(), initY = robot.getPosY();
         System.out.println("Starting exploration...");
         startTime = System.currentTimeMillis();
-        endTime = startTime + (timeLimit* 1000);
+        endTime = startTime + (timeLimit * 1000);
         if(realRun) CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();
         System.out.println("done sense Surrounding");
@@ -87,24 +87,33 @@ public class Exploration {
     private void nextMove(){
         int rbtX = robot.getPosX();
         int rbtY = robot.getPosY();
-        if (countRight == 5){
+        if (countRight == 5) {
             moveBot(MOVEMENT.LEFT);
             countRight = 0;
-        }else if (lookRightEmpty(rbtX, rbtY)){
+        }
+        if (lookRightEmpty(rbtX, rbtY)){
+            System.out.println("RightEmpty");
             moveBot(MOVEMENT.RIGHT);
             countRight++;
-            if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
+            if(lookForward(rbtX, rbtY)){
+                System.out.println("AfterRight, ForwardEmpty");
+                moveBot(MOVEMENT.FORWARD);
+            }
         } else if (lookForward(rbtX, rbtY)){
+            System.out.println("ForwardEmpty");
             countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
+            System.out.println("LeftEmpty");
             countRight = 0;
             moveBot(MOVEMENT.LEFT);
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else {
+            System.out.println("onlyLeftwithBackEmpty, turning right and right");
             countRight = 0;
-            moveBot(MOVEMENT.LEFT); //Depends on which rotation LEFT or RIGHT is better
-            moveBot(MOVEMENT.LEFT);
+            moveBot(MOVEMENT.RIGHT); //Depends on which rotation LEFT or RIGHT is better
+            moveBot(MOVEMENT.RIGHT);
+            System.out.print("MULTI_RIGHT");
         }
     }
 
@@ -214,11 +223,11 @@ public class Exploration {
     }
 
     private void goBackStart(){
-        if(!robot.getHasCrossGoal()){
-            FastestPath goToGoal = new FastestPath(explored);
-            ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-            goToGoal.executeMovements(movements, robot);
-        }
+//        if(!robot.getHasCrossGoal()){
+//            FastestPath goToGoal = new FastestPath(explored);
+//            ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
+//            goToGoal.executeMovements(movements, robot);
+//        }
         if(!(robot.getPosX() == ArenaConstants.START_X) && !(robot.getPosY() == ArenaConstants.START_Y)){
             FastestPath returnToStart = new FastestPath(explored);
             ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);

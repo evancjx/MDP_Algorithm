@@ -122,7 +122,7 @@ public class CommMgr {
                 String inputMsg = _br.readLine();
                 if (inputMsg != null && inputMsg.length() > 0) {
                 // Fox debug - print out received msg
-                    System.out.println("Message received: " + inputMsg);
+//                    System.out.println("Message received: " + inputMsg);
                     return inputMsg;
                 }
             }

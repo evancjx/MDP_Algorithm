@@ -103,20 +103,20 @@ public class Sensor {
 
             if (!exploredMap.checkValidCoord(x, y)) break;
             if((id.equals("SRL") || id.equals("LRL") || id.equals("SRR")) && exploredMap.getCell(x,y).getIsExplored()){
-                continue;
+                break;
             }
             exploredMap.getCell(x, y).setIsExplored(true);
 
             if (sensorVal == i) {
                 exploredMap.setObstacle(x, y, true);
-                if(this.id=="SRL"){
-                    DIRECTION d = DIRECTION.getNext(this.direction);
-                    d =DIRECTION.getNext(d);
-                    int dir = DIRECTION.getInt(d);
-                    CommMgr comMgr = CommMgr.getCommMgr();
-                    String s = String.format("%d,%d,%d", x, y, dir);
-                    comMgr.sendMsg(s, CommMgr.MSG_TYPE_RPI);
-                }
+//                if(this.id=="SRL"){
+//                    DIRECTION d = DIRECTION.getNext(this.direction);
+//                    d =DIRECTION.getNext(d);
+//                    int dir = DIRECTION.getInt(d);
+//                    CommMgr comMgr = CommMgr.getCommMgr();
+//                    String s = String.format("%d,%d,%d", x, y, dir);
+//                    comMgr.sendMsg(s, CommMgr.MSG_TYPE_RPI);
+//                }
                 break;
             }
 

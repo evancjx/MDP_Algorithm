@@ -42,9 +42,9 @@ public class Robot{
         LRLeft,
         SRRight;
     private boolean isAlert, hasCrossGoal ,calledHome;
-    private boolean realRobot;
+    private boolean realRobot, fastestMode;
 
-    public Robot(int posX, int posY, DIRECTION direction, boolean realRobot){
+    public Robot(int posX, int posY, DIRECTION direction, boolean realRobot, boolean fastestMode){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -53,6 +53,7 @@ public class Robot{
         this.isAlert = false;
         this.calledHome = false;
         this.realRobot = realRobot;
+        this.fastestMode = fastestMode;
 
         SRFrontLeft = new Sensor(this.posX - 1, this.posY + 1, this.direction,
             "SRFL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
@@ -99,6 +100,7 @@ public class Robot{
     public int getSpeed(){ return this.speed; }
     public Boolean getCalledHome(){ return this.calledHome; }
     public Boolean getHasCrossGoal(){ return this.hasCrossGoal; }
+    public Boolean getRobotMode(){ return this.fastestMode; }
 
     public void setRobotFront(DIRECTION dir){
         this.direction = dir;
@@ -128,6 +130,7 @@ public class Robot{
     public void setRobotSpeed(int speed){
         this.speed = 1000/speed;
     }
+    public void setRobotExplored(boolean mode) {this.fastestMode = mode; }
 
     public void setSenors(){
         switch (this.direction){
@@ -179,7 +182,6 @@ public class Robot{
             result[5] = SRRight.sense(explored, arena);
         }
         else{
-            System.out.println("Waiting for incoming message...");
             CommMgr commMgr = CommMgr.getCommMgr();
             String msg = commMgr.recvMsg();
             String[] sensorValues = msg.split(":");
@@ -191,7 +193,12 @@ public class Robot{
             result[4] = Integer.parseInt(sensorValues[4]);
             result[5] = Integer.parseInt(sensorValues[5]);
             for(int i = 0; i < result.length; i++){
-                result[i] = (result[i]+5) / 10;
+                if(result[i] % 10 > 5){
+                    result[i] = (result[i] / 10) + 1;
+                }
+                else {
+                    result[i] = (result[i]) / 10;
+                }
             }
             System.out.println("========================>");
             System.out.println(Arrays.toString(result));
@@ -218,7 +225,7 @@ public class Robot{
                 System.out.println("Something went wrong in Robot.move()!");
             }
         }
-        switch (movement){
+        switch (movement){//Changing robot position on display only
             case FORWARD: //Forward
                 switch (this.direction){
                     case UP: //UP
@@ -261,10 +268,12 @@ public class Robot{
         crossGoal();
         if(realRobot){
 //            System.out.println("Sending instruction");
+            System.out.println("Movement: " + movement);
             CommMgr commMgr = CommMgr.getCommMgr();
-            commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
+            commMgr.sendMsg(MOVEMENT.getChar(movement, this.fastestMode)+"", CommMgr.MSG_TYPE_ARDUINO);
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("movement", Character.toString(MOVEMENT.getChar(movement)));
+//            jsonObject.put("movement", Character.toString(MOVEMENT.getChar(movement, false)));
+            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
             commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
     }
@@ -283,10 +292,26 @@ public class Robot{
             default:
                 posX+=count;
         }
+//        String command = "";
+//        for (int i = 0; i < count; i++){
+//            command+="F]";
+//        }
         CommMgr commMgr = CommMgr.getCommMgr();
-        commMgr.sendMsg("F"+count, CommMgr.MSG_TYPE_ARDUINO);
+        if (count>5){
+            while (count > 5){
+                commMgr.sendMsg("W"+5*10, CommMgr.MSG_TYPE_ARDUINO);
+                count = count - 5;
+                if (count <= 5) {
+                    commMgr.sendMsg("W" + (count) * 10, CommMgr.MSG_TYPE_ARDUINO);
+                    count = 0;
+                }
+            }
+        }
+        else{
+            commMgr.sendMsg("W"+count*10, CommMgr.MSG_TYPE_ARDUINO);
+        }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("movement", "F"+count);
+//        jsonObject.put("movement", );
         jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
         commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         while(commMgr.recvMsg()==null){}

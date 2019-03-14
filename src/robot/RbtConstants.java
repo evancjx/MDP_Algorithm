@@ -51,18 +51,22 @@ public class RbtConstants {
 
     public enum MOVEMENT{
         FORWARD, LEFT, RIGHT, BACKWARD, CALIBRATE;
-        public static char getChar(MOVEMENT m){
+        public static char getChar(MOVEMENT m, boolean fastestMode){
             switch(m){
                 case FORWARD:
-                    return 'F';
+                    if(fastestMode) return 'W';
+                    else return 'F';
                 case LEFT:
-                    return 'L';
+                    if(fastestMode) return 'A';
+                    else return 'L';
                 case BACKWARD:
                     return 'B';
                 case RIGHT:
-                    return 'R';
+                    if(fastestMode) return 'D';
+                    else return 'R';
                 case CALIBRATE:
-                    return 'C';
+                    if(fastestMode) return 'X';
+                    else return 'C';
                 default:
                     return 'E';
             }

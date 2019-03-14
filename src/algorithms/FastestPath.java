@@ -6,6 +6,7 @@ import arena.Cell;
 import robot.Robot;
 import robot.RbtConstants.*;
 import simulator.Simulator;
+import utils.CommMgr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -232,7 +233,7 @@ public class FastestPath {
         StringBuilder pathString = new StringBuilder();
 
         Cell tempCell = path.pop();
-        Robot tempBot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false);
+        Robot tempBot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false, false);
         tempBot.setRobotSpeed(1000);
         DIRECTION targetDir;
 
@@ -264,6 +265,8 @@ public class FastestPath {
     }
 
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
+        CommMgr commMgr = CommMgr.getCommMgr();
+        String tmp = null;
         int count = 0;
         if(!robot.isRealRobot()){
             for(MOVEMENT move: movements){
@@ -273,18 +276,42 @@ public class FastestPath {
         }
         else{
             for (MOVEMENT move: movements){
-                if(move==MOVEMENT.FORWARD){
-                    count+=1;
-                    continue;
-                }
-                else{
-                    if(count != 0 ){
-                        robot.moveForwardMultiple(count);
-                        count = 0;
+                robot.move(move);
+//                if(move==MOVEMENT.FORWARD){
+//                    count+=1;
+//                    continue;
+//                }
+//                else{
+//                    if(count != 0 ){
+//                        robot.moveForwardMultiple(count);
+//                        count = 0;
+//                    }
+////                    while (tmp == null) {
+////                        tmp = commMgr.recvMsg();
+////                    }
+//                    System.out.println("Next movement");
+//                    robot.move(move);
+                    tmp = null;
+                    commMgr = CommMgr.getCommMgr();
+                    while (tmp == null) {
+                        tmp = commMgr.recvMsg();
                     }
-                    robot.move(move);
-                }
+//                }
                 Simulator.refresh();
+            }
+//            if(count!=0){
+//                robot.moveForwardMultiple(count);
+//            }
+//            if(robot.getDirection()==DIRECTION.LEFT){
+//                robot.move(MOVEMENT.RIGHT);
+//            }
+//            else if(robot.getDirection()==DIRECTION.RIGHT){
+//                robot.move(MOVEMENT.LEFT);
+//            }
+            tmp = null;
+            commMgr = CommMgr.getCommMgr();
+            while (tmp == null) {
+                tmp = commMgr.recvMsg();
             }
         }
 
