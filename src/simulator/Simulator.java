@@ -30,7 +30,7 @@ public class Simulator {
     private static int wayPointX = 0, wayPointY = 0;
     private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal;
 
-    private static boolean arenaExplored = false;
+    private static boolean arenaExplored = false, fastestPath = false;
     private static Thread exploreThread, fastestThread;
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
@@ -84,6 +84,10 @@ public class Simulator {
 
             //wait arena to be explored
             while(!arenaExplored);
+            fastestThread.run();
+            //wait for fastest path to be done;
+            while(!fastestPath);
+            System.out.println("arena explored");
             //wait for message
             tmp = null;
             while (tmp == null) {
@@ -201,9 +205,6 @@ public class Simulator {
                 arenaExplored = exploration.execute();
 
                 generateArenaHex(arena);
-
-                new Fastest().execute();
-
                 return 111;
             }
         }

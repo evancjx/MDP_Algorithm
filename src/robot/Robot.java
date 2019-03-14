@@ -179,6 +179,7 @@ public class Robot{
             result[5] = SRRight.sense(explored, arena);
         }
         else{
+            System.out.println("Waiting for incoming message...");
             CommMgr commMgr = CommMgr.getCommMgr();
             String msg = commMgr.recvMsg();
             String[] sensorValues = msg.split(":");
@@ -259,7 +260,7 @@ public class Robot{
 
         crossGoal();
         if(realRobot){
-            System.out.println("Sending instruction");
+//            System.out.println("Sending instruction");
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement)+"", CommMgr.MSG_TYPE_ARDUINO);
             JSONObject jsonObject = new JSONObject();

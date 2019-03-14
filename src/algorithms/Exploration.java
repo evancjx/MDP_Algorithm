@@ -98,9 +98,11 @@ public class Exploration {
             countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
+            countRight = 0;
             moveBot(MOVEMENT.LEFT);
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else {
+            countRight = 0;
             moveBot(MOVEMENT.LEFT); //Depends on which rotation LEFT or RIGHT is better
             moveBot(MOVEMENT.LEFT);
         }
