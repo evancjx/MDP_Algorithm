@@ -153,8 +153,22 @@ public class Simulator {
                 }
                 System.out.println("Done waypoint fastest path");
                 System.out.println("The robot is facing" + robot.getDirection());
-                robot.setDirection(DIRECTION.UP);
-//                robot.move(LEFT);
+                switch (robot.getDirection()){
+                    case LEFT:
+                        robot.move(RIGHT);
+                        break;
+                    case RIGHT:
+                        robot.move(LEFT);
+                        break;
+                    case DOWN:
+                        robot.move(RIGHT);
+                        robot.move(RIGHT);
+                        break;
+                    case UP:
+                    default:
+                        //do nothing
+                        break;
+                }
                 for (RbtConstants.MOVEMENT move: fPathGoal){
                     robot.move(move);
                     System.out.println("Move: " + move);
