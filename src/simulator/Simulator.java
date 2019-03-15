@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.*;
 
+import static robot.RbtConstants.MOVEMENT.*;
 import static utils.MapDescriptor.generateArenaHex;
 
 public class Simulator {
@@ -40,36 +41,43 @@ public class Simulator {
 
 
     public static void main(String[] args){
+//        fPathWayPoint = new ArrayList<>();
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RIGHT);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(LEFT);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(RIGHT);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+////
 //        fPathGoal = new ArrayList<>();
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.RIGHT);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.LEFT);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.RIGHT);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.LEFT);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathGoal.add(RbtConstants.MOVEMENT.FORWARD);
+////        fPathWayPoint.add(LEFT);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(RIGHT);
+//        fPathGoal.add(FORWARD);
 
         realOrSimulation();
         robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun,  false);
@@ -132,8 +140,33 @@ public class Simulator {
             JSONObject fastestCommand = new JSONObject(tmp);
             if (fastestCommand.has("FP_START")) {
 //                fastestThread.run();
-                new Fastest().execute();
+//                new Fastest().execute();
+                for (RbtConstants.MOVEMENT move: fPathWayPoint){
+                    robot.move(move);
+                    System.out.println("Move: " + move);
+                    tmp = null;
+                    commMgr = CommMgr.getCommMgr();
+                    while (tmp == null) {
+                        tmp = commMgr.recvMsg();
+                    }
+                    Simulator.refresh();
+                }
+                System.out.println("Done waypoint fastest path");
+                System.out.println("The robot is facing" + robot.getDirection());
+                robot.setDirection(DIRECTION.UP);
+//                robot.move(LEFT);
+                for (RbtConstants.MOVEMENT move: fPathGoal){
+                    robot.move(move);
+                    System.out.println("Move: " + move);
+                    tmp = null;
+                    commMgr = CommMgr.getCommMgr();
+                    while (tmp == null) {
+                        tmp = commMgr.recvMsg();
+                    }
+                    Simulator.refresh();
+                }
             }
+
         }
     }
 
@@ -182,27 +215,11 @@ public class Simulator {
             if (fPathWayPoint != null){
                 System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
                 fastestPath.executeMovements(fPathWayPoint, robot);
-                if(realRun){
-                    //Check if robot direction is pointing up, else rotate robot
-                    DIRECTION currentRbtDirection = robot.getDirection();
-                    if(currentRbtDirection != DIRECTION.UP){
-                        switch (currentRbtDirection){
-                            case LEFT:
-                                robot.move(RbtConstants.MOVEMENT.RIGHT);
-                                break;
-                            case DOWN:
-                                robot.move(RbtConstants.MOVEMENT.LEFT);
-                                robot.move(RbtConstants.MOVEMENT.LEFT);
-                                break;
-                            case RIGHT:
-                                robot.move(RbtConstants.MOVEMENT.LEFT);
-                                break;
-                        }
-                    }
-                }
-                else {
-                    robot.setDirection(DIRECTION.UP);
-                }
+                System.out.println("=========================================>");
+                robot.setDirection(DIRECTION.UP);
+                System.out.println("=========================================>");
+
+                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
             }
             if (fPathGoal != null){
                 System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");

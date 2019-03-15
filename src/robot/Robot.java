@@ -87,6 +87,9 @@ public class Robot{
                 case RIGHT:
                     move(MOVEMENT.LEFT);
                     break;
+                case DOWN:
+                    move(MOVEMENT.LEFT);
+                    move(MOVEMENT.LEFT);
                 default:
                     return;
             }
@@ -193,12 +196,7 @@ public class Robot{
             result[4] = Integer.parseInt(sensorValues[4]);
             result[5] = Integer.parseInt(sensorValues[5]);
             for(int i = 0; i < result.length; i++){
-                if(result[i] % 10 > 5){
-                    result[i] = (result[i] / 10) + 1;
-                }
-                else {
-                    result[i] = (result[i]) / 10;
-                }
+                result[i] = (result[i] + 5)/10;
             }
             System.out.println("========================>");
             System.out.println(Arrays.toString(result));

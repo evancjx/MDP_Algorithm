@@ -84,11 +84,11 @@ public class FastestPath {
                     printFastestPath(path);
                     robot.setRobotPos(initX, initY);
                     robot.setDirection(DIRECTION.UP);
-                    robot.setRobotFront(DIRECTION.UP);
+//                    robot.setRobotFront(DIRECTION.UP);
                     ArrayList<MOVEMENT> movements = getPathMovements(path, robot, targetX, targetY);
                     robot.setRobotPos(initX, initY);
                     robot.setDirection(DIRECTION.UP);
-                    robot.setRobotFront(DIRECTION.UP);
+//                    robot.setRobotFront(DIRECTION.UP);
                     return movements;
                 }
 
@@ -277,6 +277,7 @@ public class FastestPath {
         else{
             for (MOVEMENT move: movements){
                 robot.move(move);
+                System.out.println("Move: " + move);
 //                if(move==MOVEMENT.FORWARD){
 //                    count+=1;
 //                    continue;
@@ -291,14 +292,16 @@ public class FastestPath {
 ////                    }
 //                    System.out.println("Next movement");
 //                    robot.move(move);
-                    tmp = null;
-                    commMgr = CommMgr.getCommMgr();
-                    while (tmp == null) {
-                        tmp = commMgr.recvMsg();
-                    }
+                tmp = null;
+                commMgr = CommMgr.getCommMgr();
+                while (tmp == null) {
+                    tmp = commMgr.recvMsg();
+                }
 //                }
                 Simulator.refresh();
             }
+            System.out.println("done executing the movements in the arrayList");
+            System.out.println("===============================================================>");
 //            if(count!=0){
 //                robot.moveForwardMultiple(count);
 //            }
@@ -308,11 +311,10 @@ public class FastestPath {
 //            else if(robot.getDirection()==DIRECTION.RIGHT){
 //                robot.move(MOVEMENT.LEFT);
 //            }
-            tmp = null;
-            commMgr = CommMgr.getCommMgr();
-            while (tmp == null) {
-                tmp = commMgr.recvMsg();
-            }
+//            else if(robot.getDirection() == DIRECTION.DOWN){
+//                robot.move(MOVEMENT.LEFT);
+//                robot.move(MOVEMENT.LEFT);
+//            }
         }
 
     }

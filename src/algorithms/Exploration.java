@@ -92,15 +92,15 @@ public class Exploration {
             countRight = 0;
         }
         if (lookRightEmpty(rbtX, rbtY)){
-            System.out.println("RightEmpty");
+//            System.out.println("RightEmpty");
             moveBot(MOVEMENT.RIGHT);
             countRight++;
             if(lookForward(rbtX, rbtY)){
-                System.out.println("AfterRight, ForwardEmpty");
+//                System.out.println("AfterRight, ForwardEmpty");
                 moveBot(MOVEMENT.FORWARD);
             }
         } else if (lookForward(rbtX, rbtY)){
-            System.out.println("ForwardEmpty");
+//            System.out.println("ForwardEmpty");
             countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
@@ -109,11 +109,11 @@ public class Exploration {
             moveBot(MOVEMENT.LEFT);
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else {
-            System.out.println("onlyLeftwithBackEmpty, turning right and right");
+//            System.out.println("onlyLeftwithBackEmpty, turning right and right");
             countRight = 0;
             moveBot(MOVEMENT.RIGHT); //Depends on which rotation LEFT or RIGHT is better
             moveBot(MOVEMENT.RIGHT);
-            System.out.print("MULTI_RIGHT");
+//            System.out.print("MULTI_RIGHT");
         }
     }
 
