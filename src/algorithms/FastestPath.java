@@ -21,15 +21,8 @@ public class FastestPath {
     private DIRECTION curDir;
     private Cell[] neighbors;
     private int loop;
-    private Boolean explorationMode;
 
     public FastestPath(Arena explored){
-        this.explorationMode = false;
-        this.explored = explored;
-    }
-
-    public FastestPath(Arena explored, boolean explorationMode){
-        this.explorationMode = explorationMode;
         this.explored = explored;
     }
 
@@ -82,13 +75,7 @@ public class FastestPath {
                     System.out.println("Goal visited. Path found!");
                     path = getPath(targetX, targetY);
                     printFastestPath(path);
-                    robot.setRobotPos(initX, initY);
-                    robot.setDirection(DIRECTION.UP);
-//                    robot.setRobotFront(DIRECTION.UP);
                     ArrayList<MOVEMENT> movements = getPathMovements(path, robot, targetX, targetY);
-                    robot.setRobotPos(initX, initY);
-                    robot.setDirection(DIRECTION.UP);
-//                    robot.setRobotFront(DIRECTION.UP);
                     return movements;
                 }
 
@@ -222,8 +209,8 @@ public class FastestPath {
         System.out.println("Path:");
         while (!pathForPrint.isEmpty()) {
             temp = pathForPrint.pop();
-            if (!pathForPrint.isEmpty()) System.out.print("(" + temp.posY() + ", " + temp.posX() + ")\n --> ");
-            else System.out.print("(" + temp.posY() + ", " + temp.posX() + ")");
+            if (!pathForPrint.isEmpty()) System.out.print("(" + temp.posX() + ", " + temp.posY() + ") --> ");
+            else System.out.print("(" + temp.posX() + ", " + temp.posY() + ")");
         }
 
         System.out.println("\n");
@@ -233,33 +220,32 @@ public class FastestPath {
         StringBuilder pathString = new StringBuilder();
 
         Cell tempCell = path.pop();
-        Robot tempBot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false, false);
-        tempBot.setRobotSpeed(1000);
+        Robot simulatedRobot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false, false);
+        simulatedRobot.setRobotSpeed(1000);
         DIRECTION targetDir;
 
         ArrayList<MOVEMENT> movements = new ArrayList<>();
-
-        while(tempBot.getPosX() != targetX || tempBot.getPosY() != targetY){
-            if(tempBot.getPosX() == tempCell.posX() && tempBot.getPosY() == tempCell.posY())
+        while(simulatedRobot.getPosX() != targetX || simulatedRobot.getPosY() != targetY){
+            if(simulatedRobot.getPosX() == tempCell.posX() && simulatedRobot.getPosY() == tempCell.posY())
                 tempCell = path.pop();
 
-            targetDir = getTargetDir(tempBot.getPosX(), tempBot.getPosY(), tempBot.getDirection(), tempCell);
+            targetDir = getTargetDir(simulatedRobot.getPosX(), simulatedRobot.getPosY(), simulatedRobot.getDirection(), tempCell);
 
             MOVEMENT nextMovement;
-            if(tempBot.getDirection() != targetDir){
-                nextMovement = getNextMovement(tempBot.getDirection(), targetDir);
+            if(simulatedRobot.getDirection() != targetDir){
+                nextMovement = MOVEMENT.getNextMovement(simulatedRobot.getDirection(), targetDir);
             }
             else {
                 nextMovement = MOVEMENT.FORWARD;
             }
 
-            System.out.println("Movement " + nextMovement + "\nfrom (" + tempBot.getPosX() + ", " + tempBot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
+            System.out.println("Movement " + nextMovement + "\nfrom (" + simulatedRobot.getPosX() + ", " + simulatedRobot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
 
-
-            tempBot.move(nextMovement);
+            simulatedRobot.move(nextMovement);
             movements.add(nextMovement);
             pathString.append(nextMovement + " ");
         }
+
         System.out.println("\nMovements: " + pathString.toString());
         return movements;
     }
@@ -319,53 +305,6 @@ public class FastestPath {
 
     }
 
-    private MOVEMENT getNextMovement(DIRECTION from, DIRECTION to){
-        switch (from){
-            case UP:
-                switch (to){
-                    // no case UP
-                    case LEFT:
-                        return MOVEMENT.LEFT;
-                    case DOWN:
-                        return MOVEMENT.LEFT;
-                    case RIGHT:
-                        return MOVEMENT.RIGHT;
-                }
-                break;
-            case LEFT:
-                switch (to){
-                    case UP:
-                        return MOVEMENT.RIGHT;
-                    // no case LEFT
-                    case DOWN:
-                        return MOVEMENT.LEFT;
-                    case RIGHT:
-                        return MOVEMENT.LEFT;
-                }
-                break;
-            case DOWN:
-                switch (to){
-                    case UP:
-                        return MOVEMENT.LEFT;
-                    case LEFT:
-                        return MOVEMENT.RIGHT;
-                    // no case DOWN
-                    case RIGHT:
-                        return MOVEMENT.LEFT;
-                }
-                break;
-            case RIGHT:
-                switch (to){
-                    case UP:
-                        return MOVEMENT.LEFT;
-                    case LEFT:
-                        return MOVEMENT.LEFT;
-                    case DOWN:
-                        return MOVEMENT.RIGHT;
-                }
 
-        }
-        return null;
-    }
 
 }

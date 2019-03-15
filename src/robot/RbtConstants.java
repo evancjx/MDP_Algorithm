@@ -71,5 +71,53 @@ public class RbtConstants {
                     return 'E';
             }
         }
+        public static MOVEMENT getNextMovement(DIRECTION from, DIRECTION to){
+            switch (from){
+                case UP:
+                    switch (to){
+                        // no case UP
+                        case LEFT:
+                            return MOVEMENT.LEFT;
+                        case DOWN:
+                            return MOVEMENT.LEFT;
+                        case RIGHT:
+                            return MOVEMENT.RIGHT;
+                    }
+                    break;
+                case LEFT:
+                    switch (to){
+                        case UP:
+                            return MOVEMENT.RIGHT;
+                        // no case LEFT
+                        case DOWN:
+                            return MOVEMENT.LEFT;
+                        case RIGHT:
+                            return MOVEMENT.LEFT;
+                    }
+                    break;
+                case DOWN:
+                    switch (to){
+                        case UP:
+                            return MOVEMENT.LEFT;
+                        case LEFT:
+                            return MOVEMENT.RIGHT;
+                        // no case DOWN
+                        case RIGHT:
+                            return MOVEMENT.LEFT;
+                    }
+                    break;
+                case RIGHT:
+                    switch (to){
+                        case UP:
+                            return MOVEMENT.LEFT;
+                        case LEFT:
+                            return MOVEMENT.LEFT;
+                        case DOWN:
+                            return MOVEMENT.RIGHT;
+                    }
+
+            }
+            return null;
+        }
     }
 }

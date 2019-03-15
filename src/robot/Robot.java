@@ -80,22 +80,11 @@ public class Robot{
 
     public void setDirection(DIRECTION direction) {
         if(realRobot){
-            switch (direction){
-                case LEFT:
-                    move(MOVEMENT.RIGHT);
-                    break;
-                case RIGHT:
-                    move(MOVEMENT.LEFT);
-                    break;
-                case DOWN:
-                    move(MOVEMENT.LEFT);
-                    move(MOVEMENT.LEFT);
-                default:
-                    return;
-            }
+            MOVEMENT.getNextMovement(this.direction, direction);
         }
         else {
             this.direction = direction;
+            this.setRobotFront(this.direction);
         }
     }
     public int getFrontX(){ return this.frontX; }

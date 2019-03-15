@@ -104,7 +104,7 @@ public class Exploration {
             countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
-            System.out.println("LeftEmpty");
+//            System.out.println("LeftEmpty");
             countRight = 0;
             moveBot(MOVEMENT.LEFT);
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
@@ -223,11 +223,11 @@ public class Exploration {
     }
 
     private void goBackStart(){
-//        if(!robot.getHasCrossGoal()){
-//            FastestPath goToGoal = new FastestPath(explored);
-//            ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-//            goToGoal.executeMovements(movements, robot);
-//        }
+        if(!robot.getHasCrossGoal()){
+            FastestPath goToGoal = new FastestPath(explored);
+            ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
+            goToGoal.executeMovements(movements, robot);
+        }
         if(!(robot.getPosX() == ArenaConstants.START_X) && !(robot.getPosY() == ArenaConstants.START_Y)){
             FastestPath returnToStart = new FastestPath(explored);
             ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);

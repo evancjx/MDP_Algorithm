@@ -32,13 +32,10 @@ public class Simulator {
     private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal;
 
     private static int arenaExplored;
-//    private static Thread exploreThread, getFastestThread, fastestThread;
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int timeLimit = 300, robotSpeed = 20; //Number of steps per second
+    private static int timeLimit = 300, robotSpeed = 1000; //Number of steps per second
     private static boolean realRun = true;
-
-
 
     public static void main(String[] args){
 //        fPathWayPoint = new ArrayList<>();
@@ -139,8 +136,6 @@ public class Simulator {
             }
             JSONObject fastestCommand = new JSONObject(tmp);
             if (fastestCommand.has("FP_START")) {
-//                fastestThread.run();
-//                new Fastest().execute();
                 for (RbtConstants.MOVEMENT move: fPathWayPoint){
                     robot.move(move);
                     System.out.println("Move: " + move);
@@ -151,8 +146,8 @@ public class Simulator {
                     }
                     Simulator.refresh();
                 }
-                System.out.println("Done waypoint fastest path");
-                System.out.println("The robot is facing" + robot.getDirection());
+                System.out.println("\n\nDone waypoint fastest path");
+                System.out.println("Currently, robot is facing " + robot.getDirection());
                 switch (robot.getDirection()){
                     case LEFT:
                         robot.move(RIGHT);
@@ -169,6 +164,7 @@ public class Simulator {
                         //do nothing
                         break;
                 }
+                System.out.println("Change direction, robot is facing " + robot.getDirection() + "\n\n");
                 for (RbtConstants.MOVEMENT move: fPathGoal){
                     robot.move(move);
                     System.out.println("Move: " + move);
@@ -221,43 +217,44 @@ public class Simulator {
         cl.show(arenaPanel,"Arena");
     }
 
-    static class Fastest extends SwingWorker<Integer, String>{
-        protected Integer doInBackground() throws Exception{
+    private static void fastestPath(){
+        FastestPath fastestPath = new FastestPath(explored);
+        if((wayPointX != 0 || wayPointY !=0) && fPathWayPoint == null && fPathGoal == null){
+            System.out.println("\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+            System.out.println("Fastest path to way point and to goal zone:");
+            if(explored.checkValidCoord(wayPointX,wayPointY)){
+                fPathWayPoint = fastestPath.get(robot, wayPointX,wayPointY);
+                robot.setRobotPos(wayPointX, wayPointY);
+                fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
+                robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
+                System.out.println("Done producing path movements\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]\n\n");
+            }
+        }
+        else{
+            System.out.println("\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+            System.out.println("Fastest path to goal coords:");
+            fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
+            System.out.println("Done producing path movements\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]\n\n");
+        }
+    }
+    static class Fastest extends SwingWorker<Integer, String> {
+        protected Integer doInBackground() throws Exception {
             explored.repaint();
 
             FastestPath fastestPath = new FastestPath(explored);
             if (fPathWayPoint != null){
                 System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
                 fastestPath.executeMovements(fPathWayPoint, robot);
+                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
                 System.out.println("=========================================>");
                 robot.setDirection(DIRECTION.UP);
                 System.out.println("=========================================>");
-
                 System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
             }
             if (fPathGoal != null){
                 System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
                 fastestPath.executeMovements(fPathGoal, robot);
                 System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
-            }
-            else {
-                if((wayPointX != 0 || wayPointY !=0) && fPathWayPoint == null && fPathGoal == null){
-                    System.out.println("\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
-                    System.out.println("Fastest path to way point and to goal zone:");
-                    if(explored.checkValidCoord(wayPointX,wayPointY)){
-                        fPathWayPoint = fastestPath.get(robot, wayPointX,wayPointY);
-                        robot.setRobotPos(wayPointX, wayPointY);
-                        fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-                        robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
-                        System.out.println("Done producing path movements\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]\n\n");
-                    }
-                }
-                else{
-                    System.out.println("\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
-                    System.out.println("Fastest path to goal coords:");
-                    fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-                    System.out.println("Done producing path movements\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]\n\n");
-                }
             }
             return 222;
         }
@@ -272,8 +269,7 @@ public class Simulator {
             exploration.execute();
 
             generateArenaHex(arena);
-            new Fastest().run();
-            System.out.println("Arena explored: " + arenaExplored);
+            fastestPath();
             return 111;
         }
     }
