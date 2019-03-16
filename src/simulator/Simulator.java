@@ -23,7 +23,8 @@ import static utils.MapDescriptor.generateArenaHex;
 
 public class Simulator {
     private static JFrame appFrame = null;
-    private static JPanel arenaPanel = null, btnPanel = null;
+    private static JPanel arenaPanel = null, btnPanel = null, textPanel = null;
+    private static JLabel explorationStatus, fastestPathStatus;
     private static Container contentPane;
 
     private static Arena arena = null, explored = null;
@@ -34,45 +35,27 @@ public class Simulator {
     private static int arenaExplored;
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int timeLimit = 300, robotSpeed = 1000; //Number of steps per second
+    private static int timeLimit = 300, robotSpeed = 20; //Number of steps per second
     private static boolean realRun = true;
 
     public static void main(String[] args){
+//        //Week 8 FastestPath
 //        fPathWayPoint = new ArrayList<>();
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
 //        fPathWayPoint.add(RIGHT);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
-//        fPathWayPoint.add(RbtConstants.MOVEMENT.FORWARD);
+//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
 //        fPathWayPoint.add(LEFT);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
 //        fPathWayPoint.add(FORWARD);
 //        fPathWayPoint.add(RIGHT);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-////
+//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
 //        fPathGoal = new ArrayList<>();
-////        fPathWayPoint.add(LEFT);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(RIGHT);
+//        fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);
+//        fPathGoal.add(LEFT);
+//        fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);
 //        fPathGoal.add(RIGHT);
 //        fPathGoal.add(FORWARD);
 
@@ -83,11 +66,12 @@ public class Simulator {
             //Setup communication
             CommMgr commMgr = CommMgr.getCommMgr();
             if(!commMgr.setConnection()){
-                System.out.println("Error");
+                explorationStatus.setText("No Connection to RPi");
                return;
             }
 
             //wait for message
+            explorationStatus.setText("Waiting for Robot position, direction and Way point...");
             String tmp = null;
             while (tmp == null) {
                 tmp = commMgr.recvMsg();
@@ -98,16 +82,15 @@ public class Simulator {
             wayPointY = wayPoint.getInt(1);
             JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
             robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
-            robot.setInitialRealDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
-            System.out.println("Doing calibration");
+            robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+            explorationStatus.setText("Robot doing calibration...");
             CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
-            System.out.println("calibration not done yet!");
             while(true){
                 if(CommMgr.getCommMgr().recvMsg().equals("Done")){
                     break;
                 }
             }
-            System.out.println("done with calibration");
+            explorationStatus.setText("Done with calibration. Waiting for next command...");
             //wait for message
             tmp = null;
             while (tmp == null) {
@@ -123,61 +106,31 @@ public class Simulator {
                     e.printStackTrace();
                 }
             }
-            System.out.println("Waiting for arena to be explored");
+            Simulator.setExplorationStatus("Waiting for arena to be explored...");
             //wait arena to be explored
             while(arenaExplored != 111);
-            System.out.println("arena explored");
+            String currentMsg = fastestPathStatus.getText();
+            setFastestPathStatus("<html>" + currentMsg + "<br/>Waiting for calibration...");
             //wait for message
             robot.setRobotExplored(true);
-            robot.move(RbtConstants.MOVEMENT.CALIBRATE);
+            while(true){
+                if(CommMgr.getCommMgr().recvMsg().equals("FastestPathCalibrationDone")){
+                    break;
+                }
+            }
             tmp = null;
             while (tmp == null) {
                 tmp = commMgr.recvMsg();
             }
             JSONObject fastestCommand = new JSONObject(tmp);
             if (fastestCommand.has("FP_START")) {
-                for (RbtConstants.MOVEMENT move: fPathWayPoint){
-                    robot.move(move);
-                    System.out.println("Move: " + move);
-                    tmp = null;
-                    commMgr = CommMgr.getCommMgr();
-                    while (tmp == null) {
-                        tmp = commMgr.recvMsg();
-                    }
-                    Simulator.refresh();
-                }
-                System.out.println("\n\nDone waypoint fastest path");
-                System.out.println("Currently, robot is facing " + robot.getDirection());
-                switch (robot.getDirection()){
-                    case LEFT:
-                        robot.move(RIGHT);
-                        break;
-                    case RIGHT:
-                        robot.move(LEFT);
-                        break;
-                    case DOWN:
-                        robot.move(RIGHT);
-                        robot.move(RIGHT);
-                        break;
-                    case UP:
-                    default:
-                        //do nothing
-                        break;
-                }
-                System.out.println("Change direction, robot is facing " + robot.getDirection() + "\n\n");
-                for (RbtConstants.MOVEMENT move: fPathGoal){
-                    robot.move(move);
-                    System.out.println("Move: " + move);
-                    tmp = null;
-                    commMgr = CommMgr.getCommMgr();
-                    while (tmp == null) {
-                        tmp = commMgr.recvMsg();
-                    }
-                    Simulator.refresh();
-                }
+                new Fastest().execute();
             }
-
         }
+        else{
+            setExplorationStatus("Load Map");
+        }
+
     }
 
     public static void refresh(){
@@ -186,21 +139,29 @@ public class Simulator {
     private static void createDisplay(){
         appFrame = new JFrame();
         appFrame.setTitle("MDP Group 1 Simulator");
-        appFrame.setSize(new Dimension(690, 700));
+        if(realRun)
+            appFrame.setSize(new Dimension(690, 750));
+        else
+            appFrame.setSize(new Dimension(690, 750));
         appFrame.setResizable(false);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         appFrame.setLocation(dim.width / 2 - appFrame.getSize().width / 2, dim.height / 2 - appFrame.getSize().height / 2);
 
         arenaPanel = new JPanel(new CardLayout());
+        arenaPanel.setPreferredSize(new Dimension(480, 600));
+        textPanel = new JPanel(new GridLayout());
+        textPanel.setPreferredSize(new Dimension(500, 10));
         btnPanel = new JPanel(new GridLayout());
 
         contentPane = appFrame.getContentPane();
-        contentPane.add(arenaPanel, BorderLayout.CENTER);
+        contentPane.add(arenaPanel, BorderLayout.PAGE_START);
+        contentPane.add(textPanel, BorderLayout.CENTER);
         contentPane.add(btnPanel, BorderLayout.PAGE_END);
 
         setupArena();
-        setupActions();
+        setupText();
+        if (!realRun) setupActions();
 
         appFrame.setVisible(true);
         appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -216,26 +177,38 @@ public class Simulator {
         CardLayout cl = (CardLayout) arenaPanel.getLayout();
         cl.show(arenaPanel,"Arena");
     }
+    private static void setupText(){
+        textPanel.setBackground(Color.lightGray);
+        explorationStatus = new JLabel();
+        fastestPathStatus = new JLabel();
+
+        textPanel.add(explorationStatus, BorderLayout.NORTH);
+        textPanel.add(fastestPathStatus, BorderLayout.SOUTH);
+    }
 
     private static void fastestPath(){
         FastestPath fastestPath = new FastestPath(explored);
+        String status;
         if((wayPointX != 0 || wayPointY !=0) && fPathWayPoint == null && fPathGoal == null){
-            System.out.println("\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+            printRobotPosition();
             System.out.println("Fastest path to way point and to goal zone:");
             if(explored.checkValidCoord(wayPointX,wayPointY)){
                 fPathWayPoint = fastestPath.get(robot, wayPointX,wayPointY);
                 robot.setRobotPos(wayPointX, wayPointY);
                 fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
                 robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
-                System.out.println("Done producing path movements\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]\n\n");
             }
+            status = "Done calculating fastest path, to way point and to goal zone.";
         }
         else{
-            System.out.println("\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+            printRobotPosition();
             System.out.println("Fastest path to goal coords:");
             fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-            System.out.println("Done producing path movements\nCurrent Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]\n\n");
+            status = "Done calculating fastest path, to goal zone.";
         }
+        setFastestPathStatus(status);
+        System.out.println(status);
+        printRobotPosition();
     }
     static class Fastest extends SwingWorker<Integer, String> {
         protected Integer doInBackground() throws Exception {
@@ -243,18 +216,16 @@ public class Simulator {
 
             FastestPath fastestPath = new FastestPath(explored);
             if (fPathWayPoint != null){
-                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+                printRobotPosition();
                 fastestPath.executeMovements(fPathWayPoint, robot);
-                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
-                System.out.println("=========================================>");
+                printRobotPosition();
                 robot.setDirection(DIRECTION.UP);
-                System.out.println("=========================================>");
-                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+                printRobotPosition();
             }
             if (fPathGoal != null){
-                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+                printRobotPosition();
                 fastestPath.executeMovements(fPathGoal, robot);
-                System.out.println("Robot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+                printRobotPosition();
             }
             return 222;
         }
@@ -274,75 +245,83 @@ public class Simulator {
         }
     }
     private static void setupActions(){
-        if(!realRun){
-            JButton btnLoad = new JButton("Load Arena");
-            standardBtn(btnLoad);
-            JButton btnExplore = new JButton("Explore");
-            standardBtn(btnExplore);
-            JButton btnStop = new JButton("Stop");
-            standardBtn(btnStop);
-            JButton btnConfig =  new JButton("Config");
-            standardBtn(btnConfig);
-            JButton btnFastest = new JButton("Fastest");
-            standardBtn(btnFastest);
+        JButton btnLoad = new JButton("Load Arena");
+        standardBtn(btnLoad);
+        JButton btnExplore = new JButton("Explore");
+        standardBtn(btnExplore);
+        JButton btnStop = new JButton("Stop");
+        standardBtn(btnStop);
+        JButton btnConfig =  new JButton("Config");
+        standardBtn(btnConfig);
+        JButton btnFastest = new JButton("Fastest");
+        standardBtn(btnFastest);
 
-            btnLoad.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    super.mousePressed(e);
-                    final JFileChooser fc = new JFileChooser();
-                    fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        btnLoad.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                final JFileChooser fc = new JFileChooser();
+                fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
-                    if(fc.showOpenDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
-                        File selectedFile = fc.getSelectedFile();
-                        MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
-                        appFrame.repaint();
-                    }
-                }
-            });
-            btnPanel.add(btnLoad);
-            btnExplore.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    super.mousePressed(e);
-                    CardLayout cl = ((CardLayout) arenaPanel.getLayout());
-                    cl.show(arenaPanel, "Explore");
-                    new Explore().execute();
-                }
-            });
-            btnPanel.add(btnExplore);
-
-
-            btnStop.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    super.mousePressed(e);
-                    robot.setCalledHome(true);
-                }
-            });
-            btnPanel.add(btnStop);
-
-            btnConfig.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    super.mousePressed(e);
-                    configDialog();
-                }
-            });
-            btnPanel.add(btnConfig);
-
-            btnFastest.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    super.mousePressed(e);
-                    CardLayout cl = ((CardLayout) arenaPanel.getLayout());
-                    cl.show(arenaPanel, "Explore");
+                if(fc.showOpenDialog(appFrame) == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fc.getSelectedFile();
+                    arenaPanel.removeAll();
+                    arena =  new Arena(robot);
+                    arena.clearArena();
+                    explored = new Arena(robot);
+                    explored.clearArena();
+                    MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
+                    arenaPanel.add(arena, "Arena");
+                    arenaPanel.add(explored, "Explore");
                     appFrame.repaint();
-                    new Fastest().execute();
+                    setExplorationStatus("<html>Start exploring or input way point at Config.<br/> Click on the button below...</html>");
                 }
-            });
-            btnPanel.add(btnFastest);
-        }
+            }
+        });
+        btnPanel.add(btnLoad);
+        btnExplore.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                cl.show(arenaPanel, "Explore");
+                Simulator.setExplorationStatus("Waiting for arena to be explored...");
+                new Explore().execute();
+            }
+        });
+        btnPanel.add(btnExplore);
+
+
+        btnStop.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                robot.setCalledHome(true);
+            }
+        });
+        btnPanel.add(btnStop);
+
+        btnConfig.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                configDialog();
+            }
+        });
+        btnPanel.add(btnConfig);
+
+        btnFastest.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                CardLayout cl = ((CardLayout) arenaPanel.getLayout());
+                cl.show(arenaPanel, "Explore");
+                appFrame.repaint();
+                new Fastest().execute();
+            }
+        });
+        btnPanel.add(btnFastest);
+
     }
 
     private static void standardBtn(JButton btn){
@@ -352,38 +331,37 @@ public class Simulator {
 
     private static void realOrSimulation(){
         JDialog initialDialog = new JDialog(appFrame, "Config", true);
-        initialDialog.setSize(400,150);
+        initialDialog.setSize(400,80);
         initialDialog.setLayout(new FlowLayout());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         initialDialog.setLocation(dim.width / 2 - initialDialog.getSize().width / 2, dim.height / 2 - initialDialog.getSize().height / 2);
 
         JRadioButton realRunButton = new JRadioButton("Real Run");
-        realRunButton.setMnemonic(KeyEvent.VK_R);
         realRunButton.setSelected(true);
+        realRunButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                realRun = true;
+                initialDialog.setVisible(false);
+            }
+        });
         JRadioButton simulationButton = new JRadioButton("Simulation");
-        simulationButton.setMnemonic(KeyEvent.VK_S);
+        simulationButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                realRun = false;
+                initialDialog.setVisible(false);
+            }
+        });
 
         ButtonGroup group = new ButtonGroup();
         group.add(realRunButton);
         group.add(simulationButton);
 
-        JButton btnSave = new JButton("Save");
-        btnSave.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                super.mousePressed(e);
-                if(realRunButton.isSelected()){
-                    realRun = true;
-                }
-                else if (simulationButton.isSelected()){
-                    realRun = false;
-                }
-                initialDialog.setVisible(false);
-            }
-        });
         initialDialog.add(realRunButton);
         initialDialog.add(simulationButton);
-        initialDialog.add(btnSave);
         initialDialog.setVisible(true);
     }
 
@@ -438,5 +416,16 @@ public class Simulator {
         configDialog.add(tfPanel2);
         configDialog.add(savePanel);
         configDialog.setVisible(true);
+    }
+
+    private static void printRobotPosition(){
+        System.out.println("\nRobot [position: ("+robot.getPosX()+", "+robot.getPosY()+") direction:"+robot.getDirection()+"]");
+    }
+
+    public static void setExplorationStatus(String message){
+        explorationStatus.setText(message);
+    }
+    public static void setFastestPathStatus(String message){
+        fastestPathStatus.setText(message);
     }
 }

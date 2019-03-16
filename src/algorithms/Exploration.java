@@ -21,6 +21,7 @@ public class Exploration {
     private boolean realRun;
 
     private int countRight;
+    private String checkDirectionLog = "";
 
     public Exploration(Arena explored, Arena arena, Robot robot, int coverageLimit, int timeLimit, boolean realRun){
         this.explored = explored;
@@ -47,16 +48,17 @@ public class Exploration {
 
     public boolean execute(){
         int areaExplored, initX = robot.getPosX(), initY = robot.getPosY();
-        System.out.println("Starting exploration...");
         startTime = System.currentTimeMillis();
         endTime = startTime + (timeLimit * 1000);
+        System.out.println("Starting exploration...");
         if(realRun) CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();
-        System.out.println("done sense Surrounding");
         do{
             areaExplored = calculateAreaExplored();
-            System.out.println("Explored Area: " + areaExplored);
+//            System.out.println("Explored Area: " + areaExplored);
             nextMove();
+
+            Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
 
             if(realRun){
                 String[] mapValues = generateArenaHex(explored);
@@ -74,13 +76,21 @@ public class Exploration {
 
         goBackStart();
 
+        String message = "<html>";
+        String newLineBreak = "<br/>";
         System.out.println("Exploration complete!");
+        message += "Exploration complete!" + newLineBreak;
         areaExplored = calculateAreaExplored();
+        message += (areaExplored / 300.0) * 100.0 + " Coverage";
         System.out.printf("%.2f%% Coverage", (areaExplored / 300.0) * 100.0);
+        message += ", " + areaExplored + " Cells" + newLineBreak;
         System.out.println(", " + areaExplored + " Cells");
+        message += (System.currentTimeMillis() - startTime) + " Milli-Seconds" + newLineBreak;
         System.out.println((System.currentTimeMillis() - startTime) / 1000 + " Seconds");
+        message += "</html>";
 
-        System.out.println("Finish exploration");
+        Simulator.setExplorationStatus(message);
+        System.out.println("\nMovements:\n" + checkDirectionLog);
         return true;
     }
 
@@ -92,28 +102,27 @@ public class Exploration {
             countRight = 0;
         }
         if (lookRightEmpty(rbtX, rbtY)){
-//            System.out.println("RightEmpty");
+            checkDirectionLog += "Right Empty\n";
             moveBot(MOVEMENT.RIGHT);
             countRight++;
             if(lookForward(rbtX, rbtY)){
-//                System.out.println("AfterRight, ForwardEmpty");
+                checkDirectionLog += "Forward Empty\n";
                 moveBot(MOVEMENT.FORWARD);
             }
         } else if (lookForward(rbtX, rbtY)){
-//            System.out.println("ForwardEmpty");
+            checkDirectionLog += "Forward Empty\n";
             countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
-//            System.out.println("LeftEmpty");
+            checkDirectionLog += "Left Empty\n";
             countRight = 0;
             moveBot(MOVEMENT.LEFT);
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else {
-//            System.out.println("onlyLeftwithBackEmpty, turning right and right");
+            checkDirectionLog += "Only Back Empty\n";
             countRight = 0;
             moveBot(MOVEMENT.RIGHT); //Depends on which rotation LEFT or RIGHT is better
             moveBot(MOVEMENT.RIGHT);
-//            System.out.print("MULTI_RIGHT");
         }
     }
 
@@ -200,6 +209,7 @@ public class Exploration {
     }
 
     private void moveBot(MOVEMENT movement){
+        System.out.println("move: " + movement + "\tcountRight="+countRight);
         robot.move(movement);
         Simulator.refresh();
         senseSurrounding();

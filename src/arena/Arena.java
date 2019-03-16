@@ -110,6 +110,7 @@ public class Arena extends JPanel {
                     cell.setIsExplored(true);
                 }
                 else {
+                    cell.setIsObstacle(false);
                     cell.setIsExplored(false);
                     cell.setVirtualWall(false);
                 }

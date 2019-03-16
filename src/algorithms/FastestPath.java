@@ -251,12 +251,16 @@ public class FastestPath {
     }
 
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
+        long startTime = System.currentTimeMillis();
         CommMgr commMgr = CommMgr.getCommMgr();
         String tmp = null;
         int count = 0;
         if(!robot.isRealRobot()){
             for(MOVEMENT move: movements){
                 robot.move(move);
+                System.out.println("Move: " + move);
+//                Simulator.setFastestPathStatus("Move: " + move);
+//                Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
                 Simulator.refresh();
             }
         }
@@ -264,6 +268,7 @@ public class FastestPath {
             for (MOVEMENT move: movements){
                 robot.move(move);
                 System.out.println("Move: " + move);
+                Simulator.setFastestPathStatus("Move: " + move);
 //                if(move==MOVEMENT.FORWARD){
 //                    count+=1;
 //                    continue;
@@ -279,7 +284,6 @@ public class FastestPath {
 //                    System.out.println("Next movement");
 //                    robot.move(move);
                 tmp = null;
-                commMgr = CommMgr.getCommMgr();
                 while (tmp == null) {
                     tmp = commMgr.recvMsg();
                 }
@@ -302,9 +306,6 @@ public class FastestPath {
 //                robot.move(MOVEMENT.LEFT);
 //            }
         }
-
+        Simulator.setFastestPathStatus("FastestPath took: "+ (System.currentTimeMillis() - startTime) + " Milli-Seconds");
     }
-
-
-
 }

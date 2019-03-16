@@ -74,18 +74,14 @@ public class Robot{
     public int getPosY(){ return this.posY; }
     public DIRECTION getDirection(){return this.direction; }
 
-    public void setInitialRealDirection(DIRECTION direction){
-        this.direction = direction;
-    }
-
     public void setDirection(DIRECTION direction) {
         if(realRobot){
             MOVEMENT.getNextMovement(this.direction, direction);
         }
         else {
             this.direction = direction;
-            this.setRobotFront(this.direction);
         }
+        this.setRobotFront(this.direction);
     }
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }

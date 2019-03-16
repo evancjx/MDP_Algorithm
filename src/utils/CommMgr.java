@@ -1,5 +1,7 @@
 package utils;
 
+import simulator.Simulator;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -99,11 +101,12 @@ public class CommMgr {
         try {
             String outputMsg = msgType + msg;
 
-            System.out.println("Sending out msg: " + outputMsg);
+//
             if(_osw==null) _osw = new OutputStreamWriter(_bos, "US-ASCII");
             _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to tokenise msg)
             _osw.flush();
-
+            System.out.println("Sent out msg: " + outputMsg);
+            Simulator.setExplorationStatus("Sent out msg: " + outputMsg);
             return true;
         } catch (IOException e) {
             System.out.println("sendMsg() -> IOException");
