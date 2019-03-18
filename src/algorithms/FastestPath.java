@@ -22,6 +22,8 @@ public class FastestPath {
     private Cell[] neighbors;
     private int loop;
 
+    private DIRECTION robotLastDirection = null;
+
     public FastestPath(Arena explored){
         this.explored = explored;
     }
@@ -51,7 +53,11 @@ public class FastestPath {
         initialize();
         int initX = robot.getPosX(), initY = robot.getPosY();
         this.curCell = explored.getCell(robot.getPosX(), robot.getPosY());
-        this.curDir = robot.getDirection();
+
+        if(robotLastDirection != null) this.curDir = robotLastDirection;
+        else this.curDir = robot.getDirection();
+
+        System.out.println("@@@@@@@@ DIRECTION: " + this.curDir);
         openList.add(curCell);
         gCost[robot.getPosY()][robot.getPosX()] = 0;
         System.out.println("Calculating fastest path from (" + curCell.posX() + ", " + curCell.posY() + ") to goal (" + targetX + ", " + targetY + ")...");
@@ -64,7 +70,8 @@ public class FastestPath {
 
                 if(parents.containsKey(curCell)){
                     curDir = getTargetDir(
-                            parents.get(curCell).posX(), parents.get(curCell).posY(),
+                            parents.get(curCell).posX(),
+                            parents.get(curCell).posY(),
                             curDir, curCell);
                 }
 
@@ -75,8 +82,7 @@ public class FastestPath {
                     System.out.println("Goal visited. Path found!");
                     path = getPath(targetX, targetY);
                     printFastestPath(path);
-                    ArrayList<MOVEMENT> movements = getPathMovements(path, robot, targetX, targetY);
-                    return movements;
+                    return getPathMovements(path, robot, targetX, targetY);
                 }
 
                 //TOP
@@ -247,6 +253,7 @@ public class FastestPath {
         }
 
         System.out.println("\nMovements: " + pathString.toString());
+        if(robotLastDirection == null) robotLastDirection = simulatedRobot.getDirection();
         return movements;
     }
 

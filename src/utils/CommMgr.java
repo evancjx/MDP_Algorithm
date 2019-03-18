@@ -8,16 +8,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class CommMgr {
-
     private static CommMgr _commMgr = null;
 
     // For communication with the Raspberry-Pi
     private static final String HOST = "192.168.1.1";
     private static final int PORT = 5555;
-
-    public static final String MSG_TYPE_ANDROID = "b";
-    public static final String MSG_TYPE_RPI = "i";
-    public static final String MSG_TYPE_ARDUINO = "a";
 
     private static Socket _conn = null;
 
@@ -25,6 +20,10 @@ public class CommMgr {
     private static OutputStreamWriter _osw = null;
     private static BufferedReader _br = null;
 
+    public static final String
+            MSG_TYPE_ANDROID = "b",
+            MSG_TYPE_RPI = "i",
+            MSG_TYPE_ARDUINO = "a";
 
     //Singleton class is used. Only one CommMgr is present at any time
     private CommMgr() {}
@@ -38,9 +37,7 @@ public class CommMgr {
     }
 
     public boolean setConnection() {
-
         try {
-
             _conn = new Socket();
             _conn.connect(new InetSocketAddress(HOST, PORT));
 
@@ -49,12 +46,10 @@ public class CommMgr {
             _br = new BufferedReader(new InputStreamReader(
                     _conn.getInputStream()));
 
-
             // Successful connection, return true
             System.out.println("setConnection() -> Connection established successfully!");
 
             return true;
-
         } catch (UnknownHostException e) {
             System.out.println("setConnection() -> Unknown Host Exception");
             e.printStackTrace();
@@ -70,19 +65,13 @@ public class CommMgr {
 
     public void closeConnection() {
         try {
-            if (_bos != null) {
-            _bos.close();
-            }
-            if (_osw != null) {
-            _osw.close();
-            }
-            if (_br != null) {
-            _br.close();
-            }
+            if (_bos != null) _bos.close();
+            if (_osw != null) _osw.close();
+            if (_br != null) _br.close();
 
             if (_conn != null) {
-            _conn.close();
-            _conn = null;
+                _conn.close();
+                _conn = null;
             }
             System.out.println("connection closed successfully");
         } catch (IOException e) {
@@ -121,11 +110,10 @@ public class CommMgr {
 
     public String recvMsg() {
         try {
-            for(int i = 0; i<10; ++i){
+            for(int i = 0; i < 10; i++){
                 String inputMsg = _br.readLine();
                 if (inputMsg != null && inputMsg.length() > 0) {
-                // Fox debug - print out received msg
-                    System.out.println("Message received: " + inputMsg);
+//                    System.out.println("Message received: " + inputMsg);
                     return inputMsg;
                 }
             }
@@ -139,10 +127,4 @@ public class CommMgr {
 
         return null;
     }
-
-    public boolean isConnected() {
-        return _conn.isConnected();
-    }
-
-
 }

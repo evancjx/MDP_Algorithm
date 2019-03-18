@@ -1,7 +1,5 @@
 package robot;
 
-
-
 import arena.Arena;
 import arena.ArenaConstants;
 import org.json.JSONObject;
@@ -11,14 +9,10 @@ import utils.CommMgr;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-//import org.json.JSONObject;
-
 // @formatter:off
 /**
  * Represents the robot moving in the arena.
- *
  * The robot is represented by a 3 x 3 cell space as below:
- *
  *          ^   ^   ^
  *         SR  SR  SR
  *   < SR [X] [X] [X]
@@ -26,8 +20,6 @@ import java.util.concurrent.TimeUnit;
  *        [X] [X] [X]
  *
  * SR = Short Range Sensor, LR = Long Range Sensor
- *
- *
  */
 // @formatter:on
 
@@ -72,24 +64,20 @@ public class Robot{
 
     public int getPosX(){ return this.posX; }
     public int getPosY(){ return this.posY; }
-    public DIRECTION getDirection(){return this.direction; }
-
-    public void setDirection(DIRECTION direction) {
-        if(realRobot){
-            MOVEMENT.getNextMovement(this.direction, direction);
-        }
-        else {
-            this.direction = direction;
-        }
-        this.setRobotFront(this.direction);
-    }
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
     public int getSpeed(){ return this.speed; }
+    public boolean isRealRobot(){
+        return realRobot;
+    }
+    public DIRECTION getDirection(){return this.direction; }
     public Boolean getCalledHome(){ return this.calledHome; }
     public Boolean getHasCrossGoal(){ return this.hasCrossGoal; }
-    public Boolean getRobotMode(){ return this.fastestMode; }
 
+    public void setRobotPos(int posX, int posY){
+        this.posX = posX;
+        this.posY = posY;
+    }
     public void setRobotFront(DIRECTION dir){
         this.direction = dir;
         switch (dir){
@@ -111,15 +99,10 @@ public class Robot{
                 break;
         }
     }
-    public void setRobotPos(int posX, int posY){
-        this.posX = posX;
-        this.posY = posY;
-    }
     public void setRobotSpeed(int speed){
         this.speed = 1000/speed;
     }
     public void setRobotExplored(boolean mode) {this.fastestMode = mode; }
-
     public void setSenors(){
         switch (this.direction){
             case UP: //UP
@@ -157,6 +140,20 @@ public class Robot{
         }
     }
     public void setCalledHome(Boolean value){ this.calledHome = value; }
+    public void setDirection(DIRECTION direction) {
+        if(realRobot){
+            MOVEMENT changeDirectionMove = MOVEMENT.getNextMovement(this.direction, direction);
+            if (changeDirectionMove != null) move(changeDirectionMove);
+        }
+        else {
+            this.direction = direction;
+        }
+        this.setRobotFront(this.direction);
+    }
+    private void crossGoal(){
+        if(this.getPosX() == ArenaConstants.GOAL_X && this.getPosY() == ArenaConstants.GOAL_Y)
+            this.hasCrossGoal = true;
+    }
 
     public int[] sense(Arena explored, Arena arena){
         int[] result = new int[6];
@@ -197,10 +194,6 @@ public class Robot{
     }
 
     public void move(MOVEMENT movement){
-        this.move(movement, true);//send move to android
-    }
-
-    public void move(MOVEMENT movement, boolean sendToAndroid){
         if(!realRobot){
             try {
                 TimeUnit.MILLISECONDS.sleep(this.getSpeed());
@@ -250,17 +243,14 @@ public class Robot{
 
         crossGoal();
         if(realRobot){
-//            System.out.println("Sending instruction");
             System.out.println("Movement: " + movement);
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement, this.fastestMode)+"", CommMgr.MSG_TYPE_ARDUINO);
             JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("movement", Character.toString(MOVEMENT.getChar(movement, false)));
             jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
             commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
     }
-
     public void moveForwardMultiple(int count){
         switch(direction){
             case UP:
@@ -294,19 +284,9 @@ public class Robot{
             commMgr.sendMsg("W"+count*10, CommMgr.MSG_TYPE_ARDUINO);
         }
         JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("movement", );
         jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
         commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         while(commMgr.recvMsg()==null){}
-    }
-
-    private void crossGoal(){
-        if(this.getPosX() == ArenaConstants.GOAL_X && this.getPosY() == ArenaConstants.GOAL_Y)
-            this.hasCrossGoal = true;
-    }
-
-    public boolean isRealRobot(){
-        return realRobot;
     }
 
     //Improved Algorithm
