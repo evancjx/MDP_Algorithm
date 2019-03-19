@@ -273,7 +273,7 @@ public class FastestPath {
                         count = 0;
                         tmp = null;
                         System.out.println("Waiting for acknowledgement");
-                        while (tmp == null) tmp = commMgr.recvMsg();
+//                        while (tmp == null) tmp = commMgr.recvMsg();
                     }
                 }
             }

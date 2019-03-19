@@ -93,7 +93,7 @@ public class CommMgr {
             if(_osw==null) _osw = new OutputStreamWriter(_bos, "US-ASCII");
             _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to tokenise msg)
             _osw.flush();
-//            System.out.println("Sent out msg: " + outputMsg);
+            System.out.println("Sent out msg: " + outputMsg);
             Simulator.setExplorationStatus("Sent out msg: " + outputMsg);
             return true;
         } catch (IOException e) {
@@ -125,5 +125,9 @@ public class CommMgr {
         }
 
         return null;
+    }
+
+    public static void waitForAckonwledgement(String s) {
+        while(!_commMgr.recvMsg().equals(s));
     }
 }

@@ -273,9 +273,11 @@ public class Robot{
         if (count>5){
             while (count > 5){
                 commMgr.sendMsg("W"+5*10, CommMgr.MSG_TYPE_ARDUINO);
+                CommMgr.waitForAckonwledgement("Moved");
                 count = count - 5;
                 if (count <= 5) {
                     commMgr.sendMsg("W" + (count) * 10, CommMgr.MSG_TYPE_ARDUINO);
+                    CommMgr.waitForAckonwledgement("Moved");
                     count = 0;
                 }
             }
