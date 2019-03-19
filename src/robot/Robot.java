@@ -168,7 +168,7 @@ public class Robot{
         }
         else{
             CommMgr commMgr = CommMgr.getCommMgr();
-            String msg = commMgr.recvMsg();
+            String msg = commMgr.receiveMsg();
             String[] sensorValues = msg.split(":");
             // Front Center:Front Left: Front Right: RIGHT: Left FRONT: LEFT BACK
             result[0] = Integer.parseInt(sensorValues[0]);
@@ -196,7 +196,7 @@ public class Robot{
     public void move(MOVEMENT movement){
         if(!realRobot){
             try {
-                TimeUnit.MILLISECONDS.sleep(this.getSpeed());
+                    TimeUnit.MILLISECONDS.sleep(this.getSpeed());
             } catch (InterruptedException e) {
                 System.out.println("Something went wrong in Robot.move()!");
             }
@@ -265,10 +265,6 @@ public class Robot{
             default:
                 posX+=count;
         }
-//        String command = "";
-//        for (int i = 0; i < count; i++){
-//            command+="F]";
-//        }
         CommMgr commMgr = CommMgr.getCommMgr();
         if (count>5){
             while (count > 5){
@@ -284,11 +280,11 @@ public class Robot{
         }
         else{
             commMgr.sendMsg("W"+count*10, CommMgr.MSG_TYPE_ARDUINO);
+            CommMgr.waitForAckonwledgement("Moved");
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
         commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
-//        while(commMgr.recvMsg()==null);
     }
 
     //Improved Algorithm

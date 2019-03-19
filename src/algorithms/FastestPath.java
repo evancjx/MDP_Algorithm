@@ -271,9 +271,6 @@ public class FastestPath {
                     if(count != 0){
                         robot.moveForwardMultiple(count);
                         count = 0;
-                        tmp = null;
-                        System.out.println("Waiting for acknowledgement");
-//                        while (tmp == null) tmp = commMgr.recvMsg();
                     }
                 }
             }
@@ -283,14 +280,11 @@ public class FastestPath {
             Simulator.refresh();
             if(robot.isRealRobot()){
                 tmp = null;
-                while (tmp == null) tmp = commMgr.recvMsg();
+                while (tmp == null) tmp = commMgr.receiveMsg();
             }
         }
-//        if(count!=0) robot.moveForwardMultiple(count);
-//        if(robot.isRealRobot()){
-//            tmp = null;
-//            while (tmp == null) tmp = commMgr.recvMsg();
-//        }
+        System.out.println("Count: " + count);
+        if(count!=0) robot.moveForwardMultiple(count);
         Simulator.setFastestPathStatus("FastestPath took: "+ (System.currentTimeMillis() - startTime) + " Milli-Seconds");
     }
 }

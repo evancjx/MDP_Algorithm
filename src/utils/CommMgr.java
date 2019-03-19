@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 public class CommMgr {
     private static CommMgr _commMgr = null;
@@ -90,8 +91,8 @@ public class CommMgr {
         try {
             String outputMsg = msgType + msg;
 
-            if(_osw==null) _osw = new OutputStreamWriter(_bos, "US-ASCII");
-            _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to tokenise msg)
+            if(_osw==null) _osw = new OutputStreamWriter(_bos, StandardCharsets.US_ASCII);
+            _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to token-ise msg)
             _osw.flush();
             System.out.println("Sent out msg: " + outputMsg);
             Simulator.setExplorationStatus("Sent out msg: " + outputMsg);
@@ -103,11 +104,10 @@ public class CommMgr {
             System.out.println("sendMsg() -> Exception");
             e.printStackTrace();
         }
-
         return false;
     }
 
-    public String recvMsg() {
+    public String receiveMsg() {
         try {
             for(int i = 0; i < 10; i++){
                 String inputMsg = _br.readLine();
@@ -117,10 +117,10 @@ public class CommMgr {
                 }
             }
         } catch (IOException e) {
-            System.out.println("recvMsg() -> IO exception");
+            System.out.println("receiveMsg() -> IO exception");
             e.printStackTrace();
         } catch (Exception e) {
-            System.out.println("recvMsg() -> Exception");
+            System.out.println("receiveMsg() -> Exception");
             e.printStackTrace();
         }
 
@@ -128,6 +128,6 @@ public class CommMgr {
     }
 
     public static void waitForAckonwledgement(String s) {
-        while(!_commMgr.recvMsg().equals(s));
+        while(!_commMgr.receiveMsg().equals(s));
     }
 }
