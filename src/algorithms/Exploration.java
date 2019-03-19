@@ -90,7 +90,7 @@ public class Exploration {
         message += "</html>";
 
         Simulator.setExplorationStatus(message);
-        System.out.println("\nMovements:\n" + checkDirectionLog);
+//        System.out.println("\nMovements:\n" + checkDirectionLog);
         return true;
     }
 
@@ -209,7 +209,7 @@ public class Exploration {
     }
 
     private void moveBot(MOVEMENT movement){
-        System.out.println("move: " + movement + "\tcountRight="+countRight);
+//        System.out.println("move: " + movement + "\tcountRight="+countRight);
         robot.move(movement);
         Simulator.refresh();
         senseSurrounding();

@@ -40,7 +40,7 @@ public class Simulator {
     private static boolean realRun = true;
 
     public static void main(String[] args){
-        //Week 8 FastestPath
+//        Week 8 FastestPath
 //        fPathWayPoint = new ArrayList<>();
 //        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
 //        fPathWayPoint.add(RIGHT);
@@ -65,6 +65,7 @@ public class Simulator {
         createDisplay();
         if(realRun) {
             //Setup communication
+            String tmp = null;
             CommMgr commMgr = CommMgr.getCommMgr();
             if(!commMgr.setConnection()){
                 setExplorationStatus("No Connection to RPi");
@@ -73,7 +74,6 @@ public class Simulator {
 
             //wait for message
             setExplorationStatus("Waiting for Robot position, direction and Way point...");
-            String tmp = null;
             while (tmp == null) tmp = commMgr.recvMsg();
 
             //Get robot start position and way point coordinates
@@ -188,28 +188,22 @@ public class Simulator {
         FastestPath fastestPath = new FastestPath(explored);
         String status;
         if((wayPointX != 0 || wayPointY !=0) && fPathWayPoint == null && fPathGoal == null){
-            printRobotPosition();
-            System.out.println("Fastest path to way point and to goal zone:");
+            System.out.println("\nFastest path to way point and to goal zone:");
             if(explored.checkValidCoord(wayPointX,wayPointY)){
                 fPathWayPoint = fastestPath.get(robot, wayPointX,wayPointY);
-
                 robot.setRobotPos(wayPointX, wayPointY);
-                printRobotPosition();
                 fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-                printRobotPosition();
                 robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
             }
             status = "Done calculating fastest path, to way point and to goal zone.";
         }
         else{
-            printRobotPosition();
-            System.out.println("Fastest path to goal coords:");
+            System.out.println("\nFastest path to goal coords:");
             fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
             status = "Done calculating fastest path, to goal zone.";
         }
         setFastestPathStatus(status);
         System.out.println(status);
-        printRobotPosition();
     }
     static class Fastest extends SwingWorker<Integer, String> {
         protected Integer doInBackground() throws Exception {
@@ -217,16 +211,13 @@ public class Simulator {
 
             FastestPath fastestPath = new FastestPath(explored);
             if (fPathWayPoint != null){
-                printRobotPosition();
                 fastestPath.executeMovements(fPathWayPoint, robot);
                 printRobotPosition();
                 robot.setDirection(DIRECTION.UP);
                 printRobotPosition();
             }
             if (fPathGoal != null){
-                printRobotPosition();
                 fastestPath.executeMovements(fPathGoal, robot);
-                printRobotPosition();
             }
             return 222;
         }

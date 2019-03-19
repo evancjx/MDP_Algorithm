@@ -17,8 +17,6 @@ public class FastestPath {
     private HashMap<Cell, Cell> parents;
     private Arena explored;
     private double[][] gCost;
-    private Cell curCell;
-    private DIRECTION curDir;
     private Cell[] neighbors;
     private int loop;
 
@@ -51,16 +49,16 @@ public class FastestPath {
 
     public ArrayList<MOVEMENT> get(Robot robot, int targetX, int targetY){
         initialize();
-        int initX = robot.getPosX(), initY = robot.getPosY();
-        this.curCell = explored.getCell(robot.getPosX(), robot.getPosY());
+//        int initX = robot.getPosX(), initY = robot.getPosY();
+        Cell curCell = explored.getCell(robot.getPosX(), robot.getPosY());
+        DIRECTION curDir;
 
-        if(robotLastDirection != null) this.curDir = robotLastDirection;
-        else this.curDir = robot.getDirection();
+        if(robotLastDirection != null) curDir = robotLastDirection;
+        else curDir = robot.getDirection();
 
-        System.out.println("@@@@@@@@ DIRECTION: " + this.curDir);
         openList.add(curCell);
         gCost[robot.getPosY()][robot.getPosX()] = 0;
-        System.out.println("Calculating fastest path from (" + curCell.posX() + ", " + curCell.posY() + ") to goal (" + targetX + ", " + targetY + ")...");
+        System.out.print("Calculating fastest path from (" + curCell.posX() + ", " + curCell.posY() + ") to goal (" + targetX + ", " + targetY + ")...");
 
         Stack<Cell> path;
         try{
@@ -70,9 +68,9 @@ public class FastestPath {
 
                 if(parents.containsKey(curCell)){
                     curDir = getTargetDir(
-                            parents.get(curCell).posX(),
-                            parents.get(curCell).posY(),
-                            curDir, curCell);
+                        parents.get(curCell).posX(),
+                        parents.get(curCell).posY(),
+                        curDir, curCell);
                 }
 
                 closedList.add(curCell);
@@ -260,59 +258,39 @@ public class FastestPath {
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
         long startTime = System.currentTimeMillis();
         CommMgr commMgr = CommMgr.getCommMgr();
-        String tmp = null;
+        String tmp;
         int count = 0;
-        if(!robot.isRealRobot()){
-            for(MOVEMENT move: movements){
-                robot.move(move);
-                System.out.println("Move: " + move);
-//                Simulator.setFastestPathStatus("Move: " + move);
-//                Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
-                Simulator.refresh();
-            }
-        }
-        else{
-            for (MOVEMENT move: movements){
-                robot.move(move);
-                System.out.println("Move: " + move);
-                Simulator.setFastestPathStatus("Move: " + move);
-//                if(move==MOVEMENT.FORWARD){
-//                    count+=1;
-//                    continue;
-//                }
-//                else{
-//                    if(count != 0 ){
-//                        robot.moveForwardMultiple(count);
-//                        count = 0;
-//                    }
-////                    while (tmp == null) {
-////                        tmp = commMgr.recvMsg();
-////                    }
-//                    System.out.println("Next movement");
-//                    robot.move(move);
-                tmp = null;
-                while (tmp == null) {
-                    tmp = commMgr.recvMsg();
+
+        for(MOVEMENT move: movements) {
+            if(robot.isRealRobot()){
+                if(move == MOVEMENT.FORWARD){
+                    count+=1;
+                    continue;
                 }
-//                }
-                Simulator.refresh();
+                else{
+                    if(count != 0){
+                        robot.moveForwardMultiple(count);
+                        count = 0;
+                        tmp = null;
+                        System.out.println("Waiting for acknowledgement");
+                        while (tmp == null) tmp = commMgr.recvMsg();
+                    }
+                }
             }
-            System.out.println("done executing the movements in the arrayList");
-            System.out.println("===============================================================>");
-//            if(count!=0){
-//                robot.moveForwardMultiple(count);
-//            }
-//            if(robot.getDirection()==DIRECTION.LEFT){
-//                robot.move(MOVEMENT.RIGHT);
-//            }
-//            else if(robot.getDirection()==DIRECTION.RIGHT){
-//                robot.move(MOVEMENT.LEFT);
-//            }
-//            else if(robot.getDirection() == DIRECTION.DOWN){
-//                robot.move(MOVEMENT.LEFT);
-//                robot.move(MOVEMENT.LEFT);
-//            }
+            robot.move(move);
+            Simulator.setFastestPathStatus("Move: " + move);
+            Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
+            Simulator.refresh();
+            if(robot.isRealRobot()){
+                tmp = null;
+                while (tmp == null) tmp = commMgr.recvMsg();
+            }
         }
+//        if(count!=0) robot.moveForwardMultiple(count);
+//        if(robot.isRealRobot()){
+//            tmp = null;
+//            while (tmp == null) tmp = commMgr.recvMsg();
+//        }
         Simulator.setFastestPathStatus("FastestPath took: "+ (System.currentTimeMillis() - startTime) + " Milli-Seconds");
     }
 }

@@ -286,7 +286,7 @@ public class Robot{
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
         commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
-        while(commMgr.recvMsg()==null){}
+//        while(commMgr.recvMsg()==null);
     }
 
     //Improved Algorithm

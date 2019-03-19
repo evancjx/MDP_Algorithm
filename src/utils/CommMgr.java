@@ -112,7 +112,7 @@ public class CommMgr {
             for(int i = 0; i < 10; i++){
                 String inputMsg = _br.readLine();
                 if (inputMsg != null && inputMsg.length() > 0) {
-//                    System.out.println("Message received: " + inputMsg);
+                    System.out.println("Message received: " + inputMsg);
                     return inputMsg;
                 }
             }
