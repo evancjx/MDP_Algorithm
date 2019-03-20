@@ -157,29 +157,22 @@ public class Robot{
     }
 
     public void sense(Arena explored, Arena arena){
-        int[] result = new int[6];
         if(!realRobot){
-
-            result[0] = SRFrontLeft.sense(explored, arena);
-            result[1] = SRFrontCenter.sense(explored, arena);
-            result[2] = SRFrontRight.sense(explored, arena);
-            result[3] = SRLeft.sense(explored, arena);
-            result[4] = LRLeft.sense(explored, arena);
-            result[5] = SRRight.sense(explored, arena);
+            SRFrontLeft.sense(explored, arena);
+            SRFrontCenter.sense(explored, arena);
+            SRFrontRight.sense(explored, arena);
+            SRLeft.sense(explored, arena);
+            LRLeft.sense(explored, arena);
+            SRRight.sense(explored, arena);
         }
         else{
+            int[] result = new int[6];
             CommMgr commMgr = CommMgr.getCommMgr();
             String msg = commMgr.receiveMsg();
             String[] sensorValues = msg.split(":");
             // Front Center:Front Left: Front Right: RIGHT: Left FRONT: LEFT BACK
-            result[0] = Integer.parseInt(sensorValues[0]);
-            result[1] = Integer.parseInt(sensorValues[1]);
-            result[2] = Integer.parseInt(sensorValues[2]);
-            result[3] = Integer.parseInt(sensorValues[3]);
-            result[4] = Integer.parseInt(sensorValues[4]);
-            result[5] = Integer.parseInt(sensorValues[5]);
             for(int i = 0; i < result.length; i++){
-                result[i] = (result[i] + 5)/10;
+                    result[i] = (Integer.parseInt(sensorValues[i]) + 5) /10;
             }
             System.out.println("========================>");
             System.out.println(Arrays.toString(result));
@@ -196,7 +189,7 @@ public class Robot{
     public void move(MOVEMENT movement){
         if(!realRobot){
             try {
-                    TimeUnit.MILLISECONDS.sleep(this.getSpeed());
+                TimeUnit.MILLISECONDS.sleep(this.getSpeed());
             } catch (InterruptedException e) {
                 System.out.println("Something went wrong in Robot.move()!");
             }

@@ -96,6 +96,7 @@ public class Simulator {
             CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
 
             //Wait for calibration to be done
+            System.out.println("Watiting for calirbation to be done");
             while(!CommMgr.getCommMgr().receiveMsg().equals("Done"));
 
             //wait for message
@@ -262,7 +263,14 @@ public class Simulator {
             Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit, realRun);
             exploration.execute();
 
-            generateArenaHex(arena);
+            if(realRun){// FINAL Map Descriptor
+                String[] mapValues = generateArenaHex(explored);
+                CommMgr commMgr = CommMgr.getCommMgr();
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("explored", mapValues[0]);
+                jsonObject.put("obstacle", mapValues[1]);
+                commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
+            }
             fastestPath();
             return 111;
         }

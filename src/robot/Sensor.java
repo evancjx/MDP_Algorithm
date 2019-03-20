@@ -27,18 +27,21 @@ public class Sensor {
         this.direction = direction;
     }
 
-    public int sense(Arena exploration, Arena arena){
+    public void sense(Arena exploration, Arena arena){
         switch (this.direction){
             case UP:
-                return getSensorVal(exploration, arena, 0, 1);
+                getSensorVal(exploration, arena, 0, 1);
+                break;
             case LEFT:
-                return getSensorVal(exploration, arena, -1, 0);
+                getSensorVal(exploration, arena, -1, 0);
+                break;
             case DOWN:
-                return getSensorVal(exploration, arena, 0, -1);
+                getSensorVal(exploration, arena, 0, -1);
+                break;
             case RIGHT:
-                return getSensorVal(exploration, arena, 1, 0);
+                getSensorVal(exploration, arena, 1, 0);
+                break;
         }
-        return -1; //Error. Will never happen
     }
 
     public void senseReal(Arena exploredMap, int sensorVal){
@@ -58,43 +61,38 @@ public class Sensor {
         }
     }
 
-    private int getSensorVal(Arena exploration, Arena arena, int incX, int incY){
+    private void getSensorVal(Arena exploration, Arena arena, int incX, int incY){
         if (lowerLimit > 1){
             for(int i = 1; i< this.lowerLimit; i++){
-                int x = this.posX + (incX * i);
-                int y = this.posY + (incY * i);
-                if(!exploration.checkValidCoord(x, y)) return i; //WALL
-                if(arena.getCell(x, y).getIsObstacle()) return i; //OBSTACLE
+                int x = this.posX + (incX * i), y = this.posY + (incY * i);
+                if(!exploration.checkValidCoord(x, y)) return; //WALL
+                if(arena.getCell(x, y).getIsObstacle()) return; //OBSTACLE
+                if (id.equals("LRL") && !exploration.getCell(x, y).getIsExplored()) return;
             }
         }
-
         for(int i = this.lowerLimit; i <= this.upperLimit; i++){
-            int x = this.posX + (incX * i);
-            int y = this.posY + (incY * i);
+            int x = this.posX + (incX * i), y = this.posY + (incY * i);
 
-            if(!exploration.checkValidCoord(x, y)) return i; //WALL
-
+            if(!exploration.checkValidCoord(x, y)) return; //WALL
             exploration.getCell(x, y).setIsExplored(true); //Explored cell
 
             if (arena.getCell(x, y).getIsObstacle()){
                 exploration.setObstacle(x, y, true);
-                return i;
+                return;
             }
         }
-        return -1; //Error. Will never happen
     }
 
     private void processSensorVal(Arena exploredMap, int sensorVal, int incX, int incY) {
         if (sensorVal == 0) return;  // return value for LR sensor if obstacle before lowerRange
 
-        // If above fails, check if starting point is valid for sensors with lowerRange > 1.
-        for (int i = 1; i < this.lowerLimit; i++) {
+        for (int i = 1; i < this.lowerLimit; i++) {// If above fails, check if starting point is valid for sensors with lowerRange > 1.
             int x = this.posX + (incX * i);
             int y = this.posY + (incY * i);
 
             if (!exploredMap.checkValidCoord(x, y)) return;
             if (exploredMap.getCell(x, y).getIsObstacle()) return;
-            if (id.equals("LRL") && exploredMap.getCell(x, y).getIsExplored()) return;
+            if (id.equals("LRL") && !exploredMap.getCell(x, y).getIsExplored()) return;
         }
 
         // Update map according to sensor's value.
