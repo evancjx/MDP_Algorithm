@@ -67,82 +67,143 @@ public class Simulator {
         createDisplay();
         if(realRun) {
             //Setup communication
-
             commMgr = CommMgr.getCommMgr();
             if(!commMgr.setConnection()){
                 setExplorationStatus("No Connection to RPi");
                 return;
             }
 
-            //wait for message
             setExplorationStatus("Waiting for Robot position, direction and Way point...");
-            String tmp;
-            JSONObject startParameters = receiveJSONobject("robotPosition");
-
-            //Get robot start position and way point coordinates
-            if (startParameters.has("waypoint")){
-                JSONArray wayPoint = (JSONArray) startParameters.get("waypoint");
-                wayPointX = wayPoint.getInt(0);
-                wayPointY = wayPoint.getInt(1);
-            }
-            if (startParameters.has("robotPosition")){
-                JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
-                robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
-                robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
-            }
-
-            //Start calibration, send calibrate command
-            setExplorationStatus("Robot doing calibration...");
-            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
-
-            //Wait for calibration to be done
-            System.out.println("Watiting for calirbation to be done");
-            while(!CommMgr.getCommMgr().receiveMsg().equals("Done"));
-
-            //wait for message
-            setExplorationStatus("Done with calibration. Waiting for next command...");
-            JSONObject exploreCommand = receiveJSONobject("EX_START");
-
-            //Start exploration if command is sent
-            if (exploreCommand.has("EX_START")) {
-                CardLayout cl = (CardLayout) arenaPanel.getLayout();
-                cl.show(arenaPanel, "Explore");
-                try{
-                    arenaExplored = new Explore().doInBackground();
-                }catch (Exception e){
-                    e.printStackTrace();
+            while(true){
+                //wait for message
+                JSONObject jObj = receiveJSONobject("robotPosition");
+                for (int i = 0; i < jObj.names().length(); i++) {
+                    switch (jObj.names().get(i).toString()){
+                        case "waypoint":
+                            JSONArray wayPoint = jObj.getJSONArray("waypoint");
+                            wayPointX = wayPoint.getInt(0);
+                            wayPointY = wayPoint.getInt(1);
+                            break;
+                        case "robotPosition":
+                            JSONArray robotPositionArr = jObj.getJSONArray("robotPosition");
+                            robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
+                            robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+                            //Start calibration, send calibrate command
+                            setExplorationStatus("Robot doing calibration...");
+                            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
+                            //Wait for calibration to be done
+                            System.out.println("Watiting for calirbation to be done");
+                            while(!CommMgr.getCommMgr().receiveMsg().equals("Done"));
+                            setExplorationStatus("Done with calibration. Waiting for next command...");
+                            break;
+                        case "EX_START":
+                            //Start exploration if command is sent
+                            arenaExplored = 0; //false
+                            CardLayout cl = (CardLayout) arenaPanel.getLayout();
+                            cl.show(arenaPanel, "Explore");
+                            try{
+                                arenaExplored = new Explore().doInBackground();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            //wait arena to be explored
+                            setExplorationStatus("Waiting for arena to be explored...");
+                            while(arenaExplored != 111);
+                            //Arena explored, waiting for fastest path calibration command
+                            robot.setRobotExplored(true);
+                            String currentMsg = fastestPathStatus.getText();
+                            setFastestPathStatus("<html>" + currentMsg +
+                                    "<br/>Waiting for calibration..." +
+                                    "<br/>Please wait for 15seconds to start fastest path calibration");
+                            //wait for Fastest path calibration to be done
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(30000);
+                            } catch (InterruptedException e) {
+                                System.out.println("Waiting for 30 seconds before Fastest path calibrate");
+                            }
+                            //send fastest path calibration
+                            commMgr.sendMsg("X", CommMgr.MSG_TYPE_ARDUINO);
+                            while(!commMgr.receiveMsg().equals("FastestPathCalibrationDone"));
+                            //wait for next command
+                            setExplorationStatus("Done with calibration. Waiting for next command...");
+                            break;
+                        case "FP_START":
+                            try {
+                                new Fastest().doInBackground();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
                 }
             }
 
-            //wait arena to be explored
-            setExplorationStatus("Waiting for arena to be explored...");
-            while(arenaExplored != 111);
-
-            //Arena explored, waiting for fastest path calibration command
-            robot.setRobotExplored(true);
-            String currentMsg = fastestPathStatus.getText();
-            setFastestPathStatus("<html>" + currentMsg +
-                    "<br/>Waiting for calibration..." +
-                    "<br/>Please send calibration command from android");
-
-            //wait for Fastest path calibration to be done
-            try {
-                TimeUnit.MILLISECONDS.sleep(30000);
-            } catch (InterruptedException e) {
-                System.out.println("Waiting for 30 seconds before Fastest path calibrate");
-            }
-            commMgr.sendMsg("X", CommMgr.MSG_TYPE_ARDUINO);
-            while(!commMgr.receiveMsg().equals("FastestPathCalibrationDone"));
-            tmp = null;
-            while (tmp == null) tmp = commMgr.receiveMsg();
-            JSONObject fastestCommand = new JSONObject(tmp);
-            if (fastestCommand.has("FP_START")) {
-                try {
-                    new Fastest().doInBackground();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+//            //wait for message
+//            setExplorationStatus("Waiting for Robot position, direction and Way point...");
+//            JSONObject startParameters = receiveJSONobject("robotPosition");
+//
+//            //Get robot start position and way point coordinates
+//            if (startParameters.has("waypoint")){
+//                JSONArray wayPoint = (JSONArray) startParameters.get("waypoint");
+//                wayPointX = wayPoint.getInt(0);
+//                wayPointY = wayPoint.getInt(1);
+//            }
+//            if (startParameters.has("robotPosition")){
+//                JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
+//                robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
+//                robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+//            }
+//
+//            //Start calibration, send calibrate command
+//            setExplorationStatus("Robot doing calibration...");
+//            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
+//
+//            //Wait for calibration to be done
+//            System.out.println("Watiting for calirbation to be done");
+//            while(!CommMgr.getCommMgr().receiveMsg().equals("Done"));
+//
+//            //wait for message
+//            setExplorationStatus("Done with calibration. Waiting for next command...");
+//            JSONObject exploreCommand = receiveJSONobject("EX_START");
+//
+//            //Start exploration if command is sent
+//            if (exploreCommand.has("EX_START")) {
+//                CardLayout cl = (CardLayout) arenaPanel.getLayout();
+//                cl.show(arenaPanel, "Explore");
+//                try{
+//                    arenaExplored = new Explore().doInBackground();
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            //wait arena to be explored
+//            setExplorationStatus("Waiting for arena to be explored...");
+//            while(arenaExplored != 111);
+//
+//            //Arena explored, waiting for fastest path calibration command
+//            robot.setRobotExplored(true);
+//            String currentMsg = fastestPathStatus.getText();
+//            setFastestPathStatus("<html>" + currentMsg +
+//                    "<br/>Waiting for calibration..." +
+//                    "<br/>Please send calibration command from android");
+//
+//            //wait for Fastest path calibration to be done
+//            try {
+//                TimeUnit.MILLISECONDS.sleep(30000);
+//            } catch (InterruptedException e) {
+//                System.out.println("Waiting for 30 seconds before Fastest path calibrate");
+//            }
+//            commMgr.sendMsg("X", CommMgr.MSG_TYPE_ARDUINO);
+//            while(!commMgr.receiveMsg().equals("FastestPathCalibrationDone"));
+//            JSONObject fastestCommand = receiveJSONobject("FP_START");
+//            if (fastestCommand.has("FP_START")) {
+//                try {
+//                    new Fastest().doInBackground();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
         else setExplorationStatus("Load Map");
     }

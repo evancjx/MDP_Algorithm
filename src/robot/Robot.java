@@ -72,9 +72,7 @@ public class Robot{
     public Boolean getCalledHome(){ return this.calledHome; }
     public Boolean getHasCrossGoal(){ return this.hasCrossGoal; }
 
-    public void setRobotPos(int posX, int posY){
-        this.posX = posX; this.posY = posY;
-    }
+    public void setRobotPos(int posX, int posY){ this.posX = posX; this.posY = posY; }
     private void setRobotFront(DIRECTION dir){
         this.direction = dir;
         switch (dir){
@@ -96,9 +94,7 @@ public class Robot{
                 break;
         }
     }
-    public void setRobotSpeed(int speed){
-        this.speed = 1000/speed;
-    }
+    public void setRobotSpeed(int speed){ this.speed = 1000/speed; }
     public void setRobotExplored(boolean mode) {this.fastestMode = mode; }
     public void setSenors(){
         switch (this.direction){
