@@ -41,6 +41,23 @@ public class Sensor {
         return -1; //Error. Will never happen
     }
 
+    public void senseReal(Arena exploredMap, int sensorVal){
+        switch (direction) {
+            case UP:
+                processSensorVal(exploredMap, sensorVal, 0, 1);
+                break;
+            case RIGHT:
+                processSensorVal(exploredMap, sensorVal, 1, 0);
+                break;
+            case DOWN:
+                processSensorVal(exploredMap, sensorVal, 0, -1);
+                break;
+            case LEFT:
+                processSensorVal(exploredMap, sensorVal, -1, 0);
+                break;
+        }
+    }
+
     private int getSensorVal(Arena exploration, Arena arena, int incX, int incY){
         if (lowerLimit > 1){
             for(int i = 1; i< this.lowerLimit; i++){
@@ -67,23 +84,6 @@ public class Sensor {
         return -1; //Error. Will never happen
     }
 
-    public void senseReal(Arena exploredMap, int sensorVal){
-        switch (direction) {
-            case UP:
-                processSensorVal(exploredMap, sensorVal, 0, 1);
-                break;
-            case RIGHT:
-                processSensorVal(exploredMap, sensorVal, 1, 0);
-                break;
-            case DOWN:
-                processSensorVal(exploredMap, sensorVal, 0, -1);
-                break;
-            case LEFT:
-                processSensorVal(exploredMap, sensorVal, -1, 0);
-                break;
-        }
-    }
-
     private void processSensorVal(Arena exploredMap, int sensorVal, int incX, int incY) {
         if (sensorVal == 0) return;  // return value for LR sensor if obstacle before lowerRange
 
@@ -94,6 +94,7 @@ public class Sensor {
 
             if (!exploredMap.checkValidCoord(x, y)) return;
             if (exploredMap.getCell(x, y).getIsObstacle()) return;
+            if (id.equals("LRL") && exploredMap.getCell(x, y).getIsExplored()) return;
         }
 
         // Update map according to sensor's value.

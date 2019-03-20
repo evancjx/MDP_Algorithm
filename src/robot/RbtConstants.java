@@ -46,7 +46,6 @@ public class RbtConstants {
                     return UP;
             }
         }
-
     }
 
     public enum MOVEMENT{

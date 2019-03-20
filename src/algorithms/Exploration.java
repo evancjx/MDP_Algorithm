@@ -54,8 +54,9 @@ public class Exploration {
         if(realRun) CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();
         do{
+            Simulator.printRobotPosition();
             areaExplored = calculateAreaExplored();
-//            System.out.println("Explored Area: " + areaExplored);
+            //System.out.println("Explored Area: " + areaExplored);
             nextMove();
 
             Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
@@ -90,7 +91,7 @@ public class Exploration {
         message += "</html>";
 
         Simulator.setExplorationStatus(message);
-//        System.out.println("\nMovements:\n" + checkDirectionLog);
+        //System.out.println("\nMovements:\n" + checkDirectionLog);
         return true;
     }
 
@@ -209,7 +210,7 @@ public class Exploration {
     }
 
     private void moveBot(MOVEMENT movement){
-//        System.out.println("move: " + movement + "\tcountRight="+countRight);
+        System.out.println("move: " + movement + "\tcountRight="+countRight);
         robot.move(movement);
         Simulator.refresh();
         senseSurrounding();

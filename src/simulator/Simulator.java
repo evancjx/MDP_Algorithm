@@ -36,6 +36,8 @@ public class Simulator {
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
     private static int timeLimit = 300, robotSpeed = 20; //Number of steps per second
+
+    private static CommMgr commMgr;
     private static boolean realRun = true;
 
     public static void main(String[] args){
@@ -65,8 +67,8 @@ public class Simulator {
         createDisplay();
         if(realRun) {
             //Setup communication
-            String tmp = null;
-            CommMgr commMgr = CommMgr.getCommMgr();
+
+            commMgr = CommMgr.getCommMgr();
             if(!commMgr.setConnection()){
                 setExplorationStatus("No Connection to RPi");
                 return;
@@ -74,16 +76,20 @@ public class Simulator {
 
             //wait for message
             setExplorationStatus("Waiting for Robot position, direction and Way point...");
-            while (tmp == null) tmp = commMgr.receiveMsg();
+            String tmp;
+            JSONObject startParameters = receiveJSONobject("robotPosition");
 
             //Get robot start position and way point coordinates
-            JSONObject startParameters = new JSONObject(tmp);
-            JSONArray wayPoint = (JSONArray) startParameters.get("waypoint");
-            wayPointX = wayPoint.getInt(0);
-            wayPointY = wayPoint.getInt(1);
-            JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
-            robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
-            robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+            if (startParameters.has("waypoint")){
+                JSONArray wayPoint = (JSONArray) startParameters.get("waypoint");
+                wayPointX = wayPoint.getInt(0);
+                wayPointY = wayPoint.getInt(1);
+            }
+            if (startParameters.has("robotPosition")){
+                JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
+                robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
+                robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
+            }
 
             //Start calibration, send calibrate command
             setExplorationStatus("Robot doing calibration...");
@@ -94,11 +100,9 @@ public class Simulator {
 
             //wait for message
             setExplorationStatus("Done with calibration. Waiting for next command...");
-            tmp = null;
-            while (tmp == null) tmp = commMgr.receiveMsg();
+            JSONObject exploreCommand = receiveJSONobject("EX_START");
 
             //Start exploration if command is sent
-            JSONObject exploreCommand = new JSONObject(tmp);
             if (exploreCommand.has("EX_START")) {
                 CardLayout cl = (CardLayout) arenaPanel.getLayout();
                 cl.show(arenaPanel, "Explore");
@@ -140,6 +144,21 @@ public class Simulator {
             }
         }
         else setExplorationStatus("Load Map");
+    }
+
+    private static JSONObject receiveJSONobject(String json_key){
+        String tmp = null;
+        JSONObject jObj = new JSONObject();
+        while (!jObj.has(json_key)){
+            while (tmp == null) tmp = commMgr.receiveMsg();
+            try{
+                jObj = new JSONObject(tmp);
+            } catch (Exception e){
+                setFastestPathStatus("Wrong Command... not in JSON OBJECT?");
+            }
+            tmp = null;
+        }
+        return jObj;
     }
 
     public static void refresh(){
@@ -225,8 +244,7 @@ public class Simulator {
                 fastestPath.executeMovements(fPathWayPoint, robot);
                 printRobotPosition();
                 System.out.println("Reached way point");
-                robot.setDirection(DIRECTION.UP);
-                CommMgr.waitForAckonwledgement("Moved");
+                if(robot.setDirection(DIRECTION.UP) != null) CommMgr.waitForAcknowledgement("Moved");
                 printRobotPosition();
             }
             if (fPathGoal != null){
