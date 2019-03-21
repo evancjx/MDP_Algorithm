@@ -70,10 +70,10 @@ public class Exploration {
                 commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
             }
 
-            if(robot.getPosX() == initX && robot.getPosY() ==initY && areaExplored > 290) break;
+            if(robot.getPosX() == initX && robot.getPosY() ==initY) break;
             else if (robot.getCalledHome()) break;
 
-        } while (areaExplored <= coverageLimit && System.currentTimeMillis() <= endTime);
+        } while (System.currentTimeMillis() <= endTime); //areaExplored <= coverageLimit &&
 
         goBackStart();
 

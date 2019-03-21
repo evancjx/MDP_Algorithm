@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
+import static robot.RbtConstants.MOVEMENT.*;
 import static utils.MapDescriptor.generateArenaHex;
 
 public class Simulator {
@@ -35,7 +36,7 @@ public class Simulator {
     private static int arenaExplored;
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int timeLimit = 300, robotSpeed = 20; //Number of steps per second
+    private static int timeLimit = 180, robotSpeed = 20; //Number of steps per second
 
     private static CommMgr commMgr;
     private static boolean realRun = true;
@@ -62,6 +63,26 @@ public class Simulator {
 //        fPathGoal.add(RIGHT);
 //        fPathGoal.add(FORWARD);
 
+//        fPathWayPoint = new ArrayList<>();
+//        fPathWayPoint.add(RIGHT);
+//        fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(LEFT);
+//        fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(FORWARD);
+//        fPathWayPoint.add(LEFT);
+//        fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD);
+//        fPathGoal = new ArrayList<>();
+//        fPathGoal.add(RIGHT);
+//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
+//        fPathGoal.add(LEFT);
+//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
+//        fPathGoal.add(RIGHT);
+//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
+//        fPathGoal.add(FORWARD);
+//        fPathGoal.add(LEFT);
+//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
+
         realOrSimulation();
         robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun,  false);
         createDisplay();
@@ -76,7 +97,8 @@ public class Simulator {
             setExplorationStatus("Waiting for Robot position, direction and Way point...");
             while(true){
                 //wait for message
-                JSONObject jObj = receiveJSONobject("robotPosition");
+                JSONObject jObj = new JSONObject(commMgr.receiveMsg());
+                System.out.println(jObj);
                 for (int i = 0; i < jObj.names().length(); i++) {
                     switch (jObj.names().get(i).toString()){
                         case "waypoint":
@@ -111,15 +133,14 @@ public class Simulator {
                             while(arenaExplored != 111);
                             //Arena explored, waiting for fastest path calibration command
                             robot.setRobotExplored(true);
-                            String currentMsg = fastestPathStatus.getText();
-                            setFastestPathStatus("<html>" + currentMsg +
+                            setFastestPathStatus("<html>" + fastestPathStatus.getText() +
                                     "<br/>Waiting for calibration..." +
-                                    "<br/>Please wait for 15seconds to start fastest path calibration");
+                                    "<br/>Please wait for 15 seconds for fastest path calibration");
                             //wait for Fastest path calibration to be done
                             try {
-                                TimeUnit.MILLISECONDS.sleep(30000);
+                                TimeUnit.MILLISECONDS.sleep(15000);
                             } catch (InterruptedException e) {
-                                System.out.println("Waiting for 30 seconds before Fastest path calibrate");
+                                System.out.println("Waiting for 15 seconds");
                             }
                             //send fastest path calibration
                             commMgr.sendMsg("X", CommMgr.MSG_TYPE_ARDUINO);
@@ -138,7 +159,7 @@ public class Simulator {
                 }
             }
 
-//            //wait for message
+            //wait for message
 //            setExplorationStatus("Waiting for Robot position, direction and Way point...");
 //            JSONObject startParameters = receiveJSONobject("robotPosition");
 //
@@ -190,7 +211,7 @@ public class Simulator {
 //
 //            //wait for Fastest path calibration to be done
 //            try {
-//                TimeUnit.MILLISECONDS.sleep(30000);
+//                TimeUnit.MILLISECONDS.sleep(15000);
 //            } catch (InterruptedException e) {
 //                System.out.println("Waiting for 30 seconds before Fastest path calibrate");
 //            }
@@ -236,7 +257,7 @@ public class Simulator {
         appFrame.setResizable(false);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        appFrame.setLocation(dim.width / 2 - appFrame.getSize().width / 2, dim.height / 2 - appFrame.getSize().height / 2);
+        appFrame.setLocation(dim.width / 4 - appFrame.getSize().width / 2, dim.height / 2 - appFrame.getSize().height / 2);
 
         arenaPanel = new JPanel(new CardLayout());
         arenaPanel.setPreferredSize(new Dimension(480, 600));
