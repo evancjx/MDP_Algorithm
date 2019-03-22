@@ -33,8 +33,6 @@ public class Simulator {
     private static int wayPointX = 0, wayPointY = 0;
     private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal;
 
-    private static int arenaExplored;
-
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
     private static int timeLimit = 180, robotSpeed = 20; //Number of steps per second
 
@@ -42,47 +40,7 @@ public class Simulator {
     private static boolean realRun = true;
 
     public static void main(String[] args){
-//        Week 8 FastestPath
-//        fPathWayPoint = new ArrayList<>();
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(RIGHT);
-//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(LEFT);
-//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(RIGHT);
-//        fPathWayPoint.add(FORWARD);fPathWayPoint.add(FORWARD);
-//        fPathGoal = new ArrayList<>();
-//        fPathGoal.add(RIGHT);
-//        fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);
-//        fPathGoal.add(LEFT);
-//        fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);fPathGoal.add(FORWARD);
-//        fPathGoal.add(RIGHT);
-//        fPathGoal.add(FORWARD);
-
-//        fPathWayPoint = new ArrayList<>();
-//        fPathWayPoint.add(RIGHT);
-//        fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(LEFT);
-//        fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(FORWARD);
-//        fPathWayPoint.add(LEFT);
-//        fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD); fPathWayPoint.add(FORWARD);
-//        fPathGoal = new ArrayList<>();
-//        fPathGoal.add(RIGHT);
-//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
-//        fPathGoal.add(LEFT);
-//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
-//        fPathGoal.add(RIGHT);
-//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
-//        fPathGoal.add(FORWARD);
-//        fPathGoal.add(LEFT);
-//        fPathGoal.add(FORWARD); fPathGoal.add(FORWARD); fPathGoal.add(FORWARD);
-
+        int arenaExplored = 0, fastestPath = 0;
         realOrSimulation();
         robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun,  false);
         createDisplay();
@@ -97,7 +55,12 @@ public class Simulator {
             setExplorationStatus("Waiting for Robot position, direction and Way point...");
             while(true){
                 //wait for message
-                JSONObject jObj = new JSONObject(commMgr.receiveMsg());
+                JSONObject jObj;
+                try{
+                    jObj = new JSONObject(commMgr.receiveMsg());
+                }catch (Exception e){
+                    continue;
+                }
                 System.out.println(jObj);
                 for (int i = 0; i < jObj.names().length(); i++) {
                     switch (jObj.names().get(i).toString()){
@@ -114,7 +77,7 @@ public class Simulator {
                             setExplorationStatus("Robot doing calibration...");
                             CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
                             //Wait for calibration to be done
-                            System.out.println("Watiting for calirbation to be done");
+                            System.out.println("Waiting for calibration to be done");
                             while(!CommMgr.getCommMgr().receiveMsg().equals("Done"));
                             setExplorationStatus("Done with calibration. Waiting for next command...");
                             break;
@@ -149,82 +112,17 @@ public class Simulator {
                             setExplorationStatus("Done with calibration. Waiting for next command...");
                             break;
                         case "FP_START":
+                            if(arenaExplored != 111) break;
                             try {
-                                new Fastest().doInBackground();
+                                fastestPath = new Fastest().doInBackground();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            while(fastestPath != 222);
                             break;
                     }
                 }
             }
-
-            //wait for message
-//            setExplorationStatus("Waiting for Robot position, direction and Way point...");
-//            JSONObject startParameters = receiveJSONobject("robotPosition");
-//
-//            //Get robot start position and way point coordinates
-//            if (startParameters.has("waypoint")){
-//                JSONArray wayPoint = (JSONArray) startParameters.get("waypoint");
-//                wayPointX = wayPoint.getInt(0);
-//                wayPointY = wayPoint.getInt(1);
-//            }
-//            if (startParameters.has("robotPosition")){
-//                JSONArray robotPositionArr = (JSONArray) startParameters.get("robotPosition");
-//                robot.setRobotPos(robotPositionArr.getInt(0),robotPositionArr.getInt(1));
-//                robot.setDirection(DIRECTION.getDirection(robotPositionArr.getInt(2)));
-//            }
-//
-//            //Start calibration, send calibrate command
-//            setExplorationStatus("Robot doing calibration...");
-//            CommMgr.getCommMgr().sendMsg("C",CommMgr.MSG_TYPE_ARDUINO);
-//
-//            //Wait for calibration to be done
-//            System.out.println("Watiting for calirbation to be done");
-//            while(!CommMgr.getCommMgr().receiveMsg().equals("Done"));
-//
-//            //wait for message
-//            setExplorationStatus("Done with calibration. Waiting for next command...");
-//            JSONObject exploreCommand = receiveJSONobject("EX_START");
-//
-//            //Start exploration if command is sent
-//            if (exploreCommand.has("EX_START")) {
-//                CardLayout cl = (CardLayout) arenaPanel.getLayout();
-//                cl.show(arenaPanel, "Explore");
-//                try{
-//                    arenaExplored = new Explore().doInBackground();
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            //wait arena to be explored
-//            setExplorationStatus("Waiting for arena to be explored...");
-//            while(arenaExplored != 111);
-//
-//            //Arena explored, waiting for fastest path calibration command
-//            robot.setRobotExplored(true);
-//            String currentMsg = fastestPathStatus.getText();
-//            setFastestPathStatus("<html>" + currentMsg +
-//                    "<br/>Waiting for calibration..." +
-//                    "<br/>Please send calibration command from android");
-//
-//            //wait for Fastest path calibration to be done
-//            try {
-//                TimeUnit.MILLISECONDS.sleep(15000);
-//            } catch (InterruptedException e) {
-//                System.out.println("Waiting for 30 seconds before Fastest path calibrate");
-//            }
-//            commMgr.sendMsg("X", CommMgr.MSG_TYPE_ARDUINO);
-//            while(!commMgr.receiveMsg().equals("FastestPathCalibrationDone"));
-//            JSONObject fastestCommand = receiveJSONobject("FP_START");
-//            if (fastestCommand.has("FP_START")) {
-//                try {
-//                    new Fastest().doInBackground();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
         }
         else setExplorationStatus("Load Map");
     }
@@ -327,7 +225,9 @@ public class Simulator {
                 fastestPath.executeMovements(fPathWayPoint, robot);
                 printRobotPosition();
                 System.out.println("Reached way point");
-                if(robot.setDirection(DIRECTION.UP) != null) CommMgr.waitForAcknowledgement("Moved");
+                while(robot.getDirection() != DIRECTION.UP){
+                    if(robot.setDirection(DIRECTION.UP) != null) CommMgr.waitForAcknowledgement("Moved");
+                }
                 printRobotPosition();
             }
             if (fPathGoal != null){
@@ -338,7 +238,6 @@ public class Simulator {
     }
     static class Explore extends SwingWorker<Integer, String>{
         protected Integer doInBackground() throws Exception{
-            robot.setRobotPos(RbtConstants.START_X, RbtConstants.START_Y);
             robot.setRobotSpeed(robotSpeed);
             explored.repaint();
 
