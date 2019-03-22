@@ -262,18 +262,18 @@ public class FastestPath {
         int count = 0;
 
         for(MOVEMENT move: movements) {
-//            if(robot.isRealRobot()){
-//                if(move == MOVEMENT.FORWARD){
-//                    count+=1;
-//                    continue;
-//                }
-//                else{
-//                    if(count != 0){
-//                        robot.moveForwardMultiple(count);
-//                        count = 0;
-//                    }
-//                }
-//            }
+            if(robot.isRealRobot()){
+                if(move == MOVEMENT.FORWARD){
+                    count+=1;
+                    continue;
+                }
+                else{
+                    if(count != 0){
+                        robot.moveForwardMultiple(count);
+                        count = 0;
+                    }
+                }
+            }
             robot.move(move);
             Simulator.setFastestPathStatus("Move: " + move);
             Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));

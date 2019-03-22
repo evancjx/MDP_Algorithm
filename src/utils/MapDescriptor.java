@@ -5,6 +5,9 @@ import arena.ArenaConstants;
 import arena.Cell;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MapDescriptor {
     public static void loadArenaObstacle(Arena arena, String fileLocation){
@@ -87,12 +90,8 @@ public class MapDescriptor {
         }
         P1_bin.append("11");
         P1_hex.append(toHex(P1_bin.toString()));
-
-//        System.out.println("P1 hex: " + P1_hex);
         ArenaDescriptor[0] = P1_hex.toString();
-
         if(P2_bin.length() > 0) P2_hex.append(toHex(P2_bin.toString()));
-//        System.out.println("P2 hex: " + P2_hex);
         ArenaDescriptor[1] = P2_hex.toString();
 
         return ArenaDescriptor;
@@ -100,5 +99,30 @@ public class MapDescriptor {
 
     private static String toHex (String binary){
         return Integer.toHexString(Integer.parseInt(binary, 2));
+    }
+
+    public static void writeFile(String[] MD){
+        FileWriter fr = null;
+        try{
+            String path = new File(".").getCanonicalPath();
+            DateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmm");
+            Date date = new Date();
+            fr = new FileWriter(path + "\\" + dateFormat.format(date) + "_MD.txt");
+            StringBuilder sb = new StringBuilder();
+            for(String row: MD){
+                sb.append(row);
+                sb.append("\n");
+            }
+            fr.write(sb.toString());
+        } catch (IOException e){
+            e.printStackTrace();
+        } finally {
+            try{
+                fr.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
     }
 }

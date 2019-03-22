@@ -21,6 +21,7 @@ import javax.swing.*;
 
 import static robot.RbtConstants.MOVEMENT.*;
 import static utils.MapDescriptor.generateArenaHex;
+import static utils.MapDescriptor.writeFile;
 
 public class Simulator {
     private static JFrame appFrame = null;
@@ -124,7 +125,9 @@ public class Simulator {
                 }
             }
         }
-        else setExplorationStatus("Load Map");
+        else{
+            setExplorationStatus("Load Map");
+        }
     }
 
     private static JSONObject receiveJSONobject(String json_key){
@@ -244,8 +247,9 @@ public class Simulator {
             Exploration exploration = new Exploration(explored, arena, robot, coverageLimit, timeLimit, realRun);
             exploration.execute();
 
-            if(realRun){// FINAL Map Descriptor
-                String[] mapValues = generateArenaHex(explored);
+            String[] mapValues = generateArenaHex(explored);
+            writeFile(mapValues);
+            if(realRun){// FINAL Map Descriptor to Android
                 CommMgr commMgr = CommMgr.getCommMgr();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("explored", mapValues[0]);
@@ -382,7 +386,7 @@ public class Simulator {
         configDialog.setSize(400,150);
         configDialog.setLayout(new FlowLayout());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        configDialog.setLocation(dim.width / 2 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
+        configDialog.setLocation(dim.width / 4 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
 
         final JTextField tfRobotSpeed = new JTextField(Integer.toString(robotSpeed),2);
         final JTextField tfTimeLimit = new JTextField(Integer.toString(timeLimit),4);
