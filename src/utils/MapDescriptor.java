@@ -107,7 +107,7 @@ public class MapDescriptor {
             String path = new File(".").getCanonicalPath();
             DateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmm");
             Date date = new Date();
-            fr = new FileWriter(path + "\\" + dateFormat.format(date) + "_MD.txt");
+            fr = new FileWriter(path + "\\MD\\" + dateFormat.format(date) + "_MD.txt");
             StringBuilder sb = new StringBuilder();
             for(String row: MD){
                 sb.append(row);

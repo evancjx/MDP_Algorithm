@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
-import static robot.RbtConstants.MOVEMENT.*;
 import static utils.MapDescriptor.generateArenaHex;
 import static utils.MapDescriptor.writeFile;
 
@@ -27,12 +26,13 @@ public class Simulator {
     private static JFrame appFrame = null;
     private static JPanel arenaPanel = null, btnPanel = null, textPanel = null;
     private static JLabel explorationStatus, fastestPathStatus;
+    private static JDialog configDialog;
     private static Container contentPane;
 
     private static Arena arena = null, explored = null;
     private static Robot robot;
     private static int wayPointX = 0, wayPointY = 0;
-    private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal;
+    private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal, fastestPathMovements;
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
     private static int timeLimit = 180, robotSpeed = 20; //Number of steps per second
@@ -43,7 +43,7 @@ public class Simulator {
     public static void main(String[] args){
         int arenaExplored = 0, fastestPath = 0;
         realOrSimulation();
-        robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun,  false);
+        robot = new Robot(ArenaConstants.START_X, ArenaConstants.START_Y, DIRECTION.UP, realRun);
         createDisplay();
         if(realRun) {
             //Setup communication
@@ -56,13 +56,7 @@ public class Simulator {
             setExplorationStatus("Waiting for Robot position, direction and Way point...");
             while(true){
                 //wait for message
-                JSONObject jObj;
-                try{
-                    jObj = new JSONObject(commMgr.receiveMsg());
-                }catch (Exception e){
-                    continue;
-                }
-                System.out.println(jObj);
+                JSONObject jObj = receive_JSON_Obj();
                 for (int i = 0; i < jObj.names().length(); i++) {
                     switch (jObj.names().get(i).toString()){
                         case "waypoint":
@@ -84,6 +78,11 @@ public class Simulator {
                             break;
                         case "EX_START":
                             //Start exploration if command is sent
+                            if((wayPointX <= 3 && wayPointY <= 3) || (wayPointX >= 13 && wayPointY >= 18)){
+                                setExplorationStatus("Check way point coordinate");
+                                configDialog.setVisible(true);
+                                break;
+                            }
                             arenaExplored = 0; //false
                             CardLayout cl = (CardLayout) arenaPanel.getLayout();
                             cl.show(arenaPanel, "Explore");
@@ -125,24 +124,20 @@ public class Simulator {
                 }
             }
         }
-        else{
-            setExplorationStatus("Load Map");
-        }
+        else setExplorationStatus("Load Map");
     }
 
-    private static JSONObject receiveJSONobject(String json_key){
+    private static JSONObject receive_JSON_Obj(){
         String tmp = null;
-        JSONObject jObj = new JSONObject();
-        while (!jObj.has(json_key)){
+        while (true){
             while (tmp == null) tmp = commMgr.receiveMsg();
             try{
-                jObj = new JSONObject(tmp);
+                return new JSONObject(tmp);
             } catch (Exception e){
                 setFastestPathStatus("Wrong Command... not in JSON OBJECT?");
             }
             tmp = null;
         }
-        return jObj;
     }
 
     public static void refresh(){
@@ -208,8 +203,10 @@ public class Simulator {
                 robot.setRobotPos(wayPointX, wayPointY);
                 fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
                 robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
+                fastestPathMovements = fastestPath.combineMovements(fPathWayPoint, fPathGoal);
+                status = "Done calculating fastest path, to way point and to goal zone.";
             }
-            status = "Done calculating fastest path, to way point and to goal zone.";
+            else status = "Error not able to compute fastest path";
         }
         else{
             System.out.println("\nFastest path to goal coords:");
@@ -224,18 +221,7 @@ public class Simulator {
             explored.repaint();
 
             FastestPath fastestPath = new FastestPath(explored);
-            if (fPathWayPoint != null){
-                fastestPath.executeMovements(fPathWayPoint, robot);
-                printRobotPosition();
-                System.out.println("Reached way point");
-                while(robot.getDirection() != DIRECTION.UP){
-                    if(robot.setDirection(DIRECTION.UP) != null) CommMgr.waitForAcknowledgement("Moved");
-                }
-                printRobotPosition();
-            }
-            if (fPathGoal != null){
-                fastestPath.executeMovements(fPathGoal, robot);
-            }
+            fastestPath.executeMovements(fastestPathMovements, robot);
             return 222;
         }
     }
@@ -260,6 +246,7 @@ public class Simulator {
             return 111;
         }
     }
+
     private static void setupActions(){
         JButton btnLoad = new JButton("Load Arena");
         standardBtn(btnLoad);
@@ -299,6 +286,10 @@ public class Simulator {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
+                if((wayPointX <= 3 && wayPointY <= 3) || (wayPointX >= 13 && wayPointY >= 18)){
+                    setExplorationStatus("Check way point coordinate");
+                    return;
+                }
                 CardLayout cl = ((CardLayout) arenaPanel.getLayout());
                 cl.show(arenaPanel, "Explore");
                 Simulator.setExplorationStatus("Waiting for arena to be explored...");
@@ -339,7 +330,6 @@ public class Simulator {
         btnPanel.add(btnFastest);
 
     }
-
     private static void standardBtn(JButton btn){
         btn.setFont(new Font("Arial", Font.BOLD, 13));
         btn.setFocusPainted(false);
@@ -350,7 +340,7 @@ public class Simulator {
         initialDialog.setSize(400,80);
         initialDialog.setLayout(new FlowLayout());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        initialDialog.setLocation(dim.width / 2 - initialDialog.getSize().width / 2, dim.height / 2 - initialDialog.getSize().height / 2);
+        initialDialog.setLocation(dim.width / 4 - initialDialog.getSize().width / 2, dim.height / 2 - initialDialog.getSize().height / 2);
 
         JRadioButton realRunButton = new JRadioButton("Real Run");
         realRunButton.setSelected(true);
@@ -380,9 +370,8 @@ public class Simulator {
         initialDialog.add(simulationButton);
         initialDialog.setVisible(true);
     }
-
     private static void configDialog(){
-        JDialog configDialog = new JDialog(appFrame, "Config", true);
+        configDialog = new JDialog(appFrame, "Config", true);
         configDialog.setSize(400,150);
         configDialog.setLayout(new FlowLayout());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

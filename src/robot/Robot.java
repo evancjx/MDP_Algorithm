@@ -34,9 +34,9 @@ public class Robot{
         LRLeft,
         SRRight;
     private boolean isAlert, hasCrossGoal ,calledHome;
-    private boolean realRobot, fastestMode;
+    private boolean isRealRobot, fastestMode;
 
-    public Robot(int posX, int posY, DIRECTION direction, boolean realRobot, boolean fastestMode){
+    public Robot(int posX, int posY, DIRECTION direction, boolean isRealRobot){
         this.posX = posX;
         this.posY = posY;
         this.direction = direction;
@@ -44,8 +44,7 @@ public class Robot{
         this.speed = RbtConstants.SPEED;
         this.isAlert = false;
         this.calledHome = false;
-        this.realRobot = realRobot;
-        this.fastestMode = fastestMode;
+        this.isRealRobot = isRealRobot;
 
         SRFrontLeft = new Sensor(this.posX - 1, this.posY + 1, this.direction,
             "SRFL", RbtConstants.SEN_SHORT_L, RbtConstants.SEN_SHORT_U);
@@ -67,11 +66,12 @@ public class Robot{
     public int getFrontX(){ return this.frontX; }
     public int getFrontY(){ return this.frontY; }
     public int getSpeed(){ return this.speed; }
-    public boolean isRealRobot(){ return realRobot; }
+    public boolean getIsRealRobot(){ return isRealRobot; }
     public DIRECTION getDirection(){return this.direction; }
     public Boolean getCalledHome(){ return this.calledHome; }
     public Boolean getHasCrossGoal(){ return this.hasCrossGoal; }
 
+    public void setRealRobot(boolean value){ this.isRealRobot = value; }
     public void setRobotPos(int posX, int posY){ this.posX = posX; this.posY = posY; }
     private void setRobotFront(DIRECTION dir){
         this.direction = dir;
@@ -134,7 +134,7 @@ public class Robot{
     }
     public void setCalledHome(Boolean value){ this.calledHome = value; }
     public MOVEMENT setDirection(DIRECTION direction) {
-        if(realRobot){
+        if(isRealRobot){
             MOVEMENT changeDirectionMove = MOVEMENT.getNextMovement(this.direction, direction);
             if (changeDirectionMove != null){
                 move(changeDirectionMove);
@@ -153,7 +153,7 @@ public class Robot{
     }
 
     public void sense(Arena explored, Arena arena){
-        if(!realRobot){
+        if(!isRealRobot){
             SRFrontLeft.sense(explored, arena);
             SRFrontCenter.sense(explored, arena);
             SRFrontRight.sense(explored, arena);
@@ -183,7 +183,7 @@ public class Robot{
     }
 
     public void move(MOVEMENT movement){
-        if(!realRobot){
+        if(!isRealRobot){
             try {
                 TimeUnit.MILLISECONDS.sleep(this.getSpeed());
             } catch (InterruptedException e) {
@@ -231,7 +231,7 @@ public class Robot{
         this.setRobotFront(this.direction);
 
         crossGoal();
-        if(realRobot){
+        if(isRealRobot){
 //            System.out.println("Movement: " + movement);
             CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(MOVEMENT.getChar(movement, this.fastestMode)+"", CommMgr.MSG_TYPE_ARDUINO);
@@ -239,41 +239,6 @@ public class Robot{
             jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
             commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
-    }
-    public void moveForwardMultiple(int count){
-        switch(direction){
-            case UP:
-                posY+=count;
-                break;
-            case LEFT:
-                posX-=count;
-                break;
-            case DOWN:
-                posY-=count;
-                break;
-            default:
-                posX+=count;
-        }
-        CommMgr commMgr = CommMgr.getCommMgr();
-        if (count>5){
-            while (count > 5){
-                commMgr.sendMsg("W"+5*10, CommMgr.MSG_TYPE_ARDUINO);
-                CommMgr.waitForAcknowledgement("Moved");
-                count = count - 5;
-                if (count <= 5) {
-                    commMgr.sendMsg("W" + (count) * 10, CommMgr.MSG_TYPE_ARDUINO);
-                    CommMgr.waitForAcknowledgement("Moved");
-                    count = 0;
-                }
-            }
-        }
-        else{
-            commMgr.sendMsg("W"+count*10, CommMgr.MSG_TYPE_ARDUINO);
-            CommMgr.waitForAcknowledgement("Moved");
-        }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
-        commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
     }
 
     //Improved Algorithm

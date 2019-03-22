@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import static robot.RbtConstants.MOVEMENT.RIGHT;
+
 public class FastestPath {
     private ArrayList<Cell> openList, closedList;
     private HashMap<Cell, Cell> parents;
@@ -49,7 +51,6 @@ public class FastestPath {
 
     public ArrayList<MOVEMENT> get(Robot robot, int targetX, int targetY){
         initialize();
-//        int initX = robot.getPosX(), initY = robot.getPosY();
         Cell curCell = explored.getCell(robot.getPosX(), robot.getPosY());
         DIRECTION curDir;
 
@@ -224,7 +225,7 @@ public class FastestPath {
         StringBuilder pathString = new StringBuilder();
 
         Cell tempCell = path.pop();
-        Robot simulatedRobot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false, false);
+        Robot simulatedRobot = new Robot(robot.getPosX(), robot.getPosY(), robot.getDirection(), false);
         simulatedRobot.setRobotSpeed(1000);
         DIRECTION targetDir;
 
@@ -256,35 +257,62 @@ public class FastestPath {
     }
 
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
-        long startTime = System.currentTimeMillis();
-        CommMgr commMgr = CommMgr.getCommMgr();
-        String tmp;
-        int count = 0;
-
-        for(MOVEMENT move: movements) {
-            if(robot.isRealRobot()){
+        int forwardCount = 0, commandCount = 0;
+        StringBuilder commands = new StringBuilder();
+        if(robot.getIsRealRobot()){
+            for(MOVEMENT move: movements){
                 if(move == MOVEMENT.FORWARD){
-                    count+=1;
-                    continue;
+                    forwardCount+=1;
+                    commandCount+=1;
                 }
                 else{
-                    if(count != 0){
-                        robot.moveForwardMultiple(count);
-                        count = 0;
+                    if(forwardCount != 0){
+                        commands.append("W"+forwardCount*10+"]");
+                        forwardCount = 0;
                     }
+                    commands.append(MOVEMENT.getChar(move, true)+"]");
+                    commandCount+=1;
                 }
             }
+            if(forwardCount != 0)commands.append("W"+forwardCount*10+"]");
+            CommMgr commMgr = CommMgr.getCommMgr();
+            commMgr.sendMsg(commands.toString(), CommMgr.MSG_TYPE_ARDUINO);
+        }
+
+        robot.setRealRobot(false);
+        for(MOVEMENT move: movements) {
             robot.move(move);
             Simulator.setFastestPathStatus("Move: " + move);
-            Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
+            System.out.println("Move: " + move);
             Simulator.refresh();
-            if(robot.isRealRobot()){
-                tmp = null;
-                while (tmp == null) tmp = commMgr.receiveMsg();
-            }
         }
-        System.out.println("Count: " + count);
-        if(count!=0) robot.moveForwardMultiple(count);
-        Simulator.setFastestPathStatus("FastestPath took: "+ (System.currentTimeMillis() - startTime) + " Milli-Seconds");
+    }
+
+    public ArrayList<MOVEMENT> combineMovements(ArrayList<MOVEMENT> fPathWayPoint, ArrayList<MOVEMENT> fPathGoalZone){
+        System.out.println("Last robot direction " + robotLastDirection);
+        switch (robotLastDirection){
+            case RIGHT:
+                if (fPathGoalZone.get(0) == RIGHT)
+                    fPathGoalZone.remove(0);
+                break;
+            case DOWN:
+                switch (fPathGoalZone.get(0)){
+                    case LEFT:
+                        fPathWayPoint.add(RIGHT);
+                        break;
+                    case RIGHT:
+                        fPathWayPoint.add(MOVEMENT.LEFT);
+                        break;
+                    case FORWARD:
+                        fPathWayPoint.add(MOVEMENT.LEFT);
+                        fPathWayPoint.add(MOVEMENT.LEFT);
+                        break;
+                }
+                fPathGoalZone.remove(0);
+                break;
+        }
+        fPathWayPoint.addAll(fPathGoalZone);
+
+        return fPathWayPoint;
     }
 }
