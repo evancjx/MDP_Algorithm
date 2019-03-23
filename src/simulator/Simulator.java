@@ -38,7 +38,7 @@ public class Simulator {
     private static int timeLimit = 180, robotSpeed = 20; //Number of steps per second
 
     private static CommMgr commMgr;
-    private static boolean realRun = true;
+    public static boolean realRun = true;
 
     public static void main(String[] args){
         int arenaExplored = 0, fastestPath = 0;
@@ -273,11 +273,14 @@ public class Simulator {
                     arena.clearArena();
                     explored = new Arena(robot);
                     explored.clearArena();
+                    fPathWayPoint = fPathGoal = null;
+                    wayPointX = wayPointY = 0;
+                    robot.setRobotPos(2,2);
                     MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
                     arenaPanel.add(arena, "Arena");
                     arenaPanel.add(explored, "Explore");
                     appFrame.repaint();
-                    setExplorationStatus("<html>Start exploring or input way point at Config.<br/> Click on the button below...</html>");
+                    setExplorationStatus("<html>Input way point at Config.<br/> Click on the button below...</html>");
                 }
             }
         });

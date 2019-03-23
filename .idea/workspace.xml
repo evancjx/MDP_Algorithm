@@ -6,13 +6,14 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d9367c61-71e4-4178-b497-9e96d0c8331b" name="Default Changelist" comment="">
+    <list default="true" id="d9367c61-71e4-4178-b497-9e96d0c8331b" name="Default Changelist" comment="190322 2334pm&#10;Send all fastest path commands all at one go to Arduino.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/MapDescriptor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/MapDescriptor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/algorithms/Exploration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/Exploration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/algorithms/FastestPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/algorithms/FastestPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/arena/ArenaConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/arena/ArenaConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/robot/RbtConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/RbtConstants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/robot/Robot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/simulator/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/simulator/Simulator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/MapDescriptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/MapDescriptor.java" afterDir="false" />
     </list>
     <list id="323e80ec-0c0c-4d03-817a-19b1cdc7e79a" name="190320 21:50pm Issue fixed: Long Range Sensor, 4 to 6 never check for 1 to 3 to be explored." comment="">
       <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration$1.class" afterDir="false" />
@@ -48,47 +49,45 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="289" column="71" selection-start-line="289" selection-start-column="71" selection-end-line="289" selection-end-column="71" />
+            <state relative-caret-position="612">
+              <caret line="223" column="35" selection-start-line="223" selection-start-column="35" selection-end-line="223" selection-end-column="35" />
               <folding>
                 <element signature="method#receive_JSON_Obj#0;class#Simulator#0" />
-                <element signature="e#6490#6491#0" expanded="true" />
-                <element signature="e#6524#6525#0" expanded="true" />
                 <element signature="method#createDisplay#0;class#Simulator#0" />
                 <element signature="method#setupArena#0;class#Simulator#0" />
                 <element signature="method#setupText#0;class#Simulator#0" />
-                <element signature="method#fastestPath#0;class#Simulator#0" />
                 <element signature="class#Explore#0;class#Simulator#0" />
+                <element signature="method#setupActions#0;class#Simulator#0" />
                 <element signature="method#standardBtn#0;class#Simulator#0" />
                 <element signature="method#realOrSimulation#0;class#Simulator#0" />
+                <element signature="method#configDialog#0;class#Simulator#0" />
                 <element signature="method#printRobotPosition#0;class#Simulator#0" />
-                <element signature="e#18269#18270#0" expanded="true" />
-                <element signature="e#18319#18320#0" expanded="true" />
-                <element signature="e#18380#18381#0" expanded="true" />
-                <element signature="e#18430#18431#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/algorithms/FastestPath.java">
+        <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="281" column="30" lean-forward="true" selection-start-line="281" selection-start-column="30" selection-end-line="281" selection-end-column="30" />
+            <state relative-caret-position="34">
+              <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
               <folding>
-                <element signature="method#initialize#0;class#FastestPath#0" />
-                <element signature="method#get#0;class#FastestPath#0" />
-                <element signature="method#minCostCell#0;class#FastestPath#0" />
-                <element signature="method#heuCost#0;class#FastestPath#0" />
-                <element signature="method#getTargetDir#0;class#FastestPath#0" />
-                <element signature="method#costG#0;class#FastestPath#0" />
-                <element signature="method#getTurnCost#0;class#FastestPath#0" />
-                <element signature="method#getPath#0;class#FastestPath#0" />
-                <element signature="method#printFastestPath#0;class#FastestPath#0" />
+                <element signature="method#Exploration#0;class#Exploration#0" />
+                <element signature="e#1966#2358#1" />
+                <element signature="method#lookForward#0;class#Exploration#0" />
+                <element signature="method#lookLeftEmpty#0;class#Exploration#0" />
+                <element signature="method#lookRightEmpty#0;class#Exploration#0" />
+                <element signature="method#upFree#0;class#Exploration#0" />
+                <element signature="method#downFree#0;class#Exploration#0" />
+                <element signature="method#leftFree#0;class#Exploration#0" />
+                <element signature="method#rightFree#0;class#Exploration#0" />
+                <element signature="method#isExploredNotObstacle#0;class#Exploration#0" />
+                <element signature="method#isExploredAndFree#0;class#Exploration#0" />
+                <element signature="method#turnToDirection#0;class#Exploration#0" />
               </folding>
             </state>
           </provider>
@@ -97,15 +96,37 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/robot/Robot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-14">
-              <caret line="46" column="30" selection-start-line="46" selection-start-column="30" selection-end-line="46" selection-end-column="30" />
+            <state relative-caret-position="391">
+              <caret line="30" column="32" lean-forward="true" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
               <folding>
-                <element signature="e#2854#3498#0" />
-                <element signature="e#3647#5872#0" />
-                <element signature="e#5950#6413#0" />
-                <element signature="e#6418#6582#0" />
-                <element signature="e#6588#7835#0" />
-                <element signature="e#7841#10250#0" />
+                <element signature="e#877#2167#0" />
+                <element signature="e#2822#3466#0" />
+                <element signature="e#3633#5858#0" />
+                <element signature="e#5936#6401#0" />
+                <element signature="e#6406#6570#0" />
+                <element signature="e#6576#7825#0" />
+                <element signature="e#7831#10244#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/algorithms/FastestPath.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="194">
+              <caret line="270" column="65" lean-forward="true" selection-start-line="270" selection-start-column="65" selection-end-line="270" selection-end-column="65" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#initialize#0;class#FastestPath#0" />
+                <element signature="method#minCostCell#0;class#FastestPath#0" />
+                <element signature="method#heuCost#0;class#FastestPath#0" />
+                <element signature="method#getTargetDir#0;class#FastestPath#0" />
+                <element signature="method#costG#0;class#FastestPath#0" />
+                <element signature="method#getTurnCost#0;class#FastestPath#0" />
+                <element signature="method#getPath#0;class#FastestPath#0" />
+                <element signature="method#printFastestPath#0;class#FastestPath#0" />
+                <element signature="method#getPathMovements#0;class#FastestPath#0" />
               </folding>
             </state>
           </provider>
@@ -114,12 +135,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="52" column="27" selection-start-line="52" selection-start-column="27" selection-end-line="52" selection-end-column="27" />
+            <state relative-caret-position="85">
+              <caret line="5" column="27" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
               <folding>
                 <element signature="class#DIRECTION#0;class#RbtConstants#0" />
+                <element signature="method#getChar#0;class#MOVEMENT#0;class#RbtConstants#0" />
                 <element signature="method#getNextMovement#0;class#MOVEMENT#0;class#RbtConstants#0" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/arena/ArenaConstants.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -165,19 +196,20 @@
       <list>
         <option value="$PROJECT_DIR$/src/algorithms/Exploration_Improved.java" />
         <option value="$PROJECT_DIR$/src/arena/Arena.java" />
-        <option value="$PROJECT_DIR$/src/robot/RbtConstants.java" />
         <option value="$PROJECT_DIR$/src/utils/CommMgr.java" />
         <option value="$PROJECT_DIR$/src/robot/Sensor.java" />
-        <option value="$PROJECT_DIR$/src/algorithms/Exploration.java" />
         <option value="$PROJECT_DIR$/src/utils/MapDescriptor.java" />
-        <option value="$PROJECT_DIR$/src/robot/Robot.java" />
-        <option value="$PROJECT_DIR$/src/algorithms/FastestPath.java" />
         <option value="$PROJECT_DIR$/src/simulator/Simulator.java" />
+        <option value="$PROJECT_DIR$/src/robot/RbtConstants.java" />
+        <option value="$PROJECT_DIR$/src/arena/ArenaConstants.java" />
+        <option value="$PROJECT_DIR$/src/robot/Robot.java" />
+        <option value="$PROJECT_DIR$/src/algorithms/Exploration.java" />
+        <option value="$PROJECT_DIR$/src/algorithms/FastestPath.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-7" />
+    <option name="x" value="953" />
     <option name="width" value="974" />
     <option name="height" value="1047" />
   </component>
@@ -210,6 +242,12 @@
               <item name="MDP_Algorithm" type="b2602c69:ProjectViewProjectNode" />
               <item name="MDP_Algorithm" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="arena" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="MDP_Algorithm" type="b2602c69:ProjectViewProjectNode" />
+              <item name="MDP_Algorithm" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="robot" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -226,13 +264,17 @@
   </component>
   <component name="PropertiesComponent">
     <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="GenerateAntBuildDialog.backupFiles" value="true" />
+    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
+    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
+    <property name="GenerateAntBuildDialog.outputFileNameProperty" value="mdp_algorithm" />
     <property name="Repository.Attach.Annotations" value="false" />
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553268217172" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1553357308666" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Artifacts" />
@@ -344,17 +386,24 @@
       <option name="project" value="LOCAL" />
       <updated>1553230948604</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="190322 2334pm&#10;Send all fastest path commands all at one go to Arduino.">
+      <created>1553268302409</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1553268302410</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="60779000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="974" height="1047" extended-state="0" />
+    <frame x="953" y="0" width="974" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.26586434" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.2713348" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -364,15 +413,15 @@
       <window_info anchor="bottom" id="Flutter Performance" order="0" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" />
-      <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.49928468" visible="true" weight="0.19474836" />
+      <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.49928468" visible="true" weight="0.40043762" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.37417942" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.06717227" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.20021881" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.73757964" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.73741794" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5007153" side_tool="true" weight="0.5235669" />
       <window_info anchor="bottom" id="Messages" order="13" weight="0.32827735" />
       <window_info anchor="right" id="Flutter Inspector" order="0" />
@@ -388,7 +437,7 @@
       <window_info anchor="right" id="Palette&#9;" order="10" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.07942431" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2713348" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -398,15 +447,15 @@
       <window_info anchor="bottom" id="Flutter Performance" order="0" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="1" />
       <window_info anchor="bottom" id="Find" order="2" />
-      <window_info active="true" anchor="bottom" id="Run" order="3" sideWeight="0.49928468" visible="true" weight="0.29469123" />
-      <window_info anchor="bottom" id="Debug" order="4" weight="0.37527353" />
+      <window_info anchor="bottom" id="Run" order="3" sideWeight="0.49928468" weight="0.40043762" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.37417942" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="7" />
       <window_info anchor="bottom" id="Docker" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="9" weight="0.06717227" />
+      <window_info anchor="bottom" id="Version Control" order="9" weight="0.20021881" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.73757964" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.73741794" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5007153" side_tool="true" weight="0.5235669" />
       <window_info anchor="bottom" id="Messages" order="13" weight="0.32827735" />
       <window_info anchor="right" id="Flutter Inspector" order="0" />
@@ -473,7 +522,8 @@
     <MESSAGE value="190321 20:34pm&#10;Minor changes" />
     <MESSAGE value="190322 0845am&#10;Minor changes" />
     <MESSAGE value="190322 1302pm&#10;Save map descriptor in a txt file" />
-    <option name="LAST_COMMIT_MESSAGE" value="190322 1302pm&#10;Save map descriptor in a txt file" />
+    <MESSAGE value="190322 2334pm&#10;Send all fastest path commands all at one go to Arduino." />
+    <option name="LAST_COMMIT_MESSAGE" value="190322 2334pm&#10;Send all fastest path commands all at one go to Arduino." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Sample arena 1 HEX.txt">
@@ -512,45 +562,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/arena/ArenaConstants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/src.zip!/javax/swing/SwingWorker.java" />
     <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/src.zip!/java/awt/Component.java" />
-    <entry file="file://$PROJECT_DIR$/src/arena/Cell.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration_Improved.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2108">
           <caret line="132" column="28" selection-start-line="132" selection-start-column="28" selection-end-line="132" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/arena/Arena.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="127" selection-start-line="127" selection-end-line="127" />
-          <folding>
-            <element signature="method#Arena#0;class#Arena#0" />
-            <element signature="method#paintComponent#0;class#Arena#0" />
-            <element signature="e#851#1666#1" />
-            <element signature="method#inStartZone#0;class#Arena#0" />
-            <element signature="method#inGoalZone#0;class#Arena#0" />
-            <element signature="method#setObstacle#0;class#Arena#0" />
-            <element signature="method#clearArena#0;class#Arena#0" />
-            <element signature="method#checkValidCoord#0;class#Arena#0" />
-            <element signature="e#4843#4844#0" expanded="true" />
-            <element signature="method#setAllExplored#0;class#Arena#0" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -596,13 +613,85 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/arena/Arena.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="127" selection-start-line="127" selection-end-line="127" />
+          <folding>
+            <element signature="method#Arena#0;class#Arena#0" />
+            <element signature="method#paintComponent#0;class#Arena#0" />
+            <element signature="e#851#1666#1" />
+            <element signature="method#inStartZone#0;class#Arena#0" />
+            <element signature="method#inGoalZone#0;class#Arena#0" />
+            <element signature="method#setObstacle#0;class#Arena#0" />
+            <element signature="method#clearArena#0;class#Arena#0" />
+            <element signature="method#checkValidCoord#0;class#Arena#0" />
+            <element signature="e#4843#4844#0" expanded="true" />
+            <element signature="method#setAllExplored#0;class#Arena#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/arena/Cell.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/MapDescriptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="103" selection-start-line="103" selection-end-line="103" />
+          <folding>
+            <element signature="method#loadArenaObstacle#0;class#MapDescriptor#0" />
+            <element signature="method#writeFile#0;class#MapDescriptor#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="27" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
+          <folding>
+            <element signature="class#DIRECTION#0;class#RbtConstants#0" />
+            <element signature="method#getChar#0;class#MOVEMENT#0;class#RbtConstants#0" />
+            <element signature="method#getNextMovement#0;class#MOVEMENT#0;class#RbtConstants#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/arena/ArenaConstants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="30" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/robot/Robot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="30" column="32" lean-forward="true" selection-start-line="30" selection-start-column="32" selection-end-line="30" selection-end-column="32" />
+          <folding>
+            <element signature="e#877#2167#0" />
+            <element signature="e#2822#3466#0" />
+            <element signature="e#3633#5858#0" />
+            <element signature="e#5936#6401#0" />
+            <element signature="e#6406#6570#0" />
+            <element signature="e#6576#7825#0" />
+            <element signature="e#7831#10244#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/algorithms/Exploration.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="67" column="57" selection-start-line="67" selection-start-column="57" selection-end-line="67" selection-end-column="57" />
+        <state relative-caret-position="34">
+          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
           <folding>
             <element signature="method#Exploration#0;class#Exploration#0" />
-            <element signature="method#calculateAreaExplored#0;class#Exploration#0" />
+            <element signature="e#1966#2358#1" />
             <element signature="method#lookForward#0;class#Exploration#0" />
             <element signature="method#lookLeftEmpty#0;class#Exploration#0" />
             <element signature="method#lookRightEmpty#0;class#Exploration#0" />
@@ -613,56 +702,36 @@
             <element signature="method#isExploredNotObstacle#0;class#Exploration#0" />
             <element signature="method#isExploredAndFree#0;class#Exploration#0" />
             <element signature="method#turnToDirection#0;class#Exploration#0" />
-            <element signature="method#goBackStart#0;class#Exploration#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/MapDescriptor.java">
+    <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="103" selection-start-line="103" selection-end-line="103" />
+        <state relative-caret-position="612">
+          <caret line="223" column="35" selection-start-line="223" selection-start-column="35" selection-end-line="223" selection-end-column="35" />
           <folding>
-            <element signature="method#loadArenaObstacle#0;class#MapDescriptor#0" />
-            <element signature="method#generateArenaHex#0;class#MapDescriptor#0" />
-            <element signature="method#writeFile#0;class#MapDescriptor#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/robot/RbtConstants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="52" column="27" selection-start-line="52" selection-start-column="27" selection-end-line="52" selection-end-column="27" />
-          <folding>
-            <element signature="class#DIRECTION#0;class#RbtConstants#0" />
-            <element signature="method#getNextMovement#0;class#MOVEMENT#0;class#RbtConstants#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/robot/Robot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-14">
-          <caret line="46" column="30" selection-start-line="46" selection-start-column="30" selection-end-line="46" selection-end-column="30" />
-          <folding>
-            <element signature="e#2854#3498#0" />
-            <element signature="e#3647#5872#0" />
-            <element signature="e#5950#6413#0" />
-            <element signature="e#6418#6582#0" />
-            <element signature="e#6588#7835#0" />
-            <element signature="e#7841#10250#0" />
+            <element signature="method#receive_JSON_Obj#0;class#Simulator#0" />
+            <element signature="method#createDisplay#0;class#Simulator#0" />
+            <element signature="method#setupArena#0;class#Simulator#0" />
+            <element signature="method#setupText#0;class#Simulator#0" />
+            <element signature="class#Explore#0;class#Simulator#0" />
+            <element signature="method#setupActions#0;class#Simulator#0" />
+            <element signature="method#standardBtn#0;class#Simulator#0" />
+            <element signature="method#realOrSimulation#0;class#Simulator#0" />
+            <element signature="method#configDialog#0;class#Simulator#0" />
+            <element signature="method#printRobotPosition#0;class#Simulator#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/algorithms/FastestPath.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="281" column="30" lean-forward="true" selection-start-line="281" selection-start-column="30" selection-end-line="281" selection-end-column="30" />
+        <state relative-caret-position="194">
+          <caret line="270" column="65" lean-forward="true" selection-start-line="270" selection-start-column="65" selection-end-line="270" selection-end-column="65" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="method#initialize#0;class#FastestPath#0" />
-            <element signature="method#get#0;class#FastestPath#0" />
             <element signature="method#minCostCell#0;class#FastestPath#0" />
             <element signature="method#heuCost#0;class#FastestPath#0" />
             <element signature="method#getTargetDir#0;class#FastestPath#0" />
@@ -670,30 +739,7 @@
             <element signature="method#getTurnCost#0;class#FastestPath#0" />
             <element signature="method#getPath#0;class#FastestPath#0" />
             <element signature="method#printFastestPath#0;class#FastestPath#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/simulator/Simulator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="289" column="71" selection-start-line="289" selection-start-column="71" selection-end-line="289" selection-end-column="71" />
-          <folding>
-            <element signature="method#receive_JSON_Obj#0;class#Simulator#0" />
-            <element signature="e#6490#6491#0" expanded="true" />
-            <element signature="e#6524#6525#0" expanded="true" />
-            <element signature="method#createDisplay#0;class#Simulator#0" />
-            <element signature="method#setupArena#0;class#Simulator#0" />
-            <element signature="method#setupText#0;class#Simulator#0" />
-            <element signature="method#fastestPath#0;class#Simulator#0" />
-            <element signature="class#Explore#0;class#Simulator#0" />
-            <element signature="method#standardBtn#0;class#Simulator#0" />
-            <element signature="method#realOrSimulation#0;class#Simulator#0" />
-            <element signature="method#printRobotPosition#0;class#Simulator#0" />
-            <element signature="e#18269#18270#0" expanded="true" />
-            <element signature="e#18319#18320#0" expanded="true" />
-            <element signature="e#18380#18381#0" expanded="true" />
-            <element signature="e#18430#18431#0" expanded="true" />
+            <element signature="method#getPathMovements#0;class#FastestPath#0" />
           </folding>
         </state>
       </provider>
@@ -703,7 +749,9 @@
     <states>
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
-          <artifact-editor />
+          <artifact-editor>
+            <show-sorted>false</show-sorted>
+          </artifact-editor>
           <last-edited>MDP_Algorithm:jar</last-edited>
           <splitter-proportions>
             <option name="proportions">

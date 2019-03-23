@@ -77,6 +77,41 @@ public class Exploration {
 
         goBackStart();
 
+        if (areaExplored != 300){
+            ArrayList<Cell> unexploredCells = new ArrayList<>();
+            for(int y = ArenaConstants.ROWS; y >= 1; y--)
+                for(int x = ArenaConstants.COLS; x >= 1; x--)
+                    if(!explored.getCell(x, y).getIsExplored())
+                        unexploredCells.add(explored.getCell(x, y));
+            FastestPath fastestPath = new FastestPath(explored);
+            ArrayList<MOVEMENT> fPathUnexplored, returnPath = new ArrayList<>();
+            for(Cell cell: unexploredCells){
+                fPathUnexplored = fastestPath.get(robot, cell.posX(), cell.posY() - 1);
+                if(fPathUnexplored != null) {
+                    for(MOVEMENT move: fPathUnexplored){
+                        moveBot(move);
+                        switch (move){
+                            case LEFT:
+                                returnPath.add(0, MOVEMENT.RIGHT);
+                                break;
+                            case RIGHT:
+                                returnPath.add(0, MOVEMENT.LEFT);
+                                break;
+                            case FORWARD:
+                                returnPath.add(0, move);
+                                break;
+                        }
+                    }
+                    returnPath.add(0, MOVEMENT.LEFT);
+                    returnPath.add(0, MOVEMENT.LEFT);
+                    for(MOVEMENT move: returnPath)
+                        moveBot(move);
+                    turnToDirection(DIRECTION.UP);
+                    break;
+                }
+            }
+        }
+
         String message = "<html>";
         String newLineBreak = "<br/>";
         System.out.println("Exploration complete!");

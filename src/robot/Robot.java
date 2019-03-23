@@ -27,12 +27,8 @@ public class Robot{
     private int posX, posY, frontX, frontY, speed;
     private DIRECTION direction;
     private final Sensor
-        SRFrontLeft,
-        SRFrontCenter,
-        SRFrontRight,
-        SRLeft,
-        LRLeft,
-        SRRight;
+        SRFrontLeft, SRFrontCenter,SRFrontRight,
+        SRLeft, LRLeft, SRRight;
     private boolean isAlert, hasCrossGoal ,calledHome;
     private boolean isRealRobot, fastestMode;
 
@@ -94,7 +90,7 @@ public class Robot{
                 break;
         }
     }
-    public void setRobotSpeed(int speed){ this.speed = 1000/speed; }
+    public void setRobotSpeed(int stepsPerSecond){ this.speed = 1000/stepsPerSecond; }
     public void setRobotExplored(boolean mode) {this.fastestMode = mode; }
     public void setSenors(){
         switch (this.direction){

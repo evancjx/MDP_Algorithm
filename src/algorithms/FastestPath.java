@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import static robot.RbtConstants.MOVEMENT.LEFT;
 import static robot.RbtConstants.MOVEMENT.RIGHT;
 
 public class FastestPath {
@@ -21,7 +22,6 @@ public class FastestPath {
     private double[][] gCost;
     private Cell[] neighbors;
     private int loop;
-
     private DIRECTION robotLastDirection = null;
 
     public FastestPath(Arena explored){
@@ -257,62 +257,105 @@ public class FastestPath {
     }
 
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
-        int forwardCount = 0, commandCount = 0;
+        int forwardCount = 0;
         StringBuilder commands = new StringBuilder();
+        CommMgr commMgr = CommMgr.getCommMgr();
+
+        /*  To string all the commands in one single command to Arduino
+            Arduino would then split it up. */
         if(robot.getIsRealRobot()){
             for(MOVEMENT move: movements){
                 if(move == MOVEMENT.FORWARD){
                     forwardCount+=1;
-                    commandCount+=1;
+                    if(forwardCount == 5){
+                        commands.append("W"+forwardCount*10+"]");
+                        forwardCount = 0;
+                    }
                 }
                 else{
-                    if(forwardCount != 0){
+                    if(forwardCount !=0){
                         commands.append("W"+forwardCount*10+"]");
                         forwardCount = 0;
                     }
                     commands.append(MOVEMENT.getChar(move, true)+"]");
-                    commandCount+=1;
                 }
             }
             if(forwardCount != 0)commands.append("W"+forwardCount*10+"]");
-            CommMgr commMgr = CommMgr.getCommMgr();
             commMgr.sendMsg(commands.toString(), CommMgr.MSG_TYPE_ARDUINO);
+            System.out.println(commands.toString());
         }
 
+        //For simulating robot movements on display
         robot.setRealRobot(false);
+        if(Simulator.realRun) robot.setRobotSpeed(3);
+        String moved = null;
+        forwardCount = 0;
         for(MOVEMENT move: movements) {
             robot.move(move);
             Simulator.setFastestPathStatus("Move: " + move);
             System.out.println("Move: " + move);
             Simulator.refresh();
+            if(!Simulator.realRun) continue;
+            if(move == MOVEMENT.FORWARD){
+                forwardCount+=1;
+            }
+            else{
+                if(forwardCount != 0)
+                    while(moved == null) moved = commMgr.receiveMsg();
+                //Movement after forward movement
+                while(moved == null) moved = commMgr.receiveMsg();
+            }
         }
     }
 
-    public ArrayList<MOVEMENT> combineMovements(ArrayList<MOVEMENT> fPathWayPoint, ArrayList<MOVEMENT> fPathGoalZone){
+    public ArrayList<MOVEMENT> combineMovements(ArrayList<MOVEMENT> firstSequence, ArrayList<MOVEMENT> secondSequence){
         System.out.println("Last robot direction " + robotLastDirection);
         switch (robotLastDirection){
-            case RIGHT:
-                if (fPathGoalZone.get(0) == RIGHT)
-                    fPathGoalZone.remove(0);
-                break;
-            case DOWN:
-                switch (fPathGoalZone.get(0)){
+            case LEFT:
+                switch (secondSequence.get(0)){
+                    case FORWARD:
+                        firstSequence.add(MOVEMENT.RIGHT);
+                        break;
                     case LEFT:
-                        fPathWayPoint.add(RIGHT);
+                        secondSequence.remove(0);
                         break;
                     case RIGHT:
-                        fPathWayPoint.add(MOVEMENT.LEFT);
-                        break;
-                    case FORWARD:
-                        fPathWayPoint.add(MOVEMENT.LEFT);
-                        fPathWayPoint.add(MOVEMENT.LEFT);
+                        firstSequence.add(MOVEMENT.RIGHT);
                         break;
                 }
-                fPathGoalZone.remove(0);
+                break;
+            case DOWN:
+                switch (secondSequence.get(0)){
+                    case FORWARD:
+                        firstSequence.add(LEFT);
+                        firstSequence.add(LEFT);
+                        break;
+                    case LEFT:
+                        firstSequence.add(RIGHT);
+                        secondSequence.remove(0);
+                        break;
+                    case RIGHT:
+                        firstSequence.add(LEFT);
+                        secondSequence.remove(0);
+                        break;
+                }
+                break;
+            case RIGHT:
+                switch (secondSequence.get(0)){
+                    case FORWARD:
+                        firstSequence.add(LEFT);
+                        break;
+                    case LEFT:
+                        firstSequence.add(LEFT);
+                        break;
+                    case RIGHT:
+                        secondSequence.remove(0);
+                        break;
+                }
                 break;
         }
-        fPathWayPoint.addAll(fPathGoalZone);
+        firstSequence.addAll(secondSequence);
 
-        return fPathWayPoint;
+        return firstSequence;
     }
 }
