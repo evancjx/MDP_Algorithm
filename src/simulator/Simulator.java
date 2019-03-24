@@ -194,27 +194,18 @@ public class Simulator {
     }
 
     private static void fastestPath(){
-        FastestPath fastestPath = new FastestPath(explored);
-        String status;
         if((wayPointX != 0 || wayPointY !=0) && fPathWayPoint == null && fPathGoal == null){
+            FastestPath fastestPath = new FastestPath(explored);
             System.out.println("\nFastest path to way point and to goal zone:");
-            if(explored.checkValidCoord(wayPointX,wayPointY)){
-                fPathWayPoint = fastestPath.get(robot, wayPointX,wayPointY);
-                robot.setRobotPos(wayPointX, wayPointY);
-                fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-                robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
-                fastestPathMovements = fastestPath.combineMovements(fPathWayPoint, fPathGoal);
-                status = "Done calculating fastest path, to way point and to goal zone.";
-            }
-            else status = "Error not able to compute fastest path";
-        }
-        else{
-            System.out.println("\nFastest path to goal coords:");
+            fPathWayPoint = fastestPath.get(robot, wayPointX,wayPointY);
+            robot.setRobotPos(wayPointX, wayPointY);
             fPathGoal = fastestPath.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
-            status = "Done calculating fastest path, to goal zone.";
+            robot.setRobotPos(ArenaConstants.START_X, ArenaConstants.START_Y);
+            fastestPathMovements = fastestPath.combineMovements(fPathWayPoint, fPathGoal);
+            String status = "Done calculating fastest path, to way point and to goal zone.";
+            setFastestPathStatus(status);
+            System.out.println(status);
         }
-        setFastestPathStatus(status);
-        System.out.println(status);
     }
     static class Fastest extends SwingWorker<Integer, String> {
         protected Integer doInBackground() throws Exception {
@@ -279,7 +270,7 @@ public class Simulator {
                     MapDescriptor.loadArenaObstacle(arena, selectedFile.getAbsolutePath());
                     arenaPanel.add(arena, "Arena");
                     arenaPanel.add(explored, "Explore");
-                    appFrame.repaint();
+                    Simulator.refresh();
                     setExplorationStatus("<html>Input way point at Config.<br/> Click on the button below...</html>");
                 }
             }
@@ -378,7 +369,7 @@ public class Simulator {
         configDialog.setSize(400,150);
         configDialog.setLayout(new FlowLayout());
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        configDialog.setLocation(dim.width / 4 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
+        configDialog.setLocation(dim.width / 2 - configDialog.getSize().width / 2, dim.height / 2 - configDialog.getSize().height / 2);
 
         final JTextField tfRobotSpeed = new JTextField(Integer.toString(robotSpeed),2);
         final JTextField tfTimeLimit = new JTextField(Integer.toString(timeLimit),4);
@@ -400,9 +391,9 @@ public class Simulator {
                 coverageLimit = Integer.parseInt(tfCoverageLimit.getText());
                 wayPointX = Integer.parseInt(tfWayPointX.getText());
                 wayPointY = Integer.parseInt(tfWayPointY.getText());
-                if(arena.checkValidCoord(wayPointX,wayPointY)){
-                    explored.getCell(wayPointX,wayPointY).setWayPoint(true);
-                    arena.getCell(wayPointX, wayPointY).setWayPoint(true);
+                if(arena.checkWayPointCoord(wayPointX,wayPointY)){
+                    explored.getCell(wayPointX,wayPointY).setIsWayPoint(true);
+                    arena.getCell(wayPointX, wayPointY).setIsWayPoint(true);
                 }
                 configDialog.setVisible(false);
                 appFrame.repaint();

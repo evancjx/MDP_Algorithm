@@ -17,7 +17,7 @@ public class Exploration {
     private final Arena explored, arena;
     private final Robot robot;
     private final int coverageLimit, timeLimit;
-    private long startTime, endTime;
+    private long startTime;
     private boolean realRun;
 
     private int countRight;
@@ -46,20 +46,18 @@ public class Exploration {
         return result;
     }
 
-    public boolean execute(){
+    public void execute(){
         int areaExplored, initX = robot.getPosX(), initY = robot.getPosY();
-        startTime = System.currentTimeMillis();
-        endTime = startTime + (timeLimit * 1000);
+        startTime = System.currentTimeMillis(); long endTime = startTime + (timeLimit * 1000);
         System.out.println("Starting exploration...");
         if(realRun) CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
         senseSurrounding();
         do{
-            Simulator.printRobotPosition();
             areaExplored = calculateAreaExplored();
             //System.out.println("Explored Area: " + areaExplored);
             nextMove();
 
-            Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime));
+            Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "seconds");
 
             if(realRun){
                 String[] mapValues = generateArenaHex(explored);
@@ -70,69 +68,34 @@ public class Exploration {
                 commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
             }
 
-            if(robot.getPosX() == initX && robot.getPosY() ==initY) break;
+            if(robot.getPosX() == ArenaConstants.START_X && robot.getPosY() == ArenaConstants.START_Y) break;
             else if (robot.getCalledHome()) break;
 
         } while (System.currentTimeMillis() <= endTime); //areaExplored <= coverageLimit &&
 
-        goBackStart();
+        goBackStart(areaExplored);
 
-        if (areaExplored != 300){
-            ArrayList<Cell> unexploredCells = new ArrayList<>();
-            for(int y = ArenaConstants.ROWS; y >= 1; y--)
-                for(int x = ArenaConstants.COLS; x >= 1; x--)
-                    if(!explored.getCell(x, y).getIsExplored())
-                        unexploredCells.add(explored.getCell(x, y));
-            FastestPath fastestPath = new FastestPath(explored);
-            ArrayList<MOVEMENT> fPathUnexplored, returnPath = new ArrayList<>();
-            for(Cell cell: unexploredCells){
-                fPathUnexplored = fastestPath.get(robot, cell.posX(), cell.posY() - 1);
-                if(fPathUnexplored != null) {
-                    for(MOVEMENT move: fPathUnexplored){
-                        moveBot(move);
-                        switch (move){
-                            case LEFT:
-                                returnPath.add(0, MOVEMENT.RIGHT);
-                                break;
-                            case RIGHT:
-                                returnPath.add(0, MOVEMENT.LEFT);
-                                break;
-                            case FORWARD:
-                                returnPath.add(0, move);
-                                break;
-                        }
-                    }
-                    returnPath.add(0, MOVEMENT.LEFT);
-                    returnPath.add(0, MOVEMENT.LEFT);
-                    for(MOVEMENT move: returnPath)
-                        moveBot(move);
-                    turnToDirection(DIRECTION.UP);
-                    break;
-                }
-            }
-        }
+        if (areaExplored < 300 && !robot.getCalledHome() && System.currentTimeMillis() <= endTime)
+            goToUnexplored();
 
-        String message = "<html>";
-        String newLineBreak = "<br/>";
+        String message = "<html>", newLineBreak = "<br/>";
         System.out.println("Exploration complete!");
         message += "Exploration complete!" + newLineBreak;
         areaExplored = calculateAreaExplored();
-        message += (areaExplored / 300.0) * 100.0 + " Coverage";
+        message += String.format("%.2f%%", (areaExplored / 300.0) * 100.0) + " Coverage";
         System.out.printf("%.2f%% Coverage", (areaExplored / 300.0) * 100.0);
         message += ", " + areaExplored + " Cells" + newLineBreak;
         System.out.println(", " + areaExplored + " Cells");
-        message += (System.currentTimeMillis() - startTime) + " Milli-Seconds" + newLineBreak;
-        System.out.println((System.currentTimeMillis() - startTime) / 1000 + " Seconds");
+        message += (System.currentTimeMillis() - startTime) / 1000.0 + " seconds" + newLineBreak;
+        System.out.println((System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
         message += "</html>";
 
         Simulator.setExplorationStatus(message);
         //System.out.println("\nMovements:\n" + checkDirectionLog);
-        return true;
     }
 
     private void nextMove(){
-        int rbtX = robot.getPosX();
-        int rbtY = robot.getPosY();
+        int rbtX = robot.getPosX(), rbtY = robot.getPosY();
         if (countRight == 5) {
             moveBot(MOVEMENT.LEFT);
             countRight = 0;
@@ -245,7 +208,8 @@ public class Exploration {
     }
 
     private void moveBot(MOVEMENT movement){
-        System.out.println("move: " + movement + "\tcountRight="+countRight);
+//        Simulator.printRobotPosition();
+//        System.out.println("move: " + movement + "\tcountRight="+countRight);
         robot.move(movement);
         Simulator.refresh();
         senseSurrounding();
@@ -255,12 +219,8 @@ public class Exploration {
         int numOfTurn = Math.abs(robot.getDirection().ordinal() - target.ordinal());
         if (numOfTurn > 2) numOfTurn%=2;
         if (numOfTurn == 1){
-            if (DIRECTION.getNext(robot.getDirection()) == target){
-                moveBot(MOVEMENT.LEFT);
-            }
-            else {
-                moveBot(MOVEMENT.RIGHT);
-            }
+            if (DIRECTION.getNext(robot.getDirection()) == target) moveBot(MOVEMENT.LEFT);
+            else moveBot(MOVEMENT.RIGHT);
         }
         else if (numOfTurn == 2){
             moveBot(MOVEMENT.LEFT);
@@ -268,16 +228,87 @@ public class Exploration {
         }
     }
 
-    private void goBackStart(){
-        if(!robot.getHasCrossGoal()){
+    private void goToUnexplored(){
+        System.out.println("Checking paths to all unexplored grid");
+        ArrayList<Cell> unexploredCells = new ArrayList<>();
+        for(int y = ArenaConstants.ROWS; y >= 1; y--)
+            for(int x = ArenaConstants.COLS; x >= 1; x--)
+                if(!explored.getCell(x, y).getIsExplored())
+                    unexploredCells.add(explored.getCell(x, y));
+        FastestPath fastestPath = new FastestPath(explored);
+        ArrayList<MOVEMENT> fPathUnexplored;
+        int incX = 0, incY = 0;
+        boolean foundPath = false;
+        for(Cell cell: unexploredCells){
+            for(int i = 1; i <= 12; i ++){
+                switch (i){
+                    case 1: //TOP CELL
+                        incX = 0; incY = 1;
+                        break;
+                    case 2: //BOTTOM CELL
+                        incX = 0; incY = -1;
+                        break;
+                    case 3: //LEFT CELL
+                        incX = -1; incY = 0;
+                        break;
+                    case 4: //RIGHT CELL
+                        incX = 1; incY = 0;
+                        break;
+                    case 5: //TOP LEFT CELL
+                        incX = -1; incY = 1;
+                        break;
+                    case 6: //TOP RIGHT CELL
+                        incX = 1; incY = 1;
+                        break;
+                    case 7: //BOTTOM RIGHT CELL
+                        incX = 1; incY = -1;
+                        break;
+                    case 8: //BOTTOM LEFT CELL
+                        incX = -1; incY = -1;
+                        break;
+                }
+                fPathUnexplored = fastestPath.get(robot, cell.posX() + incX, cell.posY() + incY);
+                if(fPathUnexplored != null) {
+                    foundPath = true;
+                    for(MOVEMENT move: fPathUnexplored){
+                        Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "seconds");
+                        moveBot(move);
+                    }
+                    goBackStart(calculateAreaExplored());
+                    System.out.println("Returned");
+                    turnToDirection(DIRECTION.UP);
+                    break;
+                }
+            }
+            if(foundPath) break;
+        }
+    }
+
+    private void goBackStart(int areaExplored){
+        if(!robot.getHasCrossGoal() && areaExplored > 100){
             FastestPath goToGoal = new FastestPath(explored);
             ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
             goToGoal.executeMovements(movements, robot);
         }
         if(!(robot.getPosX() == ArenaConstants.START_X) && !(robot.getPosY() == ArenaConstants.START_Y)){
+            System.out.println("Return to Start ZONE");
             FastestPath returnToStart = new FastestPath(explored);
-            ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
-            returnToStart.executeMovements(movements, robot);
+            do{
+                ArrayList<MOVEMENT> movements = returnToStart.get(robot, ArenaConstants.START_X, ArenaConstants.START_Y);
+                for(MOVEMENT move: movements) {
+                    Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "seconds");
+                    int rbtX = robot.getPosX(), rbtY = robot.getPosY();
+                    if(move == MOVEMENT.FORWARD && lookForward(rbtX, rbtY)){
+                        moveBot(move);
+                    }
+                    else if (move == MOVEMENT.LEFT && lookLeftEmpty(rbtX, rbtY)){
+                        moveBot(move);
+                    }
+                    else if (move == MOVEMENT.RIGHT && lookRightEmpty(rbtX, rbtY)){
+                        moveBot(move);
+                    }
+                }
+            } while (robot.getPosX() != ArenaConstants.START_X && robot.getPosY() != ArenaConstants.START_Y);
         }
 
         turnToDirection(DIRECTION.UP); //return to UP ward direction

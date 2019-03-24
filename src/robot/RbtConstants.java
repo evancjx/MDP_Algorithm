@@ -26,8 +26,10 @@ public class RbtConstants {
                     return 2;
                 case LEFT:
                     return 3;
-                default:
+                case RIGHT:
                     return 4;
+                default:
+                    return 0;
             }
         }
 

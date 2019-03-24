@@ -29,7 +29,7 @@ public class Robot{
     private final Sensor
         SRFrontLeft, SRFrontCenter,SRFrontRight,
         SRLeft, LRLeft, SRRight;
-    private boolean isAlert, hasCrossGoal ,calledHome;
+    private boolean hasCrossGoal ,calledHome;
     private boolean isRealRobot, fastestMode;
 
     public Robot(int posX, int posY, DIRECTION direction, boolean isRealRobot){
@@ -38,7 +38,6 @@ public class Robot{
         this.direction = direction;
         setRobotFront(direction);
         this.speed = RbtConstants.SPEED;
-        this.isAlert = false;
         this.calledHome = false;
         this.isRealRobot = isRealRobot;
 
@@ -68,7 +67,10 @@ public class Robot{
     public Boolean getHasCrossGoal(){ return this.hasCrossGoal; }
 
     public void setRealRobot(boolean value){ this.isRealRobot = value; }
-    public void setRobotPos(int posX, int posY){ this.posX = posX; this.posY = posY; }
+    public void setRobotPos(int posX, int posY){
+        this.posX = posX; this.posY = posY;
+        setRobotFront(direction);
+    }
     private void setRobotFront(DIRECTION dir){
         this.direction = dir;
         switch (dir){
@@ -137,9 +139,7 @@ public class Robot{
                 return changeDirectionMove;
             }
         }
-        else {
-            this.direction = direction;
-        }
+        else this.direction = direction;
         this.setRobotFront(this.direction);
         return null;
     }
@@ -150,12 +150,12 @@ public class Robot{
 
     public void sense(Arena explored, Arena arena){
         if(!isRealRobot){
-            SRFrontLeft.sense(explored, arena);
             SRFrontCenter.sense(explored, arena);
+            SRFrontLeft.sense(explored, arena);
             SRFrontRight.sense(explored, arena);
+            SRRight.sense(explored, arena);
             SRLeft.sense(explored, arena);
             LRLeft.sense(explored, arena);
-            SRRight.sense(explored, arena);
         }
         else{
             int[] result = new int[6];
@@ -163,9 +163,8 @@ public class Robot{
             String msg = commMgr.receiveMsg();
             String[] sensorValues = msg.split(":");
             // Front Center:Front Left: Front Right: RIGHT: Left FRONT: LEFT BACK
-            for(int i = 0; i < result.length; i++){
-                    result[i] = (Integer.parseInt(sensorValues[i]) + 5) /10;
-            }
+            for(int i = 0; i < result.length; i++)
+                result[i] = (Integer.parseInt(sensorValues[i]) + 5) /10;
             System.out.println("========================>");
             System.out.println(Arrays.toString(result));
 
@@ -185,6 +184,13 @@ public class Robot{
             } catch (InterruptedException e) {
                 System.out.println("Something went wrong in Robot.move()!");
             }
+        }
+        else{
+            CommMgr commMgr = CommMgr.getCommMgr();
+            commMgr.sendMsg(MOVEMENT.getChar(movement, this.fastestMode)+"", CommMgr.MSG_TYPE_ARDUINO);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
+            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
         }
         switch (movement){//Changing robot position on display only
             case FORWARD: //Forward
@@ -225,19 +231,6 @@ public class Robot{
                 break;
         }
         this.setRobotFront(this.direction);
-
         crossGoal();
-        if(isRealRobot){
-//            System.out.println("Movement: " + movement);
-            CommMgr commMgr = CommMgr.getCommMgr();
-            commMgr.sendMsg(MOVEMENT.getChar(movement, this.fastestMode)+"", CommMgr.MSG_TYPE_ARDUINO);
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("robotPosition", Arrays.asList(posX, posY, DIRECTION.getInt(direction)));
-            commMgr.sendMsg(jsonObject.toString(), CommMgr.MSG_TYPE_ANDROID);
-        }
     }
-
-    //Improved Algorithm
-    public boolean getIsAlert(){ return this.isAlert; }
-    public void setIsAlert(boolean value){ this.isAlert = value;}
 }

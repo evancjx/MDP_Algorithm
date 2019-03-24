@@ -5,15 +5,13 @@ import arena.ArenaConstants;
 import arena.Cell;
 import robot.Robot;
 import robot.RbtConstants.*;
+import robot.RbtConstants.MOVEMENT;
 import simulator.Simulator;
 import utils.CommMgr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
-
-import static robot.RbtConstants.MOVEMENT.LEFT;
-import static robot.RbtConstants.MOVEMENT.RIGHT;
 
 public class FastestPath {
     private ArrayList<Cell> openList, closedList;
@@ -46,7 +44,7 @@ public class FastestPath {
     }
 
     private boolean canBeVisited(Cell c) {
-        return c.getIsExplored() && !c.getIsObstacle() && !c.getIsVirtualWall();
+        return (c.getIsExplored() && !c.getIsObstacle() && !c.getIsVirtualWall());
     }
 
     public ArrayList<MOVEMENT> get(Robot robot, int targetX, int targetY){
@@ -80,7 +78,7 @@ public class FastestPath {
                 if(closedList.contains(explored.getCell(targetX, targetY))){
                     System.out.println("Goal visited. Path found!");
                     path = getPath(targetX, targetY);
-                    printFastestPath(path);
+//                    printFastestPath(path);
                     return getPathMovements(path, robot, targetX, targetY);
                 }
 
@@ -117,7 +115,7 @@ public class FastestPath {
                         else {
                             currentG = gCost[cell.posY()-1][cell.posX()-1];
                             newG = gCost[curCell.posY()-1][curCell.posX()-1] + costG(curCell, cell, curDir);
-                            if( newG < currentG){
+                            if(newG < currentG){
                                 gCost[cell.posY()-1][cell.posX()-1] = newG;
                                 parents.put(cell, curCell);
                             }
@@ -244,7 +242,7 @@ public class FastestPath {
                 nextMovement = MOVEMENT.FORWARD;
             }
 
-            System.out.println("Movement " + nextMovement + "\nfrom (" + simulatedRobot.getPosX() + ", " + simulatedRobot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
+//            System.out.println("Movement " + nextMovement + "\nfrom (" + simulatedRobot.getPosX() + ", " + simulatedRobot.getPosY() + ") to (" + tempCell.posX() + ", " + tempCell.posY() + ")");
 
             simulatedRobot.move(nextMovement);
             movements.add(nextMovement);
@@ -256,8 +254,60 @@ public class FastestPath {
         return movements;
     }
 
+    public ArrayList<MOVEMENT> combineMovements(ArrayList<MOVEMENT> firstSequence, ArrayList<MOVEMENT> secondSequence){
+
+        switch (robotLastDirection){
+            case LEFT:
+                switch (secondSequence.get(0)){
+                    case FORWARD:
+                        firstSequence.add(MOVEMENT.RIGHT);
+                        break;
+                    case LEFT:
+                        secondSequence.remove(0);
+                        break;
+                    case RIGHT:
+                        firstSequence.add(MOVEMENT.RIGHT);
+                        break;
+                }
+                break;
+            case DOWN:
+                switch (secondSequence.get(0)){
+                    case FORWARD:
+                        firstSequence.add(MOVEMENT.LEFT);
+                        firstSequence.add(MOVEMENT.LEFT);
+                        break;
+                    case LEFT:
+                        firstSequence.add(MOVEMENT.RIGHT);
+                        secondSequence.remove(0);
+                        break;
+                    case RIGHT:
+                        firstSequence.add(MOVEMENT.LEFT);
+                        secondSequence.remove(0);
+                        break;
+                }
+                break;
+            case RIGHT:
+                switch (secondSequence.get(0)){
+                    case FORWARD:
+                        firstSequence.add(MOVEMENT.LEFT);
+                        break;
+                    case LEFT:
+                        firstSequence.add(MOVEMENT.LEFT);
+                        break;
+                    case RIGHT:
+                        secondSequence.remove(0);
+                        break;
+                }
+                break;
+        }
+        firstSequence.addAll(secondSequence);
+
+        return firstSequence;
+    }
+
     public void executeMovements(ArrayList<MOVEMENT> movements, Robot robot){
         int forwardCount = 0;
+        long startTime = System.currentTimeMillis();
         StringBuilder commands = new StringBuilder();
         CommMgr commMgr = CommMgr.getCommMgr();
 
@@ -292,8 +342,8 @@ public class FastestPath {
         forwardCount = 0;
         for(MOVEMENT move: movements) {
             robot.move(move);
-            Simulator.setFastestPathStatus("Move: " + move);
             System.out.println("Move: " + move);
+            Simulator.setFastestPathStatus("Current time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "seconds");
             Simulator.refresh();
             if(!Simulator.realRun) continue;
             if(move == MOVEMENT.FORWARD){
@@ -306,56 +356,13 @@ public class FastestPath {
                 while(moved == null) moved = commMgr.receiveMsg();
             }
         }
-    }
+        String message = "<html>", newLineBreak = "<br/>";
+        System.out.println("Fastest Path run complete!");
+        message += "Fastest Path run complete!" + newLineBreak;
+        message += (System.currentTimeMillis() - startTime) / 1000.0 + " Seconds" + newLineBreak;
+        System.out.println((System.currentTimeMillis() - startTime) / 1000.0 + " Seconds");
+        message += "</html>";
 
-    public ArrayList<MOVEMENT> combineMovements(ArrayList<MOVEMENT> firstSequence, ArrayList<MOVEMENT> secondSequence){
-        System.out.println("Last robot direction " + robotLastDirection);
-        switch (robotLastDirection){
-            case LEFT:
-                switch (secondSequence.get(0)){
-                    case FORWARD:
-                        firstSequence.add(MOVEMENT.RIGHT);
-                        break;
-                    case LEFT:
-                        secondSequence.remove(0);
-                        break;
-                    case RIGHT:
-                        firstSequence.add(MOVEMENT.RIGHT);
-                        break;
-                }
-                break;
-            case DOWN:
-                switch (secondSequence.get(0)){
-                    case FORWARD:
-                        firstSequence.add(LEFT);
-                        firstSequence.add(LEFT);
-                        break;
-                    case LEFT:
-                        firstSequence.add(RIGHT);
-                        secondSequence.remove(0);
-                        break;
-                    case RIGHT:
-                        firstSequence.add(LEFT);
-                        secondSequence.remove(0);
-                        break;
-                }
-                break;
-            case RIGHT:
-                switch (secondSequence.get(0)){
-                    case FORWARD:
-                        firstSequence.add(LEFT);
-                        break;
-                    case LEFT:
-                        firstSequence.add(LEFT);
-                        break;
-                    case RIGHT:
-                        secondSequence.remove(0);
-                        break;
-                }
-                break;
-        }
-        firstSequence.addAll(secondSequence);
-
-        return firstSequence;
+        Simulator.setFastestPathStatus(message);
     }
 }
