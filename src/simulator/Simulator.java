@@ -35,7 +35,7 @@ public class Simulator {
     private static ArrayList<RbtConstants.MOVEMENT> fPathWayPoint, fPathGoal, fastestPathMovements;
 
     private static int coverageLimit = ArenaConstants.ROWS * ArenaConstants.COLS;
-    private static int timeLimit = 180, robotSpeed = 20; //Number of steps per second
+    private static int timeLimit = 180, robotSpeed = 50; //Number of steps per second
 
     private static CommMgr commMgr;
     public static boolean realRun = true;
@@ -59,8 +59,8 @@ public class Simulator {
                 JSONObject jObj = receive_JSON_Obj();
                 for (int i = 0; i < jObj.names().length(); i++) {
                     switch (jObj.names().get(i).toString()){
-                        case "waypoint":
-                            JSONArray wayPoint = jObj.getJSONArray("waypoint");
+                        case "wayPoint":
+                            JSONArray wayPoint = jObj.getJSONArray("wayPoint");
                             wayPointX = wayPoint.getInt(0);
                             wayPointY = wayPoint.getInt(1);
                             break;
@@ -208,16 +208,16 @@ public class Simulator {
         }
     }
     static class Fastest extends SwingWorker<Integer, String> {
-        protected Integer doInBackground() throws Exception {
+        protected Integer doInBackground(){
             explored.repaint();
-
+            System.out.println("\nRunning fastest path");
             FastestPath fastestPath = new FastestPath(explored);
             fastestPath.executeMovements(fastestPathMovements, robot);
             return 222;
         }
     }
     static class Explore extends SwingWorker<Integer, String>{
-        protected Integer doInBackground() throws Exception{
+        protected Integer doInBackground(){
             robot.setRobotSpeed(robotSpeed);
             explored.repaint();
 

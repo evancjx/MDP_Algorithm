@@ -94,7 +94,7 @@ public class CommMgr {
             if(_osw==null) _osw = new OutputStreamWriter(_bos, StandardCharsets.US_ASCII);
             _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to token-ise msg)
             _osw.flush();
-//            System.out.println("Sent out msg: " + outputMsg);
+            System.out.println("Sent out msg: " + outputMsg);
             Simulator.setFastestPathStatus("Sent out msg: " + outputMsg);
             return true;
         } catch (IOException e) {

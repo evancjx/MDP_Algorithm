@@ -317,10 +317,10 @@ public class FastestPath {
             for(MOVEMENT move: movements){
                 if(move == MOVEMENT.FORWARD){
                     forwardCount+=1;
-                    if(forwardCount == 5){
-                        commands.append("W"+forwardCount*10+"]");
-                        forwardCount = 0;
-                    }
+//                    if(forwardCount == 5){
+//                        commands.append("W"+forwardCount*10+"]");
+//                        forwardCount = 0;
+//                    }
                 }
                 else{
                     if(forwardCount !=0){
@@ -360,7 +360,7 @@ public class FastestPath {
         System.out.println("Fastest Path run complete!");
         message += "Fastest Path run complete!" + newLineBreak;
         message += (System.currentTimeMillis() - startTime) / 1000.0 + " Seconds" + newLineBreak;
-        System.out.println((System.currentTimeMillis() - startTime) / 1000.0 + " Seconds");
+        System.out.println((System.currentTimeMillis() - startTime) / 1000.0 + " Seconds\n");
         message += "</html>";
 
         Simulator.setFastestPathStatus(message);

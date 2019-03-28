@@ -10,6 +10,7 @@ import simulator.Simulator;
 import utils.CommMgr;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static utils.MapDescriptor.generateArenaHex;
 
@@ -47,7 +48,7 @@ public class Exploration {
     }
 
     public void execute(){
-        int areaExplored, initX = robot.getPosX(), initY = robot.getPosY();
+        int areaExplored;
         startTime = System.currentTimeMillis(); long endTime = startTime + (timeLimit * 1000);
         System.out.println("Starting exploration...");
         if(realRun) CommMgr.getCommMgr().sendMsg("S",CommMgr.MSG_TYPE_ARDUINO);
@@ -75,8 +76,8 @@ public class Exploration {
 
         goBackStart(areaExplored);
 
-        if (areaExplored < 300 && !robot.getCalledHome() && System.currentTimeMillis() <= endTime)
-            goToUnexplored();
+//        if (areaExplored < 300 && !robot.getCalledHome() && System.currentTimeMillis() <= endTime)
+//            goToUnexplored();
 
         String message = "<html>", newLineBreak = "<br/>";
         System.out.println("Exploration complete!");
@@ -100,7 +101,7 @@ public class Exploration {
             moveBot(MOVEMENT.LEFT);
             countRight = 0;
         }
-        if (lookRightEmpty(rbtX, rbtY)){
+        else if (lookRightEmpty(rbtX, rbtY)){
             checkDirectionLog += "Right Empty\n";
             moveBot(MOVEMENT.RIGHT);
             countRight++;
@@ -240,7 +241,7 @@ public class Exploration {
         int incX = 0, incY = 0;
         boolean foundPath = false;
         for(Cell cell: unexploredCells){
-            for(int i = 1; i <= 12; i ++){
+            for(int i = 1; i <= 24; i ++){
                 switch (i){
                     case 1: //TOP CELL
                         incX = 0; incY = 1;
@@ -266,7 +267,58 @@ public class Exploration {
                     case 8: //BOTTOM LEFT CELL
                         incX = -1; incY = -1;
                         break;
+//                    case 9: //BOTTOM BOTTOM LEFT LEFT CELL
+//                        incX = -2; incY = -2;
+//                        break;
+//                    case 10: //BOTTOM BOTTOM LEFT CELL
+//                        incX = -1; incY = -2;
+//                        break;
+//                    case 11: //BOTTOM BOTTOM CELL
+//                        incX = 0; incY = -2;
+//                        break;
+//                    case 12: //BOTTOM BOTTOM RIGHT CELL
+//                        incX = 1; incY = -2;
+//                        break;
+//                    case 13: //BOTTOM BOTTOM RIGHT RIGHT CELL
+//                        incX = 2; incY = -2;
+//                        break;
+//                    case 14: //BOTTOM RIGHT RIGHT CELL
+//                        incX = 2; incY = -1;
+//                        break;
+//                    case 15: //RIGHT RIGHT CELL
+//                        incX = 2; incY = 0;
+//                        break;
+//                    case 16: //TOP RIGHT RIGHT CELL
+//                        incX = 2; incY = 1;
+//                        break;
+//                    case 17: //TOP TOP RIGHT RIGHT CELL
+//                        incX = 2; incY = 2;
+//                        break;
+//                    case 18: //TOP TOP RIGHT CELL
+//                        incX = 1; incY = 2;
+//                        break;
+//                    case 19: //TOP TOP CELL
+//                        incX = 0; incY = 2;
+//                        break;
+//                    case 20: //TOP TOP LEFT CELL
+//                        incX = -1; incY = 2;
+//                        break;
+//                    case 21: //TOP TOP LEFT LEFT CELL
+//                        incX = -2; incY = 2;
+//                        break;
+//                    case 22: //TOP LEFT LEFT CELL
+//                        incX = -2; incY = 1;
+//                        break;
+//                    case 23: //LEFT LEFT CELL
+//                        incX = -2; incY = 0;
+//                        break;
+//                    case 24: //BOTTOM LEFT LEFT CELL
+//                        incX = -2; incY = -1;
+//                        break;
                 }
+                if(!explored.checkWayPointCoord(cell.posX() + incX, cell.posY() + incY)) continue;
+                Cell tempCell = explored.getCell(cell.posX() + incX, cell.posY() + incY);
+                if(!tempCell.getIsExplored() && tempCell.getIsObstacle() && tempCell.getIsVirtualWall()) continue;
                 fPathUnexplored = fastestPath.get(robot, cell.posX() + incX, cell.posY() + incY);
                 if(fPathUnexplored != null) {
                     foundPath = true;
@@ -274,6 +326,7 @@ public class Exploration {
                         Simulator.setExplorationStatus("Current time: " + (System.currentTimeMillis() - startTime) / 1000.0 + "seconds");
                         moveBot(move);
                     }
+                    turnToDirection(DIRECTION.UP);
                     goBackStart(calculateAreaExplored());
                     System.out.println("Returned");
                     turnToDirection(DIRECTION.UP);
@@ -285,12 +338,13 @@ public class Exploration {
     }
 
     private void goBackStart(int areaExplored){
+        Simulator.printRobotPosition();
         if(!robot.getHasCrossGoal() && areaExplored > 100){
             FastestPath goToGoal = new FastestPath(explored);
             ArrayList<MOVEMENT> movements = goToGoal.get(robot, ArenaConstants.GOAL_X, ArenaConstants.GOAL_Y);
             goToGoal.executeMovements(movements, robot);
         }
-        if(!(robot.getPosX() == ArenaConstants.START_X) && !(robot.getPosY() == ArenaConstants.START_Y)){
+        if((robot.getPosX() != ArenaConstants.START_X) && (robot.getPosY() != ArenaConstants.START_Y)){
             System.out.println("Return to Start ZONE");
             FastestPath returnToStart = new FastestPath(explored);
             do{
