@@ -21,10 +21,9 @@ public class CommMgr {
     private static OutputStreamWriter _osw = null;
     private static BufferedReader _br = null;
 
-    public static final String
-            MSG_TYPE_ANDROID = "b",
-            MSG_TYPE_RPI = "i",
-            MSG_TYPE_ARDUINO = "a";
+    public static final String MSG_TYPE_ANDROID = "b";
+    public static final String MSG_TYPE_RPI = "i";
+    public static final String MSG_TYPE_ARDUINO = "a";
 
     //Singleton class is used. Only one CommMgr is present at any time
     private CommMgr() {}
@@ -92,7 +91,8 @@ public class CommMgr {
             String outputMsg = msgType + msg;
 
             if(_osw==null) _osw = new OutputStreamWriter(_bos, StandardCharsets.US_ASCII);
-            _osw.write(outputMsg+"|"); // Something requested by rpi to denote end of msg (ability to token-ise msg)
+            _osw.write(outputMsg+"|");
+            // Something requested by rpi to denote end of msg (ability to token-ise msg)
             _osw.flush();
             System.out.println("Sent out msg: " + outputMsg);
             Simulator.setFastestPathStatus("Sent out msg: " + outputMsg);
