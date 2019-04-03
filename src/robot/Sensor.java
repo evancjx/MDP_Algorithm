@@ -109,7 +109,7 @@ public class Sensor {
 
             if (sensorVal == i) {
                 exploredMap.setObstacle(x, y, true);
-                if(this.id.equals("SRL")){
+                if(this.id.equals("SRR")){
                     DIRECTION d = DIRECTION.getNext(this.direction);
                     d =DIRECTION.getNext(d);
                     int dir = DIRECTION.getInt(d);
@@ -122,11 +122,9 @@ public class Sensor {
 
             // Override previous obstacle value if front sensors detect no obstacle.
             if (exploredMap.getCell(x, y).getIsObstacle()) {
-                if (id.equals("SRFL") || id.equals("SRFC") || id.equals("SRFR")) {
-                    exploredMap.setObstacle(x, y, false);
-                } else {
-                    break;
-                }
+                if (id.equals("SRFL") || id.equals("SRFC") || id.equals("SRFR") || id.equals("SRR"))
+                    exploredMap.removeObst(x, y);
+                else break;
             }
         }
     }

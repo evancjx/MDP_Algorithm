@@ -260,13 +260,11 @@ public class FastestPath {
             case LEFT:
                 switch (secondSequence.get(0)){
                     case FORWARD:
+                    case RIGHT:
                         firstSequence.add(MOVEMENT.RIGHT);
                         break;
                     case LEFT:
                         secondSequence.remove(0);
-                        break;
-                    case RIGHT:
-                        firstSequence.add(MOVEMENT.RIGHT);
                         break;
                 }
                 break;
@@ -289,8 +287,6 @@ public class FastestPath {
             case RIGHT:
                 switch (secondSequence.get(0)){
                     case FORWARD:
-                        firstSequence.add(MOVEMENT.LEFT);
-                        break;
                     case LEFT:
                         firstSequence.add(MOVEMENT.LEFT);
                         break;
@@ -324,13 +320,13 @@ public class FastestPath {
                 }
                 else{
                     if(forwardCount !=0){
-                        commands.append("W"+forwardCount*10+"]");
+                        commands.append("W"+covertMoveToSymbol(forwardCount)+"]");
                         forwardCount = 0;
                     }
                     commands.append(MOVEMENT.getChar(move, true)+"]");
                 }
             }
-            if(forwardCount != 0)commands.append("W"+forwardCount*10+"]");
+            if(forwardCount != 0) commands.append("W"+covertMoveToSymbol(forwardCount)+"]");
             commMgr.sendMsg(commands.toString(), CommMgr.MSG_TYPE_ARDUINO);
             System.out.println(commands.toString());
         }
@@ -364,5 +360,27 @@ public class FastestPath {
         message += "</html>";
 
         Simulator.setFastestPathStatus(message);
+    }
+    private static char covertMoveToSymbol(int forwardCount){
+        switch(forwardCount){
+            case 10:
+                return ':';
+            case 11:
+                return ';';
+            case 12:
+                return '<';
+            case 13:
+                return '=';
+            case 14:
+                return '>';
+            case 15:
+                return '?';
+            case 16:
+                return '@';
+            case 17:
+                return '0';
+            default:
+                return (char)forwardCount;
+        }
     }
 }

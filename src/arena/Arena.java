@@ -35,8 +35,8 @@ public class Arena extends JPanel {
                 else if (inGoalZone(cell.posX(), cell.posY())) cellColor = Color.RED;
                 else if (!cell.getIsExplored()) cellColor = Color.LIGHT_GRAY;
                 else if (cell.getIsObstacle()) cellColor = Color.BLACK;
-//                else if (cell.getIsVirtualWall()) cellColor = Color.YELLOW;
-                else if (cell.getIsFastestPath()) cellColor = Color.MAGENTA;
+                else if (cell.getIsVirtualWall()) cellColor = Color.YELLOW;
+//                else if (cell.getIsFastestPath()) cellColor = Color.MAGENTA;
                 else if (cell.getIsWayPoint()) cellColor = Color.CYAN;
                 else cellColor = Color.WHITE;
 
@@ -71,37 +71,99 @@ public class Arena extends JPanel {
     }
 
     public void setObstacle(int x, int y, boolean obstacle){
-        System.out.println("setObstacle: " + x + "," + y + " " + obstacle);
         if (obstacle && inStartZone(x, y) || inGoalZone(x, y)) return;
-        grid[y-1][x-1].setIsObstacle(obstacle);
 
-        for(int i = -1; i<=1; ++i){
-            for(int j = -1; j<=1; ++j){
-                System.out.println(""+(x+i)+","+(y+j));
-                if(i==0&&j==0) continue;
-                if(x+i<1 || x+i>15 || y+j<1 || y+j>20) continue;
-                if(obstacle){
-                    grid[y+j-1][x+i-1].setIsVirtualWall(obstacle);
-                }
-                else{
-                    if(!hasBlockAround(x, y)) grid[y+i-1][x+j-1].setIsVirtualWall(obstacle);
-                }
+        grid[y - 1][x - 1].setIsObstacle(obstacle);
 
+        if (y >= 2){
+            grid[y - 2][x - 1].setIsVirtualWall(obstacle);            //Cell's bottom
+
+            if (x < ArenaConstants.COLS){
+                grid[y - 2][x].setIsVirtualWall(obstacle);            //Cell's bottom-right
             }
+            if (x > 1){
+                grid[y - 2][x - 2].setIsVirtualWall(obstacle);        //Cell's bottom-left
+            }
+        }
+        if (y < ArenaConstants.ROWS){
+            grid[y][x - 1].setIsVirtualWall(obstacle);                  //Cell's top
+            if (x < ArenaConstants.COLS - 1){
+                grid[y][x].setIsVirtualWall(obstacle);                  //Cell's top-right
+            }
+            if (x >= 2){
+                grid[y][x - 2].setIsVirtualWall(obstacle);              //Cell's top-left
+            }
+        }
+        if (x >= 2){
+            grid[y - 1][x - 2].setIsVirtualWall(obstacle);              //Cell's left
+        }
+        if (x < ArenaConstants.COLS){
+            grid[y - 1][x].setIsVirtualWall(obstacle);                  //Cell's right
         }
     }
 
-    private boolean hasBlockAround(int x, int y){
-        for(int i = -1; i<=1; i+=1){
-            for(int j = -1; j<=1; j+=1){
-                if(i==0&&j==0) continue;
-                if(x+i<1 || x+i>15 || y+j<1 || y+j>20) continue;
-                if(grid[y+j-1][x+i-1].getIsObstacle()){
-                    return true;
-                }
+    public void removeObst(int x, int y){
+
+        if (inStartZone(x, y) || inGoalZone(x, y)) return;
+
+        grid[y - 1][x - 1].setIsObstacle(false);
+
+        if (y-2>=0){
+            grid[y - 2][x - 1].setIsVirtualWall(checkVwall(x-1, y-2));            //Cell's bottom
+
+            if (x < ArenaConstants.COLS){
+                grid[y - 2][x].setIsVirtualWall(checkVwall(x, y-2));            //Cell's bottom-right
+            }
+            if (x > 1){
+                grid[y - 2][x - 2].setIsVirtualWall(checkVwall(x-2, y-2));        //Cell's bottom-left
             }
         }
-        return false;
+        if (y < ArenaConstants.ROWS){
+            grid[y][x - 1].setIsVirtualWall(checkVwall(x-1, y));                  //Cell's top
+            if (x < ArenaConstants.COLS - 1){
+                grid[y][x].setIsVirtualWall(checkVwall(x, y));                  //Cell's top-right
+            }
+            if (x >= 2){
+                grid[y][x - 2].setIsVirtualWall(checkVwall(x-2, y));              //Cell's top-left
+            }
+        }
+        if (x-2 >= 0){
+            grid[y - 1][x - 2].setIsVirtualWall(checkVwall(x-2, y-1));              //Cell's left
+        }
+        if (x < ArenaConstants.COLS){
+            grid[y - 1][x].setIsVirtualWall(checkVwall(x, y-1));                  //Cell's right
+        }
+    }
+
+    public boolean checkVwall(int x, int y){
+        boolean cb,cbr,cbl,ct,ctr,ctl,cl,cr;
+        cb=cbr=cbl=ct=ctr=ctl=cl=cr= false;
+        if (y-1 >=0){
+            cb = grid[y - 1][x].getIsObstacle();            //check Cell's bottom
+
+            if (x < ArenaConstants.COLS - 1){
+                cbr = grid[y - 1][x + 1].getIsObstacle();            //check Cell's bottom-right
+            }
+            if (x-1 >= 0){
+                cbl = grid[y - 1][x - 1].getIsObstacle();        //check Cell's bottom-left
+            }
+        }
+        if (y < ArenaConstants.ROWS - 1){
+            ct = grid[y + 1][x].getIsObstacle();                  //check Cell's top
+            if (x < ArenaConstants.COLS - 1){
+                ctr = grid[y+1][x+1].getIsObstacle();                  //check Cell's top-right
+            }
+            if (x - 1 >= 0){
+                ctl = grid[y+1][x - 1].getIsObstacle();              //check Cell's top-left
+            }
+        }
+        if (x-1 >= 0){
+            cl = grid[y][x - 1].getIsObstacle();              //check Cell's left
+        }
+        if (x < ArenaConstants.COLS - 1){
+            cr = grid[y][x + 1].getIsObstacle();                  //check Cell's right
+        }
+        return (cb || cbr || cbl || ct || ctl || ctr || cr || cl);
     }
 
     public void clearArena(){
