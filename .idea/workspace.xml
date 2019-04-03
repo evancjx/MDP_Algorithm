@@ -7,7 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d9367c61-71e4-4178-b497-9e96d0c8331b" name="Default Changelist" comment="190322 2334pm&#10;Send all fastest path commands all at one go to Arduino.">
-      <change beforePath="$PROJECT_DIR$/MDP_Algorithm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MDP_Algorithm.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/algorithms/Exploration$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/arena/ArenaConstants.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/arena/CellConstants.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/RbtConstants$MOVEMENT.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/robot/Sensor$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$10.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/simulator/Simulator$9.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/MDP_Algorithm/utils/MapDescriptor.class" beforeDir="false" />
     </list>
     <list id="323e80ec-0c0c-4d03-817a-19b1cdc7e79a" name="190320 21:50pm Issue fixed: Long Range Sensor, 4 to 6 never check for 1 to 3 to be explored." comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -368,7 +376,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="67984000" />
+    <option name="totallyTimeSpent" value="68277000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
