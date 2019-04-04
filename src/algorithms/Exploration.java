@@ -110,20 +110,48 @@ public class Exploration {
                 moveBot(MOVEMENT.FORWARD);
             }
         } else if (lookForward(rbtX, rbtY)){
+            takeImage(this.robot.getDirection(), rbtX, rbtY);
             checkDirectionLog += "Forward Empty\n";
             countRight = 0;
             moveBot(MOVEMENT.FORWARD);
         } else if (lookLeftEmpty(rbtX, rbtY)){
+            takeImage(this.robot.getDirection(), rbtX, rbtY);
             checkDirectionLog += "Left Empty\n";
             countRight = 0;
             moveBot(MOVEMENT.LEFT);
             if(lookForward(rbtX, rbtY)) moveBot(MOVEMENT.FORWARD);
         } else {
+            takeImage(this.robot.getDirection(), rbtX, rbtY);
             checkDirectionLog += "Only Back Empty\n";
             countRight = 0;
             moveBot(MOVEMENT.RIGHT); //Depends on which rotation LEFT or RIGHT is better
             moveBot(MOVEMENT.RIGHT);
         }
+    }
+
+    private void takeImage(DIRECTION d, int x, int y){
+        switch(d) {
+            case UP:
+                x = x + 2;
+                if(x>15) return;
+                break;
+            case LEFT:
+                y = y + 2;
+                if(y>20) return;
+                break;
+            case DOWN:
+                x = x - 2;
+                if(x<1) return;
+                break;
+            default:
+                y = y - 2;
+                if(y<1) return;
+        }
+        d = DIRECTION.getNext(d);
+        int dir = DIRECTION.getInt(d);
+        CommMgr comMgr = CommMgr.getCommMgr();
+        String s = String.format("%d,%d,%d", x, y, dir);
+        comMgr.sendMsg(s, CommMgr.MSG_TYPE_RPI);
     }
 
     private boolean lookForward(int rbtX, int rbtY){

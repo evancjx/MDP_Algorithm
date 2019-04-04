@@ -320,13 +320,21 @@ public class FastestPath {
                 }
                 else{
                     if(forwardCount !=0){
-                        commands.append("W"+covertMoveToSymbol(forwardCount)+"]");
+                        if(forwardCount > 9)
+                            commands.append("W"+covertMoveToSymbol(forwardCount)+"]");
+                        else
+                            commands.append("W"+forwardCount+"]");
                         forwardCount = 0;
                     }
                     commands.append(MOVEMENT.getChar(move, true)+"]");
                 }
             }
-            if(forwardCount != 0) commands.append("W"+covertMoveToSymbol(forwardCount)+"]");
+            if(forwardCount != 0) {
+                if (forwardCount > 9)
+                    commands.append("W" + covertMoveToSymbol(forwardCount) + "]");
+                else
+                    commands.append("W" + forwardCount + "]");
+            }
             commMgr.sendMsg(commands.toString(), CommMgr.MSG_TYPE_ARDUINO);
             System.out.println(commands.toString());
         }
